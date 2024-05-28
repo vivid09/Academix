@@ -23,11 +23,11 @@ public interface UserService {
   void signout(HttpServletRequest request, HttpServletResponse response);
   
   // 네이버 로그인
-  String getNaverLoginURL(HttpServletRequest request);
-  String getNaverLoginAccessToken(HttpServletRequest request);
-  UserDto getNaverLoginProfile(String accessToken);
-  boolean hasUser(UserDto user);
-  void naverSignin(HttpServletRequest request, UserDto naverUser);
+  //String getNaverLoginURL(HttpServletRequest request);
+  //String getNaverLoginAccessToken(HttpServletRequest request);
+ // UserDto getNaverLoginProfile(String accessToken);
+  //boolean hasUser(UserDto user);
+  //void naverSignin(HttpServletRequest request, UserDto naverUser);
   
   
   

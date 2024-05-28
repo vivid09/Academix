@@ -7,12 +7,12 @@
 
   <select id="getUserByMap"
           parameterType="Map"
-          resultType="UserDto">
-    SELECT USER_NO, EMAIL, PW, NAME, GENDER, MOBILE, EVENT_AGREE, SIGNUP_KIND, PW_MODIFY_DT, SIGNUP_DT
-      FROM USER_T
+          resultType="EmployeesDto">
+SELECT EMPLOYEE_NO, NAME, EMAIL, PHONE, ADDRESS, DEPARTMENT_NO, RANK_NO, PASSWORD, PROFILE_PICTURE_PATH, EMPLOYEE_STATUS, HIRE_DATE, EXIT_DATE
+  FROM EMPLOYEES_T
     <where>
       <if test="email!=null">EMAIL = #{email}</if>
-      <if test="pw!=null">AND PW = #{pw}</if>
+      <if test="password!=null">AND PASSWORD = #{password}</if>
     </where>
   </select>
 
