@@ -47,9 +47,11 @@ public class UserController {
     userService.signout(request, response);
   }
   
-  
-  
-  
+  // 오채원 - 조직도 직원 데이터 가져오기
+  @GetMapping(value="/getMemberList.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> getMemberList() {
+    return userService.getMemberList();
+  }
   
   
 /*

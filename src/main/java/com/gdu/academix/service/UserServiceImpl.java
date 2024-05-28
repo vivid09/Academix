@@ -226,7 +226,7 @@ public class UserServiceImpl implements UserService {
       String email = request.getParameter("email");
       
       // 입력한 비밀번호 + SHA-256 방식의 암호화
-      String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
+      String pw = MySecurityUtils.getSha256(request.getParameter("password"));
       
       // 접속 IP (접속 기록을 남길 때 필요한 정보)
       String ip = request.getRemoteAddr();
@@ -298,12 +298,14 @@ public class UserServiceImpl implements UserService {
     }
     
   }
-
-
-
   
+  // 오채원 - 추가(24/05/28)
+  @Override
+  public ResponseEntity<Map<String, Object>> getMemberList() {
+    System.out.println("department" + userMapper.getDepartmentsList());
+    return ResponseEntity.ok(Map.of("employee", userMapper.getMemberList(), "departments", userMapper.getDepartmentsList()));
+  }
   
-
 
 
 }
