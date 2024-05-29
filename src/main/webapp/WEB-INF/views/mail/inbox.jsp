@@ -24,7 +24,7 @@
     <section class="content">
       <div class="row">
         <div class="col-md-3">
-          <a href="compose.html" class="btn btn-primary btn-block margin-bottom">Compose</a>
+          <a href="${contextPath}/mail/compose.page" class="btn btn-primary btn-block margin-bottom">Compose</a>
 
           <div class="box box-solid">
             <div class="box-header with-border">
@@ -37,9 +37,9 @@
             </div>
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="#"><i class="fa fa-inbox"></i> Inbox
+                <li class="active"><a href="${contextPath}/mail/inbox.page"><i class="fa fa-inbox"></i> Inbox
                   <span class="label label-primary pull-right">12</span></a></li>
-                <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
+                <li><a href="${contextPath}/mail/sentMailbox.page"><i class="fa fa-envelope-o"></i> Sent</a></li>
                 <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
                 <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a>
                 </li>

@@ -23,22 +23,22 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="dist/css/AdminLTE.css">
+  <link rel="stylesheet" href="/dist/css/AdminLTE.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+  <link rel="stylesheet" href="/dist/css/skins/_all-skins.min.css">
   <!-- iCheck -->
-  <link rel="stylesheet" href="plugins/iCheck/flat/blue.css">
+  <link rel="stylesheet" href="/plugins/iCheck/flat/blue.css">
   <!-- Morris chart -->
-  <link rel="stylesheet" href="plugins/morris/morris.css">
+  <link rel="stylesheet" href="/plugins/morris/morris.css">
   <!-- jvectormap -->
-  <link rel="stylesheet" href="plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+  <link rel="stylesheet" href="/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
   <!-- Date Picker -->
-  <link rel="stylesheet" href="plugins/datepicker/datepicker3.css">
+  <link rel="stylesheet" href="/plugins/datepicker/datepicker3.css">
   <!-- Daterange picker -->
-  <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
+  <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
   <!-- bootstrap wysihtml5 - text editor -->
-  <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+  <link rel="stylesheet" href="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -81,7 +81,7 @@
                   <li><!-- start message -->
                     <a href="#">
                       <div class="pull-left">
-                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                       </div>
                       <h4>
                         Support Team
@@ -369,8 +369,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${contextPath}/WEB-INF/views/mail/inbox.jsp"><i class="fa fa-envelope-o"></i> <span>받은 메일함</span></a></li>
-            <li><a href="pages/mailbox/mailbox.html"><i class="fa fa-paper-plane-o"></i> <span>보낸 메일함</span></a></li>
+            <li><a href="${contextPath}/mail/inbox.page"><i class="fa fa-envelope-o"></i> <span>받은 메일함</span></a></li>
+            <li><a href="${contextPath}/mail/sentMailbox.page"><i class="fa fa-paper-plane-o"></i> <span>보낸 메일함</span></a></li>
           </ul>
         </li>    
         
@@ -479,9 +479,9 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">학생상담 내역</a></li>
-            <li><a href="pages/charts/chartjs.html">학생관리</a></li>
-            <li><a href="pages/charts/chartjs.html">학생주소록</a></li>
+            <li><a href="${contextPath}/studentMng/consultingList.page">학생 상담 관리</a></li>
+            <li><a href="pages/charts/chartjs.html">학생 관리</a></li>
+            <li><a href="pages/charts/chartjs.html">학생 주소록</a></li>
           </ul>
         </li>    
         
