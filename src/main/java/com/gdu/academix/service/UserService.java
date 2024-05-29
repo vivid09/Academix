@@ -22,12 +22,15 @@ public interface UserService {
   void signin(HttpServletRequest request, HttpServletResponse response);
   void signout(HttpServletRequest request, HttpServletResponse response);
   
+  // 오채원 - 추가(24/05/28)
+  ResponseEntity<Map<String, Object>> getMemberList();
+  
   // 네이버 로그인
-  String getNaverLoginURL(HttpServletRequest request);
-  String getNaverLoginAccessToken(HttpServletRequest request);
-  UserDto getNaverLoginProfile(String accessToken);
-  boolean hasUser(UserDto user);
-  void naverSignin(HttpServletRequest request, UserDto naverUser);
+  //String getNaverLoginURL(HttpServletRequest request);
+  //String getNaverLoginAccessToken(HttpServletRequest request);
+ // UserDto getNaverLoginProfile(String accessToken);
+  //boolean hasUser(UserDto user);
+  //void naverSignin(HttpServletRequest request, UserDto naverUser);
   
   
   

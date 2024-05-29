@@ -27,52 +27,14 @@ public class UserController {
     this.userService = userService;
   }
   
-  @GetMapping("/signup.page")
-  public String signupPage() {
-    return "user/signup";
-  }
-  
-  @PostMapping(value="/checkEmail.do", produces="application/json")
-  public ResponseEntity<Map<String, Object>> checkEmail(@RequestBody Map<String, Object> params) {
-    return userService.checkEmail(params);
-  }
-  
-  @PostMapping(value="/sendCode.do", produces="application/json")
-  public ResponseEntity<Map<String, Object>> sendCode(@RequestBody Map<String, Object> params) {
-    return userService.sendCode(params);
-  }
-  
-  @PostMapping("/signup.do")
-  public void signup(HttpServletRequest request, HttpServletResponse response) {
-    userService.signup(request, response);
-  }
-  
   @GetMapping("/leave.do")
   public void leave(HttpServletRequest request, HttpServletResponse response) {
     userService.leave(request, response);
   }
-  /*
-  @GetMapping("/leave.do")
-  public void leave(HttpSession session, HttpServletResponse response) {
-    UserDto user = (UserDto) session.getAttribute("user");
-  }
-  @GetMapping("/leave.do")
-  public void leave(@SessionAttribute(name="user") UserDto user, HttpServletResponse response) {   
-  }
-  */
-  
+
   @GetMapping("/signin.page")
-  public String signinPage(HttpServletRequest request
-                         , Model model) {
-    
-    // Sign In 페이지로 url 넘겨 주기 (로그인 후 이동할 경로를 의미함)
-    model.addAttribute("url",  userService.getRedirectURLAfterSignin(request));
-    
-    // Sign In 페이지로 naverLoginURL 넘겨 주기 (네이버 로그인 요청 주소를 의미함)
-    model.addAttribute("naverLoginURL", userService.getNaverLoginURL(request));
-    
+  public String signinPage(HttpServletRequest request) {
     return "user/signin";
-    
   }
   
   @PostMapping("/signin.do")
@@ -80,6 +42,20 @@ public class UserController {
     userService.signin(request, response);
   }
   
+  @GetMapping("/signout.do")
+  public void signout(HttpServletRequest request, HttpServletResponse response) {
+    userService.signout(request, response);
+  }
+  
+  // 오채원 - 조직도 직원 데이터 가져오기
+  @GetMapping(value="/getMemberList.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> getMemberList() {
+    return userService.getMemberList();
+  }
+  
+  
+/*
+ * 
   @GetMapping("/naver/getAccessToken.do")
   public String getAccessToken(HttpServletRequest request) {
     String accessToken = userService.getNaverLoginAccessToken(request);
@@ -110,9 +86,35 @@ public class UserController {
     
   }
   
-  @GetMapping("/signout.do")
-  public void signout(HttpServletRequest request, HttpServletResponse response) {
-    userService.signout(request, response);
+  @PostMapping(value="/checkEmail.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> checkEmail(@RequestBody Map<String, Object> params) {
+    return userService.checkEmail(params);
   }
+  
+  @PostMapping(value="/sendCode.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> sendCode(@RequestBody Map<String, Object> params) {
+    return userService.sendCode(params);
+  }  
+  
+  @GetMapping("/signup.page")
+  public String signupPage() {
+    return "user/signup";
+  }
+  
+  @PostMapping("/signup.do")
+  public void signup(HttpServletRequest request, HttpServletResponse response) {
+    userService.signup(request, response);
+  }
+  
+  @GetMapping("/leave.do")
+  public void leave(HttpSession session, HttpServletResponse response) {
+    UserDto user = (UserDto) session.getAttribute("user");
+  }
+  @GetMapping("/leave.do")
+  public void leave(@SessionAttribute(name="user") UserDto user, HttpServletResponse response) {   
+  }
+ * 
+ * 
+ */
   
 }
