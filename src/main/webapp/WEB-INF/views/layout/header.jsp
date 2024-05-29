@@ -355,8 +355,8 @@
         </li>
         
         <!-- 메일 -->
-        <li>
-          <a href="pages/mailbox/mailbox.html">
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-envelope"></i> <span>메일</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-yellow">12</small>
@@ -364,6 +364,10 @@
               <small class="label pull-right bg-red">5</small>
             </span>
           </a>
+          <ul class="treeview-menu">
+            <li><a href="${contextPath}/WEB-INF/views/mail/inbox.jsp"><i class="fa fa-envelope-o"></i> <span>받은 메일함</span></a></li>
+            <li><a href="pages/mailbox/mailbox.html"><i class="fa fa-paper-plane-o"></i> <span>보낸 메일함</span></a></li>
+          </ul>
         </li>    
         
         <!-- 일정 -->

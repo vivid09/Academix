@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
-<jsp:include page="./layout/header.jsp"/>
+<jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp"/>
 
 
 
@@ -521,4 +521,4 @@
   </div>
   <!-- /.content-wrapper -->
 
-<%@ include file="./layout/footer.jsp" %>
+<jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />
