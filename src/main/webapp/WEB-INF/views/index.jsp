@@ -520,5 +520,18 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  
+  <script>
+
+  
+  </script>
+  
+  
+  
+  
+  
+  
+  
+  
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

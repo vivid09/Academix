@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MvcController {
 
-  @GetMapping(value={"/", "/main.page"})
+  @GetMapping("/")
   public String welcome() {
+    return "user/signin";
+  }
+  
+  @GetMapping("/main.page")
+  public String welcomeMain() {
     return "index";
   }
 

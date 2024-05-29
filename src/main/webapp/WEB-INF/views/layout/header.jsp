@@ -12,8 +12,12 @@
   <title>AdminLTE 2 | Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  
   <!-- Bootstrap 3.3.6 -->
-  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   <!-- Ionicons -->
@@ -264,7 +268,7 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Alexander Pierce</span>
+              <span class="hidden-xs">${sessionScope.user.name}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -272,12 +276,12 @@
                 <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                 <p>
-                  Alexander Pierce - Web Developer
+                  ${sessionScope.user.name}
                   <small>Member since Nov. 2012</small>
                 </p>
               </li>
               <!-- Menu Body -->
-              <li class="user-body">
+<!--               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
                     <a href="#">Followers</a>
@@ -289,15 +293,15 @@
                     <a href="#">Friends</a>
                   </div>
                 </div>
-                <!-- /.row -->
-              </li>
+                /.row
+              </li> -->
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <a href="#" class="btn btn-default btn-flat">마이페이지</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="${contextPath}/user/signout.do" class="btn btn-default btn-flat">로그아웃</a>
                 </div>
               </li>
             </ul>
@@ -321,7 +325,7 @@
           <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>Alexander Pierce</p>
+          <p>${sessionScope.user.name}님</p>
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
       </div>
@@ -392,7 +396,7 @@
         </li>
         
         <li>
-          <a href="pages/chat.html">
+          <a href="${contextPath}/chatting/chat.page">
             <i class="fa fa-commenting"></i> <span>채팅</span>
           </a>
         </li> 
