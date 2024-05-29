@@ -21,6 +21,7 @@ public interface UserMapper {
   
   
   // 오채원 - 추가(24/05/28)
-  List<EmployeesDto> getMemberList();
+  List<EmployeesDto> getUserList();
   List<DepartmentsDto> getDepartmentsList();
+  EmployeesDto getUserProfileByNo(int EmployeeNo);
 }

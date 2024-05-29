@@ -301,9 +301,14 @@ public class UserServiceImpl implements UserService {
   
   // 오채원 - 추가(24/05/28)
   @Override
-  public ResponseEntity<Map<String, Object>> getMemberList() {
+  public ResponseEntity<Map<String, Object>> getUserList() {
     System.out.println("department" + userMapper.getDepartmentsList());
-    return ResponseEntity.ok(Map.of("employee", userMapper.getMemberList(), "departments", userMapper.getDepartmentsList()));
+    return ResponseEntity.ok(Map.of("employee", userMapper.getUserList(), "departments", userMapper.getDepartmentsList()));
+  }
+  
+  @Override
+  public ResponseEntity<Map<String, Object>> getUserProfileByNo(int employeeNo) {
+    return ResponseEntity.ok(Map.of("employee", userMapper.getUserProfileByNo(employeeNo)));
   }
   
 

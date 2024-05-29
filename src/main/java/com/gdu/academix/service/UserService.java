@@ -23,7 +23,8 @@ public interface UserService {
   void signout(HttpServletRequest request, HttpServletResponse response);
   
   // 오채원 - 추가(24/05/28)
-  ResponseEntity<Map<String, Object>> getMemberList();
+  ResponseEntity<Map<String, Object>> getUserList();
+  ResponseEntity<Map<String, Object>> getUserProfileByNo(int employeeNo);
   
   // 네이버 로그인
   //String getNaverLoginURL(HttpServletRequest request);
