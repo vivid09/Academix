@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/drive")
 @RequiredArgsConstructor
 @Controller
-public class DriveController {
+public class FolderController {
 	
   @GetMapping("/myDrive.page")
   public String myDrive() {
