@@ -368,7 +368,7 @@
         
         <!-- 일정 -->
         <li>
-          <a href="pages/calendar.html">
+          <a href="${contextPath}/calendar">
             <i class="fa fa-calendar"></i> <span>일정</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-red">3</small>
