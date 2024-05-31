@@ -4,7 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
-<jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp" />
+<jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp">
+  <jsp:param value="메일 작성" name="title"/>
+</jsp:include>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">

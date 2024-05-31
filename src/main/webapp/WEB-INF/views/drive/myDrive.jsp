@@ -5,32 +5,25 @@
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 <jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp">
-  <jsp:param value="받은 메일함" name="title"/>
+  <jsp:param value="내 드라이브" name="title"/>
 </jsp:include>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Mailbox
-        <small>13 new messages</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Mailbox</li>
-      </ol>
+      <h1>내 드라이브</h1>
     </section>
 
     <!-- Main content -->
     <section class="content">
       <div class="row">
         <div class="col-md-3">
-          <a href="${contextPath}/mail/compose.page" class="btn btn-primary btn-block margin-bottom">Compose</a>
+          <a href="compose.html" class="btn btn-primary btn-block margin-bottom">Compose</a>
 
           <div class="box box-solid">
             <div class="box-header with-border">
-              <h3 class="box-title">Folders</h3>
+              <h3 class="box-title">Drive</h3>
 
               <div class="box-tools">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -39,9 +32,9 @@
             </div>
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="${contextPath}/mail/inbox.page"><i class="fa fa-inbox"></i> Inbox
+                <li class="active"><a href="#"><i class="fa fa-inbox"></i> 최근 파일
                   <span class="label label-primary pull-right">12</span></a></li>
-                <li><a href="${contextPath}/mail/sentMailbox.page"><i class="fa fa-envelope-o"></i> Sent</a></li>
+                <li><a href="#"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
                 <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
                 <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a>
                 </li>
