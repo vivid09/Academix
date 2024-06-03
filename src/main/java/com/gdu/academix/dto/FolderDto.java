@@ -15,7 +15,7 @@ public class FolderDto {
 
   private int folderNo, parentFolderNo;
   private String folderTitle;
-  private Timestamp folderCreatedAt;
+  private Timestamp folderCreateDt;
   private EmployeesDto employee;
 	
 }

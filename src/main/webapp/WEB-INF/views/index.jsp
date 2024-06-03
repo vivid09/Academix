@@ -4,7 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
-<jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp"/>
+<jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp">
+   <jsp:param value="메인" name="title"/>
+ </jsp:include>
 
 
 
@@ -521,7 +523,9 @@
   </div>
   <!-- /.content-wrapper -->
   
-<!-- jQuery 2.2.3 -->
+<!-- footer js 코드 -->  
+
+  <!-- jQuery 2.2.3 -->
 <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -530,7 +534,7 @@
   $.widget.bridge('uibutton', $.ui.button);
 </script>
 <!-- Bootstrap 3.3.6 -->
-<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../bootstrap/js/bootstrap.min.js"></script>
 <!-- Morris.js charts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 <script src="/plugins/morris/morris.min.js"></script>
@@ -560,6 +564,4 @@
 <script src="/dist/js/demo.js"></script>
 <script src="/dist/js/pages/dashboard.js"></script>
   
-  
-
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />
