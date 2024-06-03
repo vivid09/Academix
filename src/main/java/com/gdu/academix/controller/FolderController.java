@@ -1,21 +1,38 @@
 package com.gdu.academix.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.RequiredArgsConstructor;
+import com.gdu.academix.service.FolderService;
 
 
 @RequestMapping("/drive")
-@RequiredArgsConstructor
 @Controller
 public class FolderController {
 	
-  @GetMapping("/myDrive.page")
-  public String myDrive() {
-      return "drive/myDrive";
+  private final FolderService folderService;
+  
+  public FolderController(FolderService folderService) {
+    super();
+    this.folderService = folderService;
   }
+  
+  @GetMapping("/main.page")
+  public String main() {
+    return "drive/main";
+  }
+  
+  @GetMapping(value="/checkDrive.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> checkDrive(@RequestParam int employeeNo) {
+    return folderService.checkDrive(employeeNo);
+  }
+
   
 
 }

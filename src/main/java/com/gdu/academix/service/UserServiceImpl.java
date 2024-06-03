@@ -1,19 +1,8 @@
 package com.gdu.academix.service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.SecureRandom;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +13,10 @@ import com.gdu.academix.dto.UserDto;
 import com.gdu.academix.mapper.UserMapper;
 import com.gdu.academix.utils.MyJavaMailUtils;
 import com.gdu.academix.utils.MySecurityUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Transactional
 @Service

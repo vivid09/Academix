@@ -33,8 +33,8 @@
   <select id="getUserByMap"
           parameterType="Map"
           resultType="EmployeesDto">
-SELECT EMPLOYEE_NO, NAME, EMAIL, PHONE, ADDRESS, DEPARTMENT_NO, RANK_NO, PASSWORD, PROFILE_PICTURE_PATH, EMPLOYEE_STATUS, HIRE_DATE, EXIT_DATE
-  FROM EMPLOYEES_T
+		SELECT EMPLOYEE_NO, NAME, EMAIL, PHONE, ADDRESS, DEPARTMENT_NO, RANK_NO, PASSWORD, PROFILE_PICTURE_PATH, EMPLOYEE_STATUS, HIRE_DATE, EXIT_DATE
+		  FROM EMPLOYEES_T
     <where>
       <if test="email!=null">EMAIL = #{email}</if>
       <if test="password!=null">AND PASSWORD = #{password}</if>

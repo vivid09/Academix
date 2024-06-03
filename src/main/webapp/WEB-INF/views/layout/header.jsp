@@ -431,7 +431,7 @@
         </li>                          
         
         <li class="drive">
-          <a href="${contextPath}/drive/myDrive.page">
+          <a href="${contextPath}/drive/main.page">
             <i class="fa fa-folder-open"></i> <span>드라이브</span>
           </a>
         </li>

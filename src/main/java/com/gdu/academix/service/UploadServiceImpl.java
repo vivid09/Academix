@@ -12,8 +12,6 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +30,7 @@ import com.gdu.academix.mapper.UploadMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 import net.coobird.thumbnailator.Thumbnails;
 
 @Transactional

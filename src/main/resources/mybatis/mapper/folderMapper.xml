@@ -23,16 +23,29 @@
       , FOLDER_TITLE
       , FOLDER_CREATE_DT
       , PARENT_FOLDER_NO
-      , EMPLOYEE_NO
+      , OWNER_NO
     ) VALUES (
         FOLDER_SEQ.NEXTVAL
       , #{folderTitle}
-      , SYSTIMESTAMP
+      , CURRNET_TIMESTAMP
       , #{parentFolderNo}
       , #{employee.employeeNo}
     )
   </insert>
 
-  
+  <select id="getDriveCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM FOLDER_T
+     WHERE OWNER_NO = #{employee.employeeNo}
+       AND PARENT_FOLDER_NO = null
+  </select>
+
+  <select id="getFolderByMap"
+          parameterType="Map"
+          resultType="FolderDto">
+    SELECT FOLDER_NO, FOLDER_TITLE, FOLDER_CREATE_DT, PARENT_FOLDER_NO, OWNER_NO
+      FROM FOLDER_T
+  </select>
 
 </mapper>
