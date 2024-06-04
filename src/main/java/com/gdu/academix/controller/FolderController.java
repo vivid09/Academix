@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gdu.academix.service.FolderService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @RequestMapping("/drive")
 @Controller
@@ -33,6 +35,17 @@ public class FolderController {
     return folderService.checkDrive(employeeNo);
   }
 
-  
+  @PostMapping(value="/createFolder.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> createFolder(HttpServletRequest request) {
+    return ResponseEntity.ok(Map.of("insertCount", folderService.createFolder(request)));
+  }
 
+  
+  
+  
+  
+  
+  
+  
+  
 }

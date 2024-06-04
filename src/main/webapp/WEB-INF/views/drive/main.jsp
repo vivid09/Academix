@@ -5,7 +5,7 @@
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 <jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp">
-  <jsp:param value="내 드라이브" name="title"/>
+  <jsp:param value="최근 파일" name="title"/>
 </jsp:include>
 
   <!-- Content Wrapper. Contains page content -->

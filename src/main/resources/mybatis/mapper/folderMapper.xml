@@ -7,7 +7,7 @@
 
   <resultMap type="FolderDto" id="FolderMap">
     <id     property="folderNo"       column="FOLDER_NO" />
-    <result property="FolderTitle"    column="FOLDER_TITLE" />
+    <result property="FolderName"    column="FOLDER_NAME" />
     <result property="folderCreateDt" column="FOLDER_CREATE_DT" />
     <result property="parentFolderNo" column="PARENT_FOLDER_NO" />
     <association property="employee"  javaType="EmployeesDto">
@@ -17,22 +17,30 @@
   </resultMap>
 
   <!-- 폴더 생성 -->
-  <insert id="insertFolder">
+  <insert id="insertFolder"
+          parameterType="FolderDto">
+    <selectKey order="BEFORE" keyProperty="folderNo" resultType="int">
+      SELECT FOLDER_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
     INSERT INTO FOLDER_T (
         FOLDER_NO
-      , FOLDER_TITLE
+      , FOLDER_NAME
       , FOLDER_CREATE_DT
+      , FOLDER_UPLOAD_PATH
       , PARENT_FOLDER_NO
       , OWNER_NO
     ) VALUES (
-        FOLDER_SEQ.NEXTVAL
-      , #{folderTitle}
+        #{folderNo}
+      , #{folderName}
       , CURRNET_TIMESTAMP
+      , #{folderUploadPath}
       , #{parentFolderNo}
       , #{employee.employeeNo}
     )
   </insert>
 
+  <!-- 최상위 폴더(드라이브) 여부 확인 -->
   <select id="getDriveCount"
           resultType="int">
     SELECT COUNT(*)
@@ -44,7 +52,7 @@
   <select id="getFolderByMap"
           parameterType="Map"
           resultType="FolderDto">
-    SELECT FOLDER_NO, FOLDER_TITLE, FOLDER_CREATE_DT, PARENT_FOLDER_NO, OWNER_NO
+    SELECT FOLDER_NO, FOLDER_NAME, FOLDER_CREATE_DT, FOLDER_UPLOAD_PATH, PARENT_FOLDER_NO, OWNER_NO
       FROM FOLDER_T
   </select>
 

@@ -10,6 +10,7 @@ import com.gdu.academix.dto.FolderDto;
 public interface FolderMapper {
 
   int getDriveCount(int employeeNo);
+  int insertFolder(FolderDto folderDto);
   
   FolderDto getFolderByMap(Map<String, Object> map);
 	

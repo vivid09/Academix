@@ -89,7 +89,7 @@ public class UploadServiceImpl implements UploadService {
         
         String uploadPath = myFileUtils.getUploadPath();
         File dir = new File(uploadPath);
-        System.out.println("====="+dir.getAbsolutePath());
+        System.out.println("=====" + dir.getAbsolutePath());
         if(!dir.exists()) {
           dir.mkdirs();
         }
