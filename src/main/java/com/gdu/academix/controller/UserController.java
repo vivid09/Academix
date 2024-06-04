@@ -1,5 +1,6 @@
 package com.gdu.academix.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,10 +56,18 @@ public class UserController {
   }
   
   // 오채원 - 직원 프로필 조회
-  @GetMapping(value="getUserProfileByNo.do", produces="application/json")
+  @GetMapping(value="/getUserProfileByNo.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> getUserProfileByNo(@RequestParam int employeeNo) {
     System.out.println("employeeNo: " + employeeNo);
     return userService.getUserProfileByNo(employeeNo);
+  }
+  
+  // 직원 프로필리스트 조회
+  @PostMapping(value="/getUserProfileListByNo.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> getUserProfileListByNo(@RequestBody Map<String, List<Integer>> requestBody) {
+    List<Integer> employeeNoList = requestBody.get("employeeNoList");
+    System.out.println("employeeNoList" + employeeNoList);
+    return userService.getUserProfileListByNo(employeeNoList);
   }
   
   
