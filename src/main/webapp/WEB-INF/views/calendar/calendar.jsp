@@ -95,7 +95,7 @@
   <!-- fullCalendar 2.2.5-->
   <link rel="stylesheet" href="/plugins/fullcalendar/fullcalendar.min.css">
   <link rel="stylesheet" href="/plugins/fullcalendar/fullcalendar.print.css" media="print">
-  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=29f2120483735c64c72dce2989d136bc&libraries=services"></script>
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ed2e5444e4bcbe271f00c46001aced51&libraries=services"></script>
    <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -114,9 +114,9 @@
 	<div class="event-overlay" id="eventOverlay">
       <div id="eventmap"></div>
 	    <h3 id="OverlayTitle"></h3>
-	    <p id="OverlayDescription"></p>
-	    <p id="OverlayTime"></p>
 	    <p id="OverlayLocation"></p>
+	    <p id="OverlayTime"></p>
+	    <p id="OverlayDescription"></p>
 	</div>
 
   <!-- Modal -->
@@ -176,9 +176,9 @@
 		          </div>
 	          </div>
 		        <div class="modal-footer">
-	        		<input id="eventlat" name="eventlat">
-	            <input id="eventlng" name="eventlng">
-	            <input id="eventlocation" name="eventlocation">
+	        		<input type="hidden" id="eventlat" name="eventlat">
+	            <input type="hidden" id="eventlng" name="eventlng">
+	            <input type="hidden" id="eventlocation" name="eventlocation">
 		        	<input type="hidden" id="eventNo" name="eventNo">
 		          <button type="button" class="btn btn-danger" id="deleteEventBtn">Delete</button>
 		          <button type="submit" class="btn btn-primary" id="saveEventBtn">Save</button>
@@ -256,50 +256,57 @@
 <!-- Page specific script -->
 <script>
 
-
-
-	function initializeMap(event, mapContainer) {
-		
-			var maplat;
-			var maplng;
-			if(event) {
-				maplat = event.lat;
-				maplng = event.lng;
-			} else {
-				maplat = 33.450701;
-				maplng = 126.570667;
-			}
-			
-    	var markers = [];
-      var mapOption = {
-          center: new kakao.maps.LatLng(parseFloat(maplat), parseFloat(maplng)),
-          level: 3
-      };
-      var map = new kakao.maps.Map(mapContainer, mapOption);
-      
-      if(event) {
-        var markerPosition = new kakao.maps.LatLng(parseFloat(event.lat), parseFloat(event.lng));
-				var marker = new kakao.maps.Marker({
-				    position: markerPosition
-				});
-				marker.setMap(map);
-			}
-
-  		//장소 검색 객체를 생성합니다
-  		var ps = new kakao.maps.services.Places();  
-  		
-  		// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
-  		var infowindow = new kakao.maps.InfoWindow({zIndex:1});
-		 	document.getElementById('searchForm').addEventListener('submit', function(event) {
-			    event.preventDefault(); // 폼 제출을 막습니다
-			    searchPlaces(ps, map, infowindow, markers);
-			    return false;
-			});
-
+	var ps;
+	var map;
+	var infowindow;
+	var markers = [];
 	
+	function initializeMap(event, mapContainer) {
+	    var maplat;
+	    var maplng;
+	    if(event) {
+	        if(event.lat && event.lng){
+	            maplat = event.lat;
+	            maplng = event.lng;    
+	        } else {
+	            maplat = 33.450701;
+	            maplng = 126.570667;
+	        }
+	    } else {
+	        maplat = 33.450701;
+	        maplng = 126.570667;
+	    }
 	    
+	    var mapOption = {
+	        center: new kakao.maps.LatLng(parseFloat(maplat), parseFloat(maplng)),
+	        level: 3
+	    };
+	    mapContainer.innerHTML = '';
+	    map = new kakao.maps.Map(mapContainer, mapOption);
+	    
+	    if(event) {
+	        var markerPosition = new kakao.maps.LatLng(parseFloat(maplat), parseFloat(maplng));
+	        var marker = new kakao.maps.Marker({
+	            position: markerPosition
+	        });
+	        marker.setMap(map);
+	    }
+	
+	    //장소 검색 객체를 생성합니다
+	    ps = new kakao.maps.services.Places();  
+	    
+	    // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+	    infowindow = new kakao.maps.InfoWindow({zIndex:1});
 	}
-
+	
+  $(document).ready(function() {
+      $('#searchForm').on('submit', function(event) {
+    	  	event.preventDefault(); // 폼 제출을 막습니다
+    	    searchPlaces(ps, map, infowindow, markers);
+      });
+  });
+	
+	
 	function searchPlaces(ps, map, infowindow, markers) {
 	    var keyword = document.getElementById('keyword').value;
 
@@ -503,12 +510,13 @@
 	      timezone: 'local',
 	      selectable: true,
         select: function(start, end, jsEvent, view) {
-        	console.log("select");
         	currentEvent = null;
         	// 처음 클릭했을 때 Delete 버튼 숨기기
         	$('#deleteEventBtn').hide(); 
         	// 이벤트 추가 모달을 띄우기 전에 모달 내용을 비운다.
-          $('#eventForm')[0].reset();
+          $('#searchForm')[0].reset();
+          placesList.innerHTML = '';
+          pagination.innerHTML = '';
           $('#eventNo').val('');
 	        // 모달을 보여주기 전에 선택한 시작 날짜와 종료 날짜를 모달에 반영
 	        $('#startDate').val(start.format('YYYY-MM-DD'));
@@ -516,21 +524,17 @@
 	        
 	        
 	        $('#eventModal').modal('show');
-	        
-	        $('#eventModal').on('shown.bs.modal', function () {
-	        	var mapContainer = document.getElementById('modal-map');
-	        	initializeMap(event, mapContainer);
-		  	  });
-	        
+	       
 	      },
         eventClick: function(event) {
-	       	console.log("eventClick");
         	// 이벤트 추가 모달을 띄우기 전에 모달 내용을 비운다.
           $('#eventForm')[0].reset();
-	        currentEvent = event;
-	       	console.log(currentEvent);
+          $('#searchForm')[0].reset();
+          placesList.innerHTML = '';
+          pagination.innerHTML = '';
 	        
 	        // 클릭한 이벤트 정보를 모달에 반영합니다.
+	        currentEvent = event;
 	        $('#eventNo').val(event.eventNo);
 	        $('#eventTitle').val(event.title);
 	        $('#startDate').val(event.start.format('YYYY-MM-DD'));
@@ -556,17 +560,12 @@
 	        // 이벤트 수정 모달을 띄웁니다.
 	        $('#deleteEventBtn').show(); // 이벤트를 클릭했을 때만 Delete 버튼을 보이도록 설정
 	        $('#eventModal').modal('show');
-	        
-	        $('#eventModal').on('shown.bs.modal', function () {
-	        	var mapContainer = document.getElementById('modal-map');
-	        	initializeMap(event, mapContainer);
-		  	  });
 
         },
         eventMouseover: function(event, jsEvent) {
             $('#OverlayTitle').text(event.title);
             $('#OverlayDescription').text(event.description);
-            $('#OverlayTime').text(moment(event.start).format('MMMM Do YYYY, h:mm a'));
+            $('#OverlayTime').text(moment(event.start).format('YYYY MMMM Do, a h:mm'));
             $('#OverlayLocation').text(event.location);
             
             $('#eventOverlay').css({
@@ -603,6 +602,12 @@
 	    });
     });
 
+    $(document).ready(function() {
+        $('#eventModal').on('shown.bs.modal', function () {
+            var mapContainer = document.getElementById('modal-map');
+            initializeMap(currentEvent, mapContainer);
+        });
+    });
     
     $('#eventForm').submit(function(event) {
          event.preventDefault();
@@ -631,16 +636,15 @@
           }) 
           .then(response => response.json())
           .then(resData => {
-        	  alert('일정을 등록했습니다.');
-
-            
+        	  alert(resData.insertResult);
+            $('#calendar').fullCalendar('removeEvents');
+    		  	fnGetEventList();
           })
           .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
           });
       $('#eventModal').modal('hide');
-      $('#calendar').fullCalendar('removeEvents');
-		  fnGetEventList();
+
     });
     
     $('#eventModal').on('hidden.bs.modal', function () {
@@ -657,7 +661,7 @@
       }) 
       .then(response => response.json())
       .then(resData => {
-    	  alert('일정을 삭제했습니다.');
+    	  alert(resData.removeCount);
 
         $('#eventModal').modal('hide');
       })

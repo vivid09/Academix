@@ -36,25 +36,21 @@ public class CalendarController {
   }
   
   @PostMapping(value="/registerEvent.do", produces="application/json")
-  public String registerEvent(@RequestBody Map<String, Object> params, RedirectAttributes redirectAttributes) throws ParseException {
+  public ResponseEntity<Map<String, Object>> registerEvent(@RequestBody Map<String, Object> params, RedirectAttributes redirectAttributes) throws ParseException {
     int insertCount = calendearService.registerEvent(params);
-    redirectAttributes.addFlashAttribute("insertResult", insertCount == 1 ? "블로그가 등록되었습니다." : "블로그가 등록되지 않았습니다.");
-    return "redirect:/calendar/calendar";
+    return ResponseEntity.ok(Map.of("insertResult", insertCount == 1 ? "일정이 등록되었습니다." : "일정이 등록되지 않았습니다."));
   }
   
   @PostMapping(value="/updateEvent.do", produces="application/json")
-  public String updateEvent(@RequestBody Map<String, Object> params, RedirectAttributes redirectAttributes) throws ParseException {
+  public ResponseEntity<Map<String, Object>> updateEvent(@RequestBody Map<String, Object> params, RedirectAttributes redirectAttributes) throws ParseException {
   	int insertCount = calendearService.updateEvent(params);
-  	redirectAttributes.addFlashAttribute("insertResult", insertCount == 1 ? "블로그가 등록되었습니다." : "블로그가 등록되지 않았습니다.");
-  	return "redirect:/calendar/calendar";
+    return ResponseEntity.ok(Map.of("insertResult", insertCount == 1 ? "일정이 수정되었습니다." : "일정이 수정되지 않았습니다."));
   }
   
   @PostMapping(value="/removeEvent.do", produces="application/json")
-  public String removeEvent(@RequestBody int eventNo
-                         , RedirectAttributes redirectAttributes) {
+  public ResponseEntity<Map<String, Object>> removeEvent(@RequestBody int eventNo, RedirectAttributes redirectAttributes) {
     int removeCount = calendearService.removeEvent(eventNo);
-    redirectAttributes.addFlashAttribute("removeResult", removeCount == 1 ? "블로그가 삭제되었습니다." : "블로그가 삭제되지 않았습니다.");
-  	return "redirect:/calendar/calendar";
+    return ResponseEntity.ok(Map.of("removeCount", removeCount == 1 ? "일정이 삭제되었습니다." : "일정이 삭제되지 않았습니다."));
   }
   
   @GetMapping(value="/getEvents.do", produces="application/json")
