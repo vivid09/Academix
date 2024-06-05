@@ -16,6 +16,30 @@
     </association>
   </resultMap>
 
+  <!-- 드라이브 생성 -->
+  <insert id="insertDrive"
+          parameterType="FolderDto">
+    <selectKey order="BEFORE" keyProperty="folderNo" resultType="int">
+      SELECT FOLDER_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO FOLDER_T (
+        FOLDER_NO
+      , FOLDER_NAME
+      , FOLDER_CREATE_DT
+      , FOLDER_UPLOAD_PATH
+      , PARENT_FOLDER_NO
+      , OWNER_NO
+    ) VALUES (
+        #{folderNo}
+      , #{folderName}
+      , CURRENT_TIMESTAMP
+      , #{folderUploadPath}
+      , null
+      , #{employee.employeeNo}
+    )
+  </insert>
+  
   <!-- 폴더 생성 -->
   <insert id="insertFolder"
           parameterType="FolderDto">
@@ -33,7 +57,7 @@
     ) VALUES (
         #{folderNo}
       , #{folderName}
-      , CURRNET_TIMESTAMP
+      , CURRENT_TIMESTAMP
       , #{folderUploadPath}
       , #{parentFolderNo}
       , #{employee.employeeNo}
@@ -46,7 +70,7 @@
     SELECT COUNT(*)
       FROM FOLDER_T
      WHERE OWNER_NO = #{employee.employeeNo}
-       AND PARENT_FOLDER_NO = null
+       AND PARENT_FOLDER_NO is null
   </select>
 
   <select id="getFolderByMap"

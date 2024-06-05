@@ -12,8 +12,6 @@ import com.gdu.academix.dto.FolderDto;
 import com.gdu.academix.mapper.FolderMapper;
 import com.gdu.academix.utils.MySecurityUtils;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Transactional
 @Service
 public class FolderServiceImpl implements FolderService {
@@ -33,11 +31,28 @@ public class FolderServiceImpl implements FolderService {
   }
 
   @Override
-  public int createFolder(HttpServletRequest request) {
-    String folderName = request.getParameter("folderName");
+  public int createDrive(Map<String, Object> params) {
+    String folderName = (String) params.get("folderName");
     String folderUploadPath = "/" + folderName;
-    int parentFolderNo = Integer.parseInt(request.getParameter("parentFolderNo"));
-    int employeeNo = Integer.parseInt(request.getParameter("employeeNo"));
+    int employeeNo = Integer.parseInt(String.valueOf(params.get("employeeNo")));
+    
+    EmployeesDto employee = new EmployeesDto();
+    employee.setEmployeeNo(employeeNo);
+    FolderDto folder = FolderDto.builder()
+                          .folderName(MySecurityUtils.getPreventXss(folderName))
+                          .folderUploadPath(folderUploadPath)
+                          .employee(employee)
+                        .build();
+    
+    return folderMapper.insertDrive(folder);
+  }
+  
+  @Override
+  public int createFolder(Map<String, Object> params) {
+    String folderName = (String) params.get("folderName");
+    String folderUploadPath = "/" + folderName;
+    int employeeNo = Integer.parseInt(String.valueOf(params.get("employeeNo")));
+    int parentFolderNo = Integer.parseInt(String.valueOf(params.get("parentFolderNo")));
     
     EmployeesDto employee = new EmployeesDto();
     employee.setEmployeeNo(employeeNo);
@@ -50,5 +65,10 @@ public class FolderServiceImpl implements FolderService {
     
     return folderMapper.insertFolder(folder);
   }
+  
+  
+  
+  
+  
   
 }
