@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class AttachDto {
-  private int attachNo, downloadCount, hasThumbnail, uploadNo;
-  private String uploadPath, filesystemName, originalFilename;
+public class RanksDto {
+  private int rankNo;
+  private String rankTitle;
 }

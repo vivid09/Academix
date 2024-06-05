@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.HrMapper">
+
+  
+ 
+
+<insert id="registerDepartment"
+        parameterType="DepartmentsDto">
+    INSERT INTO DEPARTMENTS_T(
+    DEPARTMENT_NO,
+    DEPART_NAME,
+    PARENT_DEPART_NO) VALUES(
+    DEPARTMENTS_SEQ.NEXTVAL,
+    #{departName},
+    #{parentDepartNo})
+</insert>
+
+<insert id="registerRank"
+        parameterType="RanksDto">
+  INSERT INTO RANKS_T(
+   RANK_NO,
+   RANK_TITLE) VALUES(
+   RANKS_SEQ.NEXTVAL,
+   #{rankTitle})
+</insert>
+
+<insert id="registerEmployee" parameterType="EmployeesDto">
+
+    INSERT INTO EMPLOYEES_T(
+        EMPLOYEE_NO,
+        NAME,
+        EMAIL,
+        PHONE,
+        ADDRESS,
+        DEPARTMENT_NO,
+        RANK_NO,
+        PASSWORD,
+        PROFILE_PICTURE_PATH,
+        EMPLOYEE_STATUS,
+        HIRE_DATE,
+        EXIT_DATE
+    ) VALUES (
+        EMPLOYEES_SEQ.NEXTVAL,
+        #{name}, 
+        #{email},
+        #{phone},
+        #{address},
+        #{departmentNo},
+        #{rankNo},
+        #{password},
+        #{profilePicturePath},
+        #{employeeStatus},
+        #{hireDate},
+        #{exitDate}
+    )
+</insert>
+
+
+
+
+
+
+
+
+
+</mapper>

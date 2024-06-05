@@ -1,7 +1,5 @@
 package com.gdu.academix.dto;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class UserDto {
-  private int userNo, eventAgree, signupKind;
-  private String email, pw, name, gender, mobile;
-  private Date pwModifyDt, signupDt;
+public class RequestAttachDto {
+  private int attachNo, requestNo;
+  private String uploadPath, filesystemName, originalFileName;
 }
