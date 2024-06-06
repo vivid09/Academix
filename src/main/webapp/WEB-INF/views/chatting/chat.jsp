@@ -8,13 +8,15 @@
    <jsp:param value="채팅" name="title"/>
  </jsp:include>
 
-<link rel="stylesheet" href="${contextPath}/resources/css/chat.css?dt=${dt}">
 
 <!-- Font Awesome 5.15.4 (unchanged as it's already the latest stable version for this specific major version) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
 <!-- jsTree 3.3.12 (unchanged as it's the latest stable version) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+
+
+<link rel="stylesheet" href="${contextPath}/resources/css/chat.css?dt=${dt}">
 
 <!-- jQuery 3.6.0 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -40,12 +42,12 @@
         채팅
         <!-- <small>it all starts here</small> -->
       </h1>
-      <ol class="breadcrumb">
+<%--       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="#">Examples</a></li>
         <li class="active">Blank page</li>
         <input type="hidden" data-session-no="${sessionScope.user.employeeNo}">
-      </ol>
+      </ol> --%>
     </section>
 
     <!-- Main content -->
@@ -59,6 +61,7 @@
 	           <i class="fa fa-user"></i>
 	           <i class="fa fa-commenting"></i>
 	         </div>
+
          
          	 <!-- 닫기 버튼이랑 메뉴 버튼 -->
 	         <div class="box-tools pull-right">
@@ -66,11 +69,19 @@
 	             <i class="fa fa-minus"></i>
 	           </button>
 	         </div>
-        </div>
+          </div>
+          <p class="chat-member-title">직원목록</p>
+<!--           <div class="searchInput-cover">
+            <input type="text" class="searchInput" placeholder="직원 검색">
+          </div> -->
         <div class="box-body chat-member"></div> 
+   			<div class="addChatroomBtn-cover">
+	       <button type="button" class="btn btn-block btn-primary addChatRoomBtn">+ 새 그룹채팅방 생성</button>
+	      </div>
       </div>
+
       
-            <!-- 모달창 -->
+            <!-- 프로필 조회 모달창 -->
       <div class="example-modal">
         <div class="modal fade" id="modal-default" style="display: none;">
           <div class="modal-dialog">
@@ -104,7 +115,55 @@
         <!-- /.modal -->
       </div>
       
+            <!-- 그룹 채팅 생성모달창 -->
+      <div class="example-modal">
+        <div class="modal fade" id="modal-default2" style="display: none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">새 채팅방 생성</h4>
+              </div>
+              <div class="modal-body chatModal-body">
+              	<!-- 여기에 내용 넣으면 됨. -->
+              	<h4 class="modal-title">선택한 멤버</h4>
+              	<div class="selected-member-cover"> <!-- 여기에 선택 멤버 들어감. -->
+<!-- 					        <p>이민형 대표이사</p>
+					        <p>강민지 주임</p>
+					        <p>권태현 책임</p>
+					        <p>한다혜 사원</p>
+					        <p>정우진 사원</p>
+					        <p>김지현 강사</p>
+					        <p>곽상태 강사</p>
+					        <p>황수아 주임</p>
+					        <p>김민주 책임</p>
+					        <p>한다혜 사원</p>
+					        <p>정우진 사원</p>
+					        <p>김지현 강사</p>
+					        <p>곽상태 강사</p>					 -->        
+              	</div> 
+              	<input class="form-control newGroupChatroom-input" type="text" maxlength='20' placeholder="채팅방 이름을 작성해주세요">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-groupChat">확인</button>
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">취소</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+      </div>
       
+      <!-- 새 채팅방 생성 경고창 -->
+<!-- 			<div class="alert alert-info alert-dismissible" id="checkMemberAlert" style="display: none;">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<h4><i class="icon fa fa-info"></i> 이런! </h4>
+				😁새로운 채팅방에 참여할 직원을 선택해주세요!😁
+			</div>       -->
       
       
       <!-- 채팅방 부분 -->
@@ -114,6 +173,7 @@
       <div class="box chat-box" style="display: none">
         <div class="box-header with-border">
           <div class="chat-box-title">
+            <!-- <i class="fa fa-times"></i> -->
 						<span>채팅방 이름</span>
           </div>
           
@@ -125,11 +185,11 @@
 						    <i class="fa fa-reorder"></i>
 						  </a>
 						  <div class="dropdown-menu chat-box-dropdown" aria-labelledby="dropdownMenuLink">
+					      <div class="title-row">
+					        <p>현재 활동중</p>
+					      </div>
 							  <table>
 							    <tbody>
-							      <tr class="title-row">
-							        <td>현재 활동중</td>
-							      </tr>
 							      <tr class="employee-row">
 							        <td>황수아 주임</td>
 							        <td class="status offline">오프라인</td>
@@ -146,13 +206,13 @@
 	 						        <td>권태현 책임</td>
 							        <td class="status offline">오프라인</td>
 							      </tr>
- 							      <tr class="employee-row">
-	 						        <td><a href="#" class="leave-chat"><i class="fa fa-share"></i> 채팅방 나가기</a></td>
-							        <td class="status offline"></td>
-							      </tr>
-							      
 							    </tbody>
 							  </table>
+							  <div class="menu-row-cover">
+					        <a href="#" class="modify-chatTitle"><i class="fa fa-pencil-square-o"></i> 채팅방 이름 수정</a>
+					        <a href="#" class="leave-chat"><i class="fa fa-share"></i> 채팅방 나가기</a>
+							  </div>
+						  
 							  
 						  </div>
 						</div>
@@ -213,7 +273,7 @@
         	</div>
         	<!-- 입력창 -->
          	<div class="chatMessage-input">
-	        	<input class="form-control chat-message-input" type="text" maxlength='500' placeholder="Default input">
+	        	<input class="form-control chat-message-input" type="text" maxlength='500' placeholder="메시지를 입력해주세요">
 	        	<button type="submit" class="btn btn-primary chatMessage-btn"><i class="fa fa-send"></i></button>
         	</div>
         </div>      
@@ -243,38 +303,79 @@
 	// 날짜 한글로
 	moment.locale('ko');
 	
+	// jvectorMap 이벤트 제거
+	$(document).ready(function() {
+	    // jQuery의 vectorMap 함수가 존재하는지 확인
+	    if (typeof $.fn.vectorMap !== 'undefined') {
+	        $('#world-map').vectorMap({
+	            map: 'world_mill_en',
+	            backgroundColor: "transparent",
+	            regionStyle: {
+	                initial: {
+	                    fill: '#e4e4e4',
+	                    "fill-opacity": 1,
+	                    stroke: 'none',
+	                    "stroke-width": 0,
+	                    "stroke-opacity": 1
+	                }
+	            }
+	        });
+	    } else {
+	        console.log('vectorMap function not defined');
+	    }
+	    
+	});
 	
+	// 화면 작아졌을 때
+/* 	$(document).ready(function() {
+		console.log('contacts-list-name 클릭됨.')
+	    $('.contacts-list-name').on('click', function() {
+	        if (window.innerWidth <= 768) {
+	            $('.member-box').addClass('hidden');
+	            $('.chat-box').addClass('active');
+	        }
+	    });
+	
+	    // 예시: 채팅방 화면에서 뒤로 가기 버튼 클릭 시 채팅 목록으로 돌아가기
+	    $('.fa-times').on('click', function() {
+	        $('.member-box').removeClass('hidden');
+	        $('.chat-box').removeClass('active');
+	    });
+	});	 */
+
 	
   // 직원 목록 & 채팅 목록 조회
   const fnShowChatList = () => {
 	  
-	  // 첫번째 사람 아이콘 클릭 시
-	  $('.box-title-choice i').eq(0).on('click', () => {
+  	// 첫번째 사람 아이콘 클릭 시
+  	$('.box-title-choice i').eq(0).on('click', () => {
+ 		  $('.addChatroomBtn-cover').css('display', ''); 
 		  $('.chat-member').empty();
 		  $('.box-title-choice i').eq(1).css('color', '#B5B5B5');
 		  $('.box-title-choice i').eq(0).css('color', 'black');
-		  $('.chat-member .chat-member-title').text('직원 목록');
+		  $('.chat-member-title').text('직원 목록');
 		  $('.chat-member .chat-member-title').remove();
-      $('.chat-member .searchInput').remove();
+      $('.searchInput-cover').remove();
       $('.chat-member #memberArea').remove();
 		  fnGetChatUserList();
 	  })
 	  
 	  // 두번째 채팅 아이콘 클릭 시
 	  $('.box-title-choice i').eq(1).on('click', () => {
+		  $('.addChatroomBtn-cover').css('display', 'none');  
+		  $('.chat-member').empty();
 		  $('.box-title-choice i').eq(0).css('color', '#B5B5B5');
 		  $('.box-title-choice i').eq(1).css('color', 'black');
       // input 태그 삭제
-      $('.chat-member .searchInput').remove();
+      $('.searchInput-cover').remove();
       // #memberArea div 요소 삭제
-      $('.chat-member #memberArea').remove();
-      $('.chat-member .chat-member-title').text('채팅 목록');
+      //$('.chat-member #memberArea').remove();
+      $('.chat-member-title').text('채팅 목록');
       
-      // 
-      $('.chat-member-title').after('<ul class="contacts-list"></ul>');
+      // 먼저 chat-member 요소 추가
+      //$('.chat-member-title').after('<div class="box-body chat-member"></div>');
       
-      
-      
+      $('.chat-member').append('<ul class="contacts-list"></ul>');
       
       
       // 채팅 목록 가져오기
@@ -291,8 +392,9 @@
   const fnGetChatUserList = () => {
 	  
  	  // 새로운 태그 추가
-    $('.chat-member').append('<p class="chat-member-title">직원 목록</p>');
-    $('.chat-member').append('<input type="text" class="searchInput" placeholder="직원 검색">')
+    //$('.chat-member').append('<p class="chat-member-title">직원 목록</p>');
+ 	  $('.chat-member-title').after('<div class="searchInput-cover"></div>');
+    $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="직원 검색">')
     $('.chat-member').append('<div id="memberArea"></div>');
 	  
 	  fetch('${contextPath}/user/getUserList.do',{
@@ -360,6 +462,8 @@
 			  }
 		  });
 		  
+		  console.log('jstreeData', jstreeData);
+		  
 		  // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
 		  $('#memberArea').jstree({
 			  'core': {
@@ -410,7 +514,6 @@
 		  } else {
 			  return;
 		  }
-		  
 
 		  fetch('${contextPath}/user/getUserProfileByNo.do?employeeNo=' + employeeNo,{
 		      method: 'GET',
@@ -1113,20 +1216,135 @@
 				console.log('chatroomDto', chatroomDto);
 				
 				// 채팅 내역 가져오기
-				//fnGetChatMessage(chatroomDto.chatroomNo);
 				fnOpenChatroom(chatroomDto);
-				//fnChatMessageScrollHandler();
 				
-				
-/* 				fetch('${contextPath}/chatting/getChatroomByChatroomNo.do?chatroomNo=' + chatroomNo, {
-					method: 'GET',
-				})
-				.then((response) => response.json())
-				.then(resData => {
-					
-				}) */
 			})
 		}
+		
+		// 단체 채팅방 만들기
+		const fnAddNewGroupChatroom = () => {
+			
+			// 새 채팅방 만들기 버튼 클릭 시 선택한 노드의 텍스트 값 가져옴.
+	    $('.addChatRoomBtn').on('click', () => {
+	    	
+	    	// 'get_checked' 메서드로 선택된 노드 가져오기
+        let checked_ids = $('#memberArea').jstree('get_checked', true);
+	    	
+        // 각 node의 id가 emp_로 시작하는 것들만 가져옴. 텍스트 값 가져오기
+        let filterResult = checked_ids.filter((node) => {
+        	return node.id.startsWith('emp_');
+        })
+        
+        // 위에서 필터링 한 값들 가져오기 - 텍스트
+        // 내 이름 가져오기
+        let myName = $('.hidden-xs').text();
+        
+        // 내 이름 선택 시 제외하고 텍스트 가져오기
+        let checkedMemberText = filterResult
+        .map((node) => {
+        	return node.text;
+        })
+        .filter((text) => {
+        	let namePart = text.split(' ')[0];
+        	return namePart !== myName;
+        });
+        
+        // 위에서 필터링 한 값들 가져오기 - 직원번호
+        let checkedMemberNo = filterResult.map((node) => {
+        	return node.id.replace('emp_', '');
+        })
+        
+        // 모달창에 추가하기 전에 초기화.
+        $('.selected-member-cover').empty();
+        
+        // 선택한 직원이 없거나 한명이라면 경고창
+        if(checkedMemberText.length === 0 || checkedMemberText.length < 2) {
+        	
+        	//$('.checkMemberAlert').css('display', 'block');
+        	alert('직원을 한명 이상 선택해주세요.');
+        	
+        } else {
+     		// 반복문으로 output 돌면서 p 태그 추가
+	        checkedMemberText.forEach((member) => {
+	        	$('.selected-member-cover').append('<p>' + member + '</p>');
+	        })
+	        
+	        // 직원번호 리스트 input에 저장
+	        $('.selected-member-cover').append('<input type="hidden" id="hiddenList" value="">');
+	        $('#hiddenList').val(JSON.stringify(checkedMemberNo));
+	        
+	        $('#modal-default2').modal('show');
+        }
+        
+        
+        $('.btn-groupChat').on('click', () => {
+        	
+        	fetch('${contextPath}/chatting/insertNewGroupChatroom.do', {
+        		method: 'POST',
+        		headers: {
+        			'Content-Type': 'application/json',
+        		},
+        		body: JSON.stringify ({
+        			'loginUserNo': ${sessionScope.user.employeeNo},
+        			'employeeNoList': $('#hiddenList').val(),
+        			'chatroomTitle': $('.newGroupChatroom-input').val()
+        		})
+        	})
+        	.then((response) => response.json())
+        	.then(resData => {
+        		console.log(resData);
+        	})
+			 		.catch(error => {
+			 			console.error('Error fetching sender data:', error);
+			 		}); 
+        	
+        	$('#modal-default2').modal('hide');
+        	
+        })
+        
+        
+        
+        
+        
+        
+	    });
+			
+			
+			
+			
+			// jstree의 인원 선택 후 모달창 띄우기
+			//$('#modal-default2').modal('show');
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
   
 	fnPressEnterSendBtn();		
   fnGetChatUserList();
@@ -1134,6 +1352,7 @@
   fnAddChatRoom();
   fnGochatroom();
   fnChatMessageScrollHandler();
+  fnAddNewGroupChatroom();
   //fnMessageSend();
   
   </script>
@@ -1147,11 +1366,12 @@
 <!-- Morris.js charts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 <script src="/plugins/morris/morris.min.js"></script>
+
 <!-- Sparkline -->
 <script src="/plugins/sparkline/jquery.sparkline.min.js"></script>
 <!-- jvectormap -->
-<script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<!-- <script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script> -->
+<!-- <script src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script> -->
 <!-- jQuery Knob Chart -->
 <script src="/plugins/knob/jquery.knob.js"></script>
 <!-- daterangepicker -->
@@ -1171,6 +1391,6 @@
 
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
-<script src="/dist/js/pages/dashboard.js"></script>  
+<!-- <script src="/dist/js/pages/dashboard.js"></script>   -->
     
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />
