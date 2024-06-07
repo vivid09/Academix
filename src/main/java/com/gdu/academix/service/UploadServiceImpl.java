@@ -42,11 +42,11 @@ public class UploadServiceImpl implements UploadService {
   private final MyFileUtils myFileUtils;
   
   public UploadServiceImpl(UploadMapper uploadMapper, MyPageUtils myPageUtils, MyFileUtils myFileUtils) {
-	super();
-	this.uploadMapper = uploadMapper;
-	this.myPageUtils = myPageUtils;
-	this.myFileUtils = myFileUtils;
-}
+  	super();
+  	this.uploadMapper = uploadMapper;
+  	this.myPageUtils = myPageUtils;
+  	this.myFileUtils = myFileUtils;
+  }
 
   @Override
   public boolean registerUpload(MultipartHttpServletRequest multipartRequest) {

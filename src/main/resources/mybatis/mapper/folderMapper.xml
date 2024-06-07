@@ -7,14 +7,35 @@
 
   <resultMap type="FolderDto" id="FolderMap">
     <id     property="folderNo"       column="FOLDER_NO" />
-    <result property="FolderName"    column="FOLDER_NAME" />
+    <result property="FolderName"     column="FOLDER_NAME" />
     <result property="folderCreateDt" column="FOLDER_CREATE_DT" />
     <result property="parentFolderNo" column="PARENT_FOLDER_NO" />
-    <association property="employee"  javaType="EmployeesDto">
-      <id     property="employeeNo" column="EMPLOYEE_NO" />
-      <result property="email"  column="EMAIL" />
+    <association property="employee" javaType="EmployeesDto">
+      <id     property="employeeNo"   column="EMPLOYEE_NO" />
+      <result property="email"        column="EMAIL" />
     </association>
   </resultMap>
+  
+  <resultMap type="FileDto" id="FileMap">
+    <id     property="fileNo"           column="FILE_NO" />
+    <result property="fileUploadPath"   column="FILE_UPLOAD_PATH" />
+    <result property="filesystemName"   column="FILESYSTEM_NAME" />
+    <result property="originalFilename" column="ORIGINAL_FILENAME" />
+    <result property="fileUploadDt"     column="FILE_UPLOAD_DT" />
+    <association property="employee" javaType="EmployeesDto">
+      <id     property="employeeNo"   column="EMPLOYEE_NO" />
+      <result property="email"        column="EMAIL" />
+    </association>
+  </resultMap>
+
+  <!-- 최상위 폴더(드라이브) 여부 확인 -->
+  <select id="getDriveCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM FOLDER_T
+     WHERE OWNER_NO = #{employee.employeeNo}
+       AND PARENT_FOLDER_NO IS NULL
+  </select>
 
   <!-- 드라이브 생성 -->
   <insert id="insertDrive"
@@ -36,6 +57,32 @@
       , CURRENT_TIMESTAMP
       , #{folderUploadPath}
       , null
+      , #{employee.employeeNo}
+    )
+  </insert>
+
+  <!-- 파일 업로드 -->
+  <insert id="insertFile"
+          parameterType="FileDto">
+    <selectKey order="BEFORE" keyProperty="fileNo" resultType="int">
+      SELECT UPLOAD_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO FILE_T (
+        FILE_NO
+      , FILE_UPLOAD_PATH
+      , FILESYSTEM_NAME
+      , ORIGINAL_FILENAME
+      , FILE_UPLOAD_DT
+      , FOLDER_NO
+      , OWNER_NO
+    ) VALUES (
+        #{fileNo}
+      , #{fileUploadPath}
+      , #{filesystemName}
+      , #{originalFilename}
+      , CURRENT_TIMESTAMP
+      , #{folderNo}
       , #{employee.employeeNo}
     )
   </insert>
@@ -63,15 +110,6 @@
       , #{employee.employeeNo}
     )
   </insert>
-
-  <!-- 최상위 폴더(드라이브) 여부 확인 -->
-  <select id="getDriveCount"
-          resultType="int">
-    SELECT COUNT(*)
-      FROM FOLDER_T
-     WHERE OWNER_NO = #{employee.employeeNo}
-       AND PARENT_FOLDER_NO is null
-  </select>
 
   <select id="getFolderByMap"
           parameterType="Map"

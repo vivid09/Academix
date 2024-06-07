@@ -19,7 +19,7 @@
     <section class="content">
       <div class="row">
         <div class="col-md-3">
-          <a href="compose.html" class="btn btn-primary btn-block margin-bottom"><i class="fa fa-upload"></i>&nbsp;&nbsp;파일 업로드</a>
+          <button type="button" class="btn btn-primary btn-block margin-bottom" id="uploadButton"><i class="fa fa-upload"></i>&nbsp;&nbsp;파일 업로드</button>
 
           <div class="box box-solid">
             <div class="box-header with-border">
@@ -32,8 +32,8 @@
             </div>
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="#"><i class="fa fa-history"></i> 최근 파일</a></li>
-                <li><a href="#"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
+                <li><a href="${contextPath}/drive/main.page"><i class="fa fa-history"></i> 최근 파일</a></li>
+                <li class="active"><a href="${contextPath}/drive/allList.page"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
               </ul>
             </div>
             <!-- /.box-body -->
@@ -224,6 +224,46 @@
           <!-- /. box -->
         </div>
         <!-- /.col -->
+        <div class="example-modal">
+          <div class="modal fade" id="uploadModal" style="display: none;">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">파일 업로드</h4>
+                </div>
+                <div class="modal-body">
+                  <!-- 여기에 내용 넣으면 됨. -->
+                  <form id="frm-upload-register"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="${contextPath}/drive/register.do">
+                    <div class="form-group">
+                      <label for="fileInput">파일 선택</label>
+                      <input type="file" class="form-control-file" id="fileInput">
+                    </div>
+                    <div class="drag-drop-area" id="dragDropArea">
+                      <p>파일을 여기에 드래그 앤 드롭 하거나 클릭하여 선택하세요</p>
+                    </div>
+                    <input type="file" id="files" multiple style="display:none">
+                    <div class="file-list" id="fileList"></div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">
+                  <button type="submit" class="btn btn-primary pull-left">업로드</button>
+                  <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">닫기</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        </div>
+        <!-- /.example-modal -->
       </div>
       <!-- /.row -->
     </section>
@@ -269,6 +309,58 @@
       $(this).data("clicks", !clicks);
     });
   });
+  
+  // 파일 업로드하는 버튼
+  document.getElementById('uploadButton').addEventListener('click', () => {
+    $('#uploadModal').modal('show');
+    
+    // Drag and Drop
+    var dragDropArea = document.getElementById('dragDropArea');
+    var fileInput = document.getElementById('files');
+
+    dragDropArea.addEventListener('dragover', (evt) => {
+    	evt.preventDefault();
+    	evt.stopPropagation();
+      dragDropArea.classList.add('dragover');
+    });
+
+    dragDropArea.addEventListener('dragleave', (evt) => {
+    	evt.preventDefault();
+    	evt.stopPropagation();
+      dragDropArea.classList.remove('dragover');
+    });
+
+    dragDropArea.addEventListener('drop', (evt) => {
+    	evt.preventDefault();
+    	evt.stopPropagation();
+      dragDropArea.classList.remove('dragover');
+      var files = evt.dataTransfer.files;
+      handleFiles(files);
+    });
+
+    dragDropArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (evt) => {
+      var files = evt.target.files;
+      handleFiles(files);
+    });
+
+    function handleFiles(files) {
+      fileList.innerHTML = ''; // 기존 파일 목록 초기화
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.textContent = file.name;
+        fileList.appendChild(fileItem);
+      }
+    }
+	});
+  
+  
+  
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

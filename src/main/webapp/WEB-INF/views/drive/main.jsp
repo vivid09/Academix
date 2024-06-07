@@ -8,6 +8,18 @@
   <jsp:param value="최근 파일" name="title"/>
 </jsp:include>
 
+<style>
+    .drag-drop-area {
+        border: 2px dashed #007bff;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .drag-drop-area.dragover {
+        background-color: #e9ecef;
+    }
+</style>
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -19,7 +31,7 @@
     <section class="content">
       <div class="row">
         <div class="col-md-3">
-          <a href="compose.html" class="btn btn-primary btn-block margin-bottom"><i class="fa fa-upload"></i>&nbsp;&nbsp;파일 업로드</a>
+          <button type="button" class="btn btn-primary btn-block margin-bottom" id="uploadButton"><i class="fa fa-upload"></i>&nbsp;&nbsp;파일 업로드</button>
 
           <div class="box box-solid">
             <div class="box-header with-border">
@@ -33,7 +45,7 @@
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
                 <li class="active"><a href="#"><i class="fa fa-history"></i> 최근 파일</a></li>
-                <li><a href="#"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
+                <li><a href="${contextPath}/drive/allList.page"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
               </ul>
             </div>
             <!-- /.box-body -->
@@ -224,6 +236,44 @@
           <!-- /. box -->
         </div>
         <!-- /.col -->
+        <div class="example-modal">
+          <div class="modal fade" id="uploadModal" style="display: none;">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">파일 업로드</h4>
+                </div>
+                <div class="modal-body">
+                  <!-- 여기에 내용 넣으면 됨. -->
+                  <form id="frm-upload-register"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="${contextPath}/drive/register.do">
+                    <!-- 폴더 구조 가져와서 어디에 파일 저장할지 선택하도록 하기
+                          -> 선택한 폴더 번호 같이 서버로 갈 수 있도록 저장하기 -->
+                    <div class="drag-drop-area" id="dragDropArea">
+                      <p>파일을 여기에 드래그 앤 드롭 하거나 클릭하여 선택하세요</p>
+                    </div>
+                    <input type="file" id="files" multiple style="display:none">
+                    <div class="file-list" id="fileList"></div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">
+                  <button type="submit" class="btn btn-primary pull-left">업로드</button>
+                  <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">닫기</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        </div>
+        <!-- /.example-modal -->
       </div>
       <!-- /.row -->
     </section>
@@ -269,6 +319,168 @@
       $(this).data("clicks", !clicks);
     });
   });
+  
+  // 파일 업로드하는 버튼
+  document.getElementById('uploadButton').addEventListener('click', () => {
+    $('#uploadModal').modal('show');
+    
+    // Drag and Drop
+    var dragDropArea = document.getElementById('dragDropArea');
+    var fileInput = document.getElementById('files');
+
+    dragDropArea.addEventListener('dragover', (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      dragDropArea.classList.add('dragover');
+    });
+
+    dragDropArea.addEventListener('dragleave', (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      dragDropArea.classList.remove('dragover');
+    });
+
+    dragDropArea.addEventListener('drop', (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      dragDropArea.classList.remove('dragover');
+      var files = evt.dataTransfer.files;
+      handleFiles(files);
+    });
+
+    dragDropArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (evt) => {
+      var files = evt.target.files;
+      handleFiles(files);
+    });
+
+    function handleFiles(files) {
+      fileList.innerHTML = ''; // 기존 파일 목록 초기화
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.textContent = file.name;
+        fileList.appendChild(fileItem);
+      }
+    }
+  });
+  
+  // -------------------------------------------- 폴더 구조 --------------------------------------------
+  // 직원 리스트 가져오기
+  const fnGetChatUserList = () => {
+    
+    // 새로운 태그 추가
+    //$('.chat-member').append('<p class="chat-member-title">직원 목록</p>');
+    $('.chat-member-title').after('<div class="searchInput-cover"></div>');
+    $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="직원 검색">')
+    $('.chat-member').append('<div id="memberArea"></div>');
+    
+    fetch('${contextPath}/user/getUserList.do',{
+        method: 'GET',
+      })
+    .then((response) => response.json())
+    .then(resData => {
+    
+      // 변환한 데이터 담을 배열 선언
+      var jstreeData = [];
+      
+      
+      // 회사 root node로 설정
+      var com = resData.departments.find(depart => depart.departName === 'Academix');
+      if(com) {
+        jstreeData.push({
+          id: com.departmentNo,
+          parent: '#',
+          text: com.departName,
+          icon: "fas fa-building"
+        });
+      }
+      
+      // employee 데이터에서 대표데이터만 빼서 설정
+      var ceo = resData.employee.find(employee => employee.rank.rankTitle === '대표이사');
+      if(ceo) {
+        jstreeData.push({
+          id: 'emp_' + ceo.employeeNo,
+          parent: '0',
+          text: ceo.name + ' ' + ceo.rank.rankTitle,
+          icon: "fas fa-user-tie"
+        });
+      }
+      
+      // 부서 데이터
+      resData.departments.forEach(function(department) {
+        if(department.departName !== 'Academix'){
+          jstreeData.push({
+            id: department.departmentNo.toString(),
+            parent: department.parentDepartNo.toString(),
+            text: department.departName,
+            icon: "fas fa-layer-group"
+          });
+        }
+      });
+      
+      // 직원 데이터
+      resData.employee.forEach(function(employee) {
+        if(employee.depart.departmentNo !== 0 && employee.employeeStatus !== 0){ // 대표이사 제외
+          if(employee.rank.rankNo === 5) {
+            jstreeData.push({
+              id: 'emp_' + employee.employeeNo,
+              parent: employee.depart.departmentNo.toString(),
+              text: employee.name + ' ' + employee.rank.rankTitle,
+              icon: "fas fa-chalkboard-teacher"
+            });
+          } else {
+            jstreeData.push({
+              id: 'emp_' + employee.employeeNo,
+              parent: employee.depart.departmentNo.toString(),
+              text: employee.name + ' ' + employee.rank.rankTitle,
+              icon: "fas fa-user"
+            });
+          }
+        }
+      });
+      
+      console.log('jstreeData', jstreeData);
+      
+      // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
+      $('#memberArea').jstree({
+        'core': {
+          'data': jstreeData,
+            'themes': {
+               'icons': true
+            }
+        },
+        'plugins': ['search', 'checkbox'],
+            'checkbox': {
+               'keep_selected_style': true,
+               'three_state': false,
+               'whole_node' : false,
+               'tie_selection' : false,
+               'cascade': 'down'
+            }           
+      }).on('ready.jstree', function() {
+        $(this).jstree(true).open_all();
+      })
+      
+      // 검색 기능 추가
+      $('.searchInput').on('keyup', function() {
+        var searchString = $(this).val();
+        $('#memberArea').jstree('search', searchString);
+      });
+      
+    })
+    .catch(error => {
+      console.error('There has been a problem with your fetch operation:', error);
+    });  
+    
+    fnGetProfile();
+    
+  }
+  
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />
