@@ -89,10 +89,12 @@
      <div>
    
       <c:if test="${leaveRequests.requests.requestStatus == 0 }">
+      <c:if test="${sessionScope.user.employeeNo == leaveRequests.requests.employees.employeeNo}">
       <form id="frm-btn" method="POST">  
         <input type="hidden" name="requestNo" value="${leaveRequests.requests.requestNo}">
         <button type="button" id="btn-edit" class="btn btn-warning btn-sm">편집</button>
         <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
+        </c:if>
         </c:if>
       </form>
     
@@ -100,14 +102,17 @@
 </div>
     <form action="${contextPath}/requests/requestApproval.do" method="post"
           id="frm-requests-approval" onsubmit="submitFormWithApproval()">
+          <c:if test="${sessionScope.user.depart.departmentNo == 2}">
           <div>
      <button type="submit" id="btn-approval">승인</button>
      <button type="button" id="btn-reject" onclick="openModal()">반려</button>
+     </c:if>
     </div>
+    
         <table>
             <tr>
-                <td colspan="2">결재</td>
-                <td colspan="2" class="split-cell">
+                <td >결재</td>
+                <td  class="split-cell">
                     <div class="left">인사과</div>
                     <div class="right">
                      <c:choose>
@@ -115,10 +120,10 @@
                         미결재
 					 </c:when>
                       <c:when test="${leaveRequests.requests.requestStatus eq '1'}">
-                        승인
+                        <img src="/images/approved.png" style="width:45px;">
 					 </c:when>
                       <c:when test="${leaveRequests.requests.requestStatus eq '2'}">
-                        반려
+                        <img src="/images/rejected.png" style="width:45px;">
 					 </c:when>
                 </c:choose>
                     </div> 
@@ -144,7 +149,10 @@
 					        연차
 					    </c:when>
                 <c:when test="${leaveRequests.leaveType eq '1'}">
-					        반차
+					        오전반차
+					    </c:when>
+                <c:when test="${leaveRequests.leaveType eq '2'}">
+					        오후반차
 					    </c:when>
 			   </c:choose>
                 </td>
@@ -153,7 +161,7 @@
                 <th class="section-title" colspan="4">사유</th>
             </tr>
             <tr>
-                <td colspan="4"><textarea name="reason" rows="5" required>${leaveRequests.requests.reason}</textarea></td>
+                <td colspan="4"><textarea name="reason" rows="5" required readonly="readonly">${leaveRequests.requests.reason}</textarea></td>
             </tr>
             <tr>
                 <th class="section-title" colspan="4">기간</th>
@@ -163,18 +171,18 @@
                 <td> <input type="text" name="endYear" size="4" required>년 <input type="text" name="endMonth" size="2" required>월 <input type="text" name="endDay" size="2" required>일 까지</td>
                 <td colspan="2">(<input type="text" name="days" size="2" required> 일간)</td>
                 <input type="hidden" name="requestSort" value="1">
-                <label for="employeeNo">사원번호</label>
-            ${leaveRequests.requests.employees.employeeNo}
+               
             </tr>
             <tr>
-            <td>첨부파일</td>
-            <td>${leaveRequests.attach.originalFileName}</td>
+            <td data-attach-no="${leaveRequests.attach.attachNo}" id="td-attach">첨부파일</td>
+            <td id="down-path">${leaveRequests.attach.originalFileName}</td>
             </tr>
         </table>
         <div style="text-align: center; margin-top: 20px;">
          <input type="hidden" name="requestStatus" id="requestStatus" value="${leaveRequests.requests.requestStatus}">   
          <input type="hidden" name="picNo" id="picNo" value="${leaveRequests.requests.picNo}">   
          <input type="hidden" name="requestNo" id="requestNo" value="${leaveRequests.requests.requestNo}">
+         <input type="hidden" name="attachNo" id="attachNo" value="${leaveRequests.attach.attachNo}">
         </div>
     </form>
   </div>
@@ -204,6 +212,8 @@
   <script>
   
   // 시작일 및 종료일 날짜 설정
+  document.addEventListener('DOMContentLoaded', function() {
+  // 시작일 및 종료일 날짜 설정
   let startDateStr = '${leaveRequests.startDate}';
   let endDateStr = '${leaveRequests.endDate}';
 
@@ -224,8 +234,16 @@
   document.querySelector('input[name="endDay"]').value = endDay;
 
   // 휴가 일수 계산
-  const daysDiff = Math.ceil((new Date(endDateStr) - new Date(startDateStr)) / (1000 * 60 * 60 * 24));
+  let daysDiff = Math.ceil((new Date(endDateStr) - new Date(startDateStr)) / (1000 * 60 * 60 * 24));
+  
+  // 휴가 종류가 반차인 경우
+  if ('${leaveRequests.leaveType}' === '1' || '${leaveRequests.leaveType}' === '2') {
+    daysDiff = 0.5; // 휴가 일수를 0.5일로 설정
+  }
+  
   document.querySelector('input[name="days"]').value = daysDiff;
+});
+
   
   
    
@@ -233,7 +251,7 @@
 	   
         // requestStatus 필드의 값을 1로 변경
         document.getElementById("requestStatus").value = "1";
-        document.getElementById("picNo").value = "1";
+        document.getElementById("picNo").value = "${sessionScope.user.employeeNo}";
         
     } 
    
@@ -241,10 +259,20 @@
      function rejectRequest() {
         // requestStatus 필드의 값을 2로 변경
         document.getElementById("requestStatus").value = "2";
-        document.getElementById("picNo").value = "1";
+        document.getElementById("picNo").value = "${sessionScope.user.employeeNo}";
         document.getElementById("frm-requests-approval").submit();
     }
     
+     
+     const fnDownload = () => {
+    	 var attachNo = document.getElementById('td-attach').dataset.attachNo;
+    	  $('#down-path').on('click', (evt) => {
+    	    if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
+    	      location.href = '${contextPath}/requests/download.do?attachNo=' +attachNo;
+    	    }
+    	  })
+    	} 
+     fnDownload();
      
      const fnEditRequests = () => {
     		document.getElementById('btn-edit').addEventListener('click', (evt) => {
@@ -264,7 +292,7 @@
     	      frmBtn.submit();
     			}
     	  })
-    	}
+    	} 
      
      
   // 모달 열기 함수
@@ -279,10 +307,13 @@
          modal.style.display = 'none';
      }
      
+     
+     
 
      
      fnRemoveRequest();
      fnEditRequests();
+     
   </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

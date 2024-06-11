@@ -5,28 +5,28 @@
 
 <mapper namespace="com.gdu.academix.mapper.HrMapper">
 
-  
+  <resultMap type="EmployeesDto" id="EmployeesMap">
+    <id property="employeeNo" column="EMPLOYEE_NO"/>
+    <result property="employeeStatus" column="EMPLOYEE_STATUS"/>
+    <result property="name" column="NAME"/>
+    <result property="email" column="EMAIL"/>
+    <result property="phone" column="PHONE"/>
+    <result property="address" column="ADDRESS"/>
+    <result property="password" column="PASSWORD"/>
+    <result property="profilePicturePath" column="PROFILE_PICTURE_PATH"/>
+    <result property="hireDate" column="HIRE_DATE"/>
+    <result property="exitDate" column="EXIT_DATE"/>
+    <association property="depart" javaType="DepartmentsDto">
+      <id property="departmentNo" column="DEPARTMENT_NO"/>
+   	  <result property="departName" column="DEPART_NAME"/>
+   	  <result property="parentDepartNo" column="PARENT_DEPART_NO"/>
+    </association>
+    <association property="rank" javaType="RANKSDTO">
+     <id property="rankNo" column="RANK_NO"/>
+     <result property="rankTitle" column="RANK_TITLE"/>
+  </association>
+  </resultMap>
  
-
-<insert id="registerDepartment"
-        parameterType="DepartmentsDto">
-    INSERT INTO DEPARTMENTS_T(
-    DEPARTMENT_NO,
-    DEPART_NAME,
-    PARENT_DEPART_NO) VALUES(
-    DEPARTMENTS_SEQ.NEXTVAL,
-    #{departName},
-    #{parentDepartNo})
-</insert>
-
-<insert id="registerRank"
-        parameterType="RanksDto">
-  INSERT INTO RANKS_T(
-   RANK_NO,
-   RANK_TITLE) VALUES(
-   RANKS_SEQ.NEXTVAL,
-   #{rankTitle})
-</insert>
 
 <insert id="registerEmployee" parameterType="EmployeesDto">
 
@@ -49,22 +49,59 @@
         #{email},
         #{phone},
         #{address},
-        #{departmentNo},
-        #{rankNo},
+        #{depart.departmentNo},
+        #{rank.rankNo},
         #{password},
         #{profilePicturePath},
         #{employeeStatus},
         #{hireDate},
-        #{exitDate}
+        #{exitDate, jdbcType=DATE}
     )
 </insert>
 
 
+<select id="getEmployeesList"
+        parameterType="Map"
+        resultMap="EmployeesMap">
+SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
+	  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D ON D.DEPARTMENT_NO = E.DEPARTMENT_NO 
+	                     INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+	 ORDER BY E.EMPLOYEE_NO
+</select>
+
+<select id="getEmployeeListCount"
+        resultType="int">
+	SELECT COUNT(*)
+	FROM EMPLOYEES_T
+</select>
+
+<select id="getUserProfileByNo"
+        parameterType="int"
+        resultMap="EmployeesMap">
+    SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
+	  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D 
+        ON D.DEPARTMENT_NO = E.DEPARTMENT_NO
+            INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+	 WHERE E.EMPLOYEE_NO = #{employeeNo}
+</select>
 
 
-
-
-
+<update id="employeeModify"
+        parameterType="EmployeesDto">
+  UPDATE EMPLOYEES_T
+     SET NAME        = #{name},
+         EMAIL       = #{email},
+         PHONE       = #{phone},
+         ADDRESS     = #{address},
+         DEPARTMENT_NO = #{depart.departmentNo},
+         RANK_NO       = #{rank.rankNo},
+         PASSWORD      =#{password},
+         PROFILE_PICTURE_PATH =#{profilePicturePath},
+         EMPLOYEE_STATUS       =#{employeeStatus},
+         HIRE_DATE           =#{hireDate},
+         EXIT_DATE           =#{exitDate, jdbcType=DATE}
+         WHERE EMPLOYEE_NO= #{employeeNo}
+</update>
 
 
 </mapper>

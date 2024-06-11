@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class DepartmentsDto {
-  private int departmentNo, parentDepartNo;
+
+  private int departmentNo, parentDepartNo ;
   private String departName;
+
 }

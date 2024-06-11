@@ -27,4 +27,7 @@ public interface RequestsMapper {
   int removeRequest(int requestNo);
   int removeRequest2(int requestNo);
   int removeRequest3(int requestNo);
+  int pending(int requestStatus);
+  int updateDownloadCount(int attachNo);
+  RequestAttachDto getAttachByNo(int attachNo);
 }

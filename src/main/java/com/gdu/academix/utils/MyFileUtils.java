@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -12,12 +13,19 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @Component
 public class MyFileUtils {
 
+	@Value("${service.file-uploadurl}")
+	public String UP_DIR;
+	
+	
+
+	 
+	
   // 현재 날짜
   public static final LocalDate TODAY = LocalDate.now();
   
   // 업로드 경로 반환
   public String getUploadPath() {
-    return "/upload" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
+    return   UP_DIR+"/upload" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
   }
   
   // 저장될 파일명 반환
@@ -59,7 +67,7 @@ public class MyFileUtils {
  
  // 메인 프로필 경로 반환
  public String getMainProfilePath() {
-   return "/profile/main" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
+   return UP_DIR +"/profile/main" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
  }
  
  public String updateProfilePicture(MultipartHttpServletRequest multipartRequest, String paramName) {
@@ -85,7 +93,9 @@ public class MyFileUtils {
 	      System.out.println(originalFilename);
 	      
 	      String filesystemName = getFilesystemName(originalFilename);
-	      profilePicturePath = builder.append("<img src=\"").append(multipartRequest.getContextPath()).append(uploadPath).append("/") .append(filesystemName).append("\">").toString();
+	      // UP_DIR을 제거하고 상대 경로만 사용
+          String relativePath = uploadPath.substring(UP_DIR.length());
+	      profilePicturePath = builder.append("<img src=\"").append(multipartRequest.getContextPath()).append(relativePath).append("/") .append(filesystemName).append("\">").toString();
 	      builder.setLength(0);
 	      
 	      File file = new File(dir, filesystemName);

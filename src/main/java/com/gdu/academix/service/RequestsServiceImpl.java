@@ -1,6 +1,7 @@
 package com.gdu.academix.service;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -8,6 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -40,7 +44,7 @@ public class RequestsServiceImpl implements RequestsService {
   
   @Override
   @Transactional
-  public int createLeaveRequest(MultipartHttpServletRequest multipartRequest) {
+  public boolean createLeaveRequest(MultipartHttpServletRequest multipartRequest) {
     
 	  String departName = multipartRequest.getParameter("departName");
 	    String name = multipartRequest.getParameter("name");
@@ -72,7 +76,7 @@ public class RequestsServiceImpl implements RequestsService {
 	                                      .build();
 	    
 	    
-	    int duration = Integer.parseInt(multipartRequest.getParameter("duration"));
+	    Double duration = Double.parseDouble(multipartRequest.getParameter("duration"));
 	    String startDateString = multipartRequest.getParameter("startDate");
 	    String endDateString = multipartRequest.getParameter("endDate");
 	    int leaveType = Integer.parseInt(multipartRequest.getParameter("leaveType"));
@@ -103,11 +107,12 @@ public class RequestsServiceImpl implements RequestsService {
 		    // 첨부 파일이 있는 경우 : [MultipartFile[field="files", filename=404.jpg, contentType=image/jpeg, size=63891]]
 		    // System.out.println(files);
 
+	     int insertAttachCount=0;
 		    try {
 		    	 if(files.get(0).getSize() == 0) {
-		 	    	insertCount = 1;  // 첨부가 없어도 files.size() 는 1 이다.
+		 	    	insertAttachCount = 1;  // 첨부가 없어도 files.size() 는 1 이다.
 		 	    } else {
-		 	    	insertCount = 0;
+		 	    	insertAttachCount = 0;
 		 	    }
 		 	    
 		 	    for (MultipartFile multipartFile : files) {
@@ -123,6 +128,9 @@ public class RequestsServiceImpl implements RequestsService {
 		 	        String originalFilename = multipartFile.getOriginalFilename();
 		 	        String filesystemName = myfileUtils.getFilesystemName(originalFilename);
 		 	        File file = new File(dir, filesystemName);
+		 	        System.out.println(dir);
+		 	        System.out.println(filesystemName);
+		 	        multipartFile.transferTo(file);
 		 	        
 		 	        RequestAttachDto attach = RequestAttachDto.builder()
 		 	        		                                  .requestNo(requestNo)
@@ -130,7 +138,7 @@ public class RequestsServiceImpl implements RequestsService {
 		 	        		                                  .filesystemName(filesystemName)
 		 	        		                                  .originalFileName(originalFilename)
 		 	        		                                  .build();
-		 	        insertCount += requestsMapper.insertRequestsAttach(attach);
+		 	       insertAttachCount += requestsMapper.insertRequestsAttach(attach);
 		 	
 		     }
 		 	      
@@ -142,7 +150,7 @@ public class RequestsServiceImpl implements RequestsService {
 
 	     
 	    
-	    return insertCount;
+	    return (insertCount == 1) && (insertAttachCount == files.size());
   }
   
  
@@ -220,10 +228,9 @@ public class RequestsServiceImpl implements RequestsService {
 	}
 
   @Override
-	public void getRequestsList(Model model) {
+	public void getRequestsList(HttpServletRequest request, Model model) {
 		
-	  Map<String, Object> modelMap = model.asMap();
-	    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+	
 	    
 	    int total = requestsMapper.getRequestsCount();
 	    
@@ -264,7 +271,7 @@ public class RequestsServiceImpl implements RequestsService {
 	  String rankTitle = multipartRequest.getParameter("rankTitle");
 	  String reason = multipartRequest.getParameter("reason");
 	  int leaveType = Integer.parseInt(multipartRequest.getParameter("leaveType"));
-	  int duration = Integer.parseInt(multipartRequest.getParameter("duration"));
+	  Double duration = Double.parseDouble(multipartRequest.getParameter("duration"));
 	   String startDateString = multipartRequest.getParameter("startDate");
 	   String endDateString = multipartRequest.getParameter("endDate");
 	   int requestNo = Integer.parseInt(multipartRequest.getParameter("requestNo"));
@@ -357,6 +364,63 @@ public class RequestsServiceImpl implements RequestsService {
 	  deleteCount += requestsMapper.removeRequest3(requestNo);
 	   deleteCount += requestsMapper.removeRequest(requestNo);
 		return deleteCount;
+	}
+  
+  @Override
+	public ResponseEntity<Map<String, Object>> pending() {
+	  
+      
+	  return ResponseEntity.ok(Map.of("0", requestsMapper.pending(0)
+			                          ,"1",requestsMapper.pending(1)
+			                          , "2",requestsMapper.pending(2)));
+	}
+  
+  @Override
+	public ResponseEntity<Resource> download(HttpServletRequest request) {
+	// 첨부 파일 정보를 DB 에서 가져오기
+	    int attachNo = Integer.parseInt(request.getParameter("attachNo"));
+	    RequestAttachDto attach = requestsMapper.getAttachByNo(attachNo);
+	    
+	    // 첨부 파일 정보를 File 객체로 만든 뒤 Resource 객체로 변환
+	    File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+	    Resource resource = new FileSystemResource(file);
+	    
+	    // 첨부 파일이 없으면 다운로드 취소
+	    if(!resource.exists()) {
+	      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	    }
+	    
+	    // DOWNLOAD_COUNT 증가
+	    requestsMapper.updateDownloadCount(attachNo);
+	    
+	    // 사용자가 다운로드 받을 파일명 결정 (originalFilename 을 브라우저에 따라 다르게 인코딩 처리)
+	    String originalFilename = attach.getOriginalFileName();
+	    String userAgent = request.getHeader("User-Agent");
+	    try {
+	      // IE
+	      if(userAgent.contains("Trident")) {
+	       originalFilename = URLEncoder.encode(originalFilename, "UTF-8").replace("+", " "); 
+	      }
+	      // Edge
+	      else if(userAgent.contains("Edg")) {
+	        originalFilename = URLEncoder.encode(originalFilename, "UTF-8");
+	      }
+	      // Other
+	      else {
+	        originalFilename = new String(originalFilename.getBytes("UTF-8"), "ISO-8859-1");
+	      }
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	    
+	    // 다운로드용 응답 헤더 설정 (HTTP 참조)
+	    HttpHeaders responseHeader = new org.springframework.http.HttpHeaders();
+	    responseHeader.add("Content-Type", "application/octet-stream");
+	    responseHeader.add("Content-Disposition", "attachment; filename=" + originalFilename);
+	    responseHeader.add("Content-Length", file.length() + "");
+	    
+	    // 다운로드 진행
+	    return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
 	}
   
 }

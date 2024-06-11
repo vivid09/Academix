@@ -22,7 +22,6 @@
 
 .header-wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid #000;
     padding-bottom: 10px;
@@ -92,6 +91,18 @@ button:hover {
  #option1 {
  display:none;
 }
+.title-right{
+  width:30%;
+  margin:auto;
+}
+.dept-approval{
+  width:50%;
+}
+.stamp-box{
+  width:50%;
+  border: 1px solid black;
+  
+}
 
 </style>
 
@@ -113,11 +124,11 @@ button:hover {
         <div class="requests-wrapper">
             <div class="header-wrapper">
                 <div class="title">
-                    <h1>연차 신청서</h1>
+                    <h2>연차 신청서</h2>
                 </div>
                 <div class="title-right">
-                    <span>결재</span>
                     <div class="dept-approval">
+                        <span>결재:</span>
                         <span>인사과</span>
                     </div>
                     <div class="stamp-box">
@@ -136,7 +147,8 @@ button:hover {
                 <input type="text" name="rankTitle" id="rankTitle">
                 <select name="leaveType" id="leaveType">
                         <option value="0">연차</option>
-                        <option value="1">반차</option>
+                        <option value="1">오전 반차</option>
+                        <option value="2">오후 반차</option>
                     </select>
             </div>
             <div class="form-group reason">
@@ -150,8 +162,6 @@ button:hover {
 		        <input type="date" name="endDate" id="endDate">
 		        <label for="duration">기간</label>
 		        <input type="text" name="duration" id="duration">
-		        <label for="employeeNo">사원번호</label>
-            <input type="text" name="employeeNo" id="employeeNo">
 	            </div>
             <button type="submit">기안하기</button>
             <div>
@@ -159,7 +169,7 @@ button:hover {
 			    <input type="file" name="files" id="files" multiple>
 			</div>
         </div>
-        <!--<input type="hidden" name="employeeNo" value="1"> -->
+        <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}"> 
         <input type="hidden" name="picNo" value="0">
         <input type="hidden" name="requestStatus" value="0">
         <input type="hidden" name="requestSort" value="1">
@@ -198,7 +208,7 @@ document.querySelector('form').addEventListener('submit', function(event) {
       //option2Div.style.display = 'none';
     } else if (selectElement.value === '2') {
       option1Div.style.display = 'none';
-      option2Div.style.display = 'block';
+      //option2Div.style.display = 'block';
     }
   }
 
@@ -209,24 +219,35 @@ document.querySelector('form').addEventListener('submit', function(event) {
   
   
   function calculateDuration() {
-      const startDate = document.querySelector('input[name="startDate"]').value;
-      const endDate = document.querySelector('input[name="endDate"]').value;
-      const durationField = document.querySelector('input[name="duration"]');
-      
-      if (startDate && endDate) {
-          const start = new Date(startDate);
-          const end = new Date(endDate);
-          const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1; // Include start day
-          durationField.value = duration > 0 ? duration : 0;
-      } else {
-          durationField.value = 0;
-      }
-  }
+	    const startDateField = document.querySelector('input[name="startDate"]');
+	    const endDateField = document.querySelector('input[name="endDate"]');
+	    const durationField = document.querySelector('input[name="duration"]');
+	    const leaveType = document.getElementById('leaveType').value;
+	    const startDate = startDateField.value;
+	    const endDate = endDateField.value;
+
+	    if (leaveType === '1' || leaveType === '2') { // 반차
+	        durationField.value = 0.5;
+	        if (startDate) {
+	            endDateField.value = startDate; // 종료일을 시작일과 동일하게 설정
+	        }
+	    } else {
+	        if (startDate && endDate) {
+	            const start = new Date(startDate);
+	            const end = new Date(endDate);
+	            const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1; // 시작일 포함
+	            durationField.value = duration > 0 ? duration : 0;
+	        } else {
+	            durationField.value = 0;
+	        }
+	    }
+	}
 
   document.addEventListener('DOMContentLoaded', function() {
       calculateDuration(); // Calculate duration when the page loads
       document.querySelector('input[name="startDate"]').addEventListener('change', calculateDuration);
       document.querySelector('input[name="endDate"]').addEventListener('change', calculateDuration);
+      document.getElementById('leaveType').addEventListener('change', calculateDuration);
   });
   
   

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.LeaveRequestDto;
 import com.gdu.academix.dto.RequestsDto;
+import com.gdu.academix.service.HrService;
 import com.gdu.academix.service.RequestsService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,10 +25,17 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/hr")
 @Controller
 public class HrController {
+	
+	@Autowired
+	private HrService hrService;
 
- @GetMapping("/list.do")
+ @GetMapping("/list.page")
  public String hrList() {
 	 return "hr/list";
+ }
+ @GetMapping("/chat.page")
+ public String hrc() {
+	 return "hr/chat";
  }
  
  @GetMapping("/employeeRegister.page")
@@ -36,9 +44,27 @@ public class HrController {
  }
  
  @PostMapping("/employeeRegister.do")
-  public String employeeRegister(MultipartRequest multipartRequest) {
-	 
-	 return "redirect:/hr/employeeRegister.do";
+  public String employeeRegister(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+	 int insertCount = hrService.registerEmployee(multipartRequest);
+	 redirectAttributes.addFlashAttribute("insertCount", insertCount == 1  ? "등록되었습니다." : "등록 되지 않았습니다");
+	 return "redirect:/hr/list.page";
  }
   
+ @GetMapping("/profileEdit.do")
+  public String modifyMove(@RequestParam int employeeNo, Model model) {
+	 model.addAttribute("employee", hrService.getUserProfileByNo(employeeNo));
+	 return "hr/edit";
+ }
+ 
+ @PostMapping("/employeeModify.do")
+  public String employeeModify(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+	 redirectAttributes
+     .addFlashAttribute("modifyResult", hrService.emloyeeModify(multipartRequest) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
+	 System.out.println(hrService.emloyeeModify(multipartRequest));
+      return "hr/list";
+ }
+		 
+ 
+
+ 
 }

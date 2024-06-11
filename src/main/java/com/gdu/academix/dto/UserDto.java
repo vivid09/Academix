@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class LeaveRequestDto {
-  private int   leaveType;
-  private Double duration;
-  private Date startDate, endDate;
-  private RequestsDto requests;
-  private RequestAttachDto attach;
+public class UserDto {
+  private int userNo, eventAgree, signupKind;
+  private String email, pw, name, gender, mobile;
+  private Date pwModifyDt, signupDt;
 }

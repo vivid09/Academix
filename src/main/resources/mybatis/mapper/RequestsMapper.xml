@@ -206,7 +206,7 @@ WHERE
         parameterType="Map"
         resultMap="LeaveRequestMap">
       SELECT REQUEST_NO, REQUEST_SORT, REQUEST_DATE, REQUEST_STATUS,NAME
-      FROM (SELECT ROW_NUMBER() OVER (ORDER BY L.REQUEST_NO) AS RN, L.REQUEST_NO, R.REQUEST_SORT, R.REQUEST_DATE, R.REQUEST_STATUS,L.NAME
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY L.REQUEST_NO DESC) AS RN, L.REQUEST_NO, R.REQUEST_SORT, R.REQUEST_DATE, R.REQUEST_STATUS,L.NAME
       FROM LEAVE_REQUEST_T L INNER JOIN REQUESTS_T R
             ON R.REQUEST_NO = L.REQUEST_NO)
        WHERE RN BETWEEN #{begin} AND #{end}
@@ -262,10 +262,25 @@ WHERE
 </delete>
 
 
+<select id="pending"
+        parameterType="int"
+        resultSetType="DEFAULT">
+  SELECT COUNT(REQUEST_STATUS)
+    FROM REQUESTS_T
+   WHERE REQUEST_STATUS =#{requestStatus}     
+</select>
 
+<update id="updateDownloadCount">
+   UPDATE REQUEST_ATTACH_T
+      SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
+    WHERE ATTACH_NO = #{attahcNo}  
+</update>
 
-
-
-
+<select id="getAttachByNo"
+        resultType="RequestAttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT
+    FROM REQUEST_ATTACH_T 
+   WHERE ATTACH_NO = #{attachNo} 
+</select>
 
 </mapper>

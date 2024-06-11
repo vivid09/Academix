@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class RanksDto {
-
-  private int rankNo;
-  private String rankTitle;
-
+public class BlogImageDto {
+  private int blogNo;
+  private String uploadPath; 
+  private String filesystemName;
 }

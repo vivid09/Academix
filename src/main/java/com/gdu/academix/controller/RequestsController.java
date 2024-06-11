@@ -3,6 +3,7 @@ package com.gdu.academix.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,10 +41,10 @@ public class RequestsController {
   
   @PostMapping("/write.do")
   public String createLeaveRequest(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
-	  int insertCount = requestsService.createLeaveRequest(multipartRequest);
-	  redirectAttributes.addFlashAttribute("insertCount", insertCount == 1  ? "기안되었습니다." : "기안 되지 않았습니다");
+	  //boolean insertCount = ;
+	  redirectAttributes.addFlashAttribute("insertCount", requestsService.createLeaveRequest(multipartRequest));
 	   
-	    return "redirect:/requests/requestsList.do"; // 리디렉션
+	    return "redirect:/requests/main.page"; // 리디렉션
 	}
   
   @GetMapping(value="/main.page")
@@ -83,8 +84,8 @@ public class RequestsController {
   
   @GetMapping("/requestsList.do")
   public String Paging(HttpServletRequest request, Model model) {
-	  model.addAttribute("request", request);
-	  requestsService.getRequestsList(model);
+	  //model.addAttribute("request", request);
+	  requestsService.getRequestsList(request, model);
 	  return "requests/paging";
   }
   
@@ -113,5 +114,17 @@ public class RequestsController {
 			redirectAttributes.addFlashAttribute("removeResult", removeCount == 1 ? "기안서가 삭제되었습니다." : "기안서가 삭제되지 않았습니다.");
 			return "redirect:/requests/main.page";
 	}
+  
+	
+   @GetMapping(value="/pending.do", produces="application/json")
+	public ResponseEntity<Map<String, Object>> pending() {
+	  System.out.println();
+	   return  requestsService.pending();
+    }
+	 
+   @GetMapping("/download.do")
+   public ResponseEntity<Resource> download(HttpServletRequest request){
+	   return requestsService.download(request);
+   }
   
 }

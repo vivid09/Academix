@@ -13,6 +13,19 @@
 
 <style>
 
+.table{
+ background-color: white;
+ border-radius: 20px;
+}
+.table tbody tr {
+  border: 1px solid black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+  tfoot tr {
+        display: flex;
+    }
+  
   
 </style>
   
@@ -56,6 +69,7 @@
     </thead>
     <tbody>
       <c:forEach items="${requestsList}" var="leaveRequests" varStatus="vs">
+    <c:if test="${sessionScope.user.name == leaveRequests.requests.employees.name}">
         <tr class="sta" data-request-status="${leaveRequests.requests.requestStatus}">
           <td>${leaveRequests.requests.requestNo}</td>
           <td>
@@ -83,6 +97,7 @@
 					 </c:when>
                 </c:choose></td>
         </tr>
+        </c:if>
       </c:forEach>
     </tbody>
     <tfoot>
@@ -137,7 +152,8 @@
 	});
 	
 	
-
+	//resultMap="EmployeesMap"
+	console.log(${sessionScope.user.employeeNo});
 	
 	
 

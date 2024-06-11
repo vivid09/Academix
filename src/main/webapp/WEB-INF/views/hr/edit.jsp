@@ -57,36 +57,37 @@
   
   
   <div class="content-wrapper">
-        <h2 class="title">직원 및 강사 등록</h2>
-        <form action="${contextPath}/hr/employeeRegister.do" method="POST" enctype="multipart/form-data">
+        <h2 class="title">직원 및 강사 수정</h2>
+        <form action="${contextPath}/hr/employeeModify.do" 
+              method="POST" enctype="multipart/form-data">
             <div>
                 <label for="profile">프로필</label>
-                <input type="file" name="profile" id="profile">
+                <input type="file" name="profile" id="profile" value="${employee.profilePicturePath}">
             </div>
             <div>
                 <label for="name">이름</label>
-                <input type="text" name="name" id="name">
+                <input type="text" name="name" id="name" value="${employee.name}">
             </div>
             <div>
                 <label for="email">이메일</label>
-                <input type="text" name="email" id="email">
+                <input type="text" name="email" id="email" value="${employee.email}">
             </div>
             <div>
                 <label for="pw">비밀번호</label>
-                <input type="password" name="pw" id="pw">
+                <input type="password" name="pw" id="pw" value="${employee.password}">
             </div>
             <div>
                 <label for="phone">전화번호</label>
-                <input type="text" name="phone" id="phone">
+                <input type="text" name="phone" id="phone" value="${employee.phone}">
             </div>
             <div>
                 <label for="address">주소</label>
-                <input type="text" name="address" id="address">
+                <input type="text" name="address" id="address" value="${employee.address}">
             </div>
             <div>
                 <label for="departName">부서명</label>
                 <select name="departName" id="departName">
-                  <option>부서 선택</option>
+                  <option>${employee.depart.departName}</option>
                   <option value="대표실">대표실</option>
                   <option value="행정부">행정부</option>
                   <option value="인사팀">인사팀</option>
@@ -96,8 +97,8 @@
             </div>
             <div>
                 <label for="rankTitle">직급명</label>
-                <select name="rankTitle" id="rankTitle">
-                 <option>직급 선택</option>
+                <select name="rankTitle" id="rankTitle" >
+                 <option>${employee.rank.rankTitle}</option>
                  <option value="대표이사">대표이사</option>
                  <option value="수석">수석</option>
                  <option value="책임">책임</option>
@@ -109,36 +110,45 @@
             <div>
                 <label for="employeeStatus">사원상태</label>
                 <select name="employeeStatus" id="employeeStatus">
-                  <option>직원 상태</option>
+                  <option value="${employee.employeeStatus}">
+                    <c:choose>
+				            <c:when test="${employee.employeeStatus eq '1'}">재직</c:when>
+				            <c:when test="${employee.employeeStatus eq '0'}">퇴직</c:when>
+				        </c:choose>
+                  </option>
                   <option value="1">재직</option>
                   <option value="0">퇴직</option>
                   <option></option>
                 </select>
             </div>
             <div>
-                <label for="departmentNo">부서번호</label>
-                <input type="text" name="departmentNo" id="departmentNo">
+	                <input type="hidden" name="departmentNo" id="departmentNo" value="${employee.depart.departmentNo}">
             </div>
             <div>
-                <label for="rankNo">직책번호</label>
-                <input type="text" name="rankNo" id="rankNo">
+                <input type="hidden" name="rankNo" id="rankNo" value="${employee.rank.rankNo}">
             </div>
             <div>
                 <label for="hireDate">입사일</label>
-                <input type="date" name="hireDate" id="hireDate" >
+                <input type="date" name="hireDate" id="hireDate"  value="${employee.hireDate}">
             </div>
             <div>
                 <label for="exitDate">퇴사일</label>
-                <input type="date" name="exitDate" id="exitDate">
+                <input type="date" name="exitDate" id="exitDate" value="${employee.exitDate}">
             </div>
             <div>
                 <label for="parentDepartNo">부모부서번호</label>
-                <select name="parentDepartNo" id="parentDepartNo">
-                  <option>-----</option>
+                <select name="parentDepartNo" id="parentDepartNo" >
+                  <option value="${employee.depart.parentDepartNo}">
+                   <c:choose>
+				        <c:when test="${employee.depart.parentDepartNo eq '1'}">행정부</c:when>
+				        </c:choose>
+                  </option>
                   <option value="1">행정부</option>
                 </select>
+                <input type="hidden" name="employeeNo" value="${employee.employeeNo}">
+                
             </div>
-            <button type="submit">등록하기</button>
+            <button type="submit">수정하기</button>
         </form>
     </div>
   

@@ -99,9 +99,18 @@
                 <th class="section-title" colspan="1">휴가 종류</th>
                 <td colspan="3">
                 <select name="leaveType" id="leaveType">
-                        <option value="0">연차</option>
-                        <option value="1">반차</option>
-                    </select>
+				    <option value="${leaveRequests.leaveType}">
+				        <c:choose>
+				            <c:when test="${leaveRequests.leaveType eq '0'}">연차</c:when>
+				            <c:when test="${leaveRequests.leaveType eq '1'}">오전반차</c:when>
+				            <c:when test="${leaveRequests.leaveType eq '2'}">오후반차</c:when>
+				        </c:choose>
+				    </option>
+				    <option value="0">연차</option>
+				    <option value="1">오전 반차</option>
+				    <option value="2">오후 반차</option>
+			    </select>
+
                 </td>
             </tr>
             <tr>
@@ -118,8 +127,7 @@
                 <td> <input type="date" name="endDate" value="${leaveRequests.endDate}"> 
                 <td colspan="2">(<input type="text" name="duration" size="2" value="${leaveRequests.duration }"> 일간)</td>
                 <input type="hidden" name="requestSort" value="1">
-                <label for="employeeNo">사원번호</label>
-            ${leaveRequests.requests.employees.employeeNo}
+               
             </tr>
             <tr>
             <td><label for="files">첨부파일</label>
@@ -147,25 +155,38 @@
  
   
   function calculateDuration() {
-      const startDate = document.querySelector('input[name="startDate"]').value;
-      const endDate = document.querySelector('input[name="endDate"]').value;
-      const durationField = document.querySelector('input[name="duration"]');
-      
-      if (startDate && endDate) {
-          const start = new Date(startDate);
-          const end = new Date(endDate);
-          const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1; // Include start day
-          durationField.value = duration > 0 ? duration : 0;
-      } else {
-          durationField.value = 0;
-      }
-  }
+	    const startDateField = document.querySelector('input[name="startDate"]');
+	    const endDateField = document.querySelector('input[name="endDate"]');
+	    const durationField = document.querySelector('input[name="duration"]');
+	    const leaveType = document.getElementById('leaveType').value;
+	    const startDate = startDateField.value;
+	    const endDate = endDateField.value;
 
-  window.onload = function() {
-      calculateDuration(); // Calculate duration when the page loads
-      document.querySelector('input[name="startDate"]').addEventListener('change', calculateDuration);
-      document.querySelector('input[name="endDate"]').addEventListener('change', calculateDuration);
-  }
+	    if (leaveType === '1' || leaveType === '2') { // 반차
+	        durationField.value = 0.5;
+	        if (startDate) {
+	            endDateField.value = startDate; // 종료일을 시작일과 동일하게 설정
+	        }
+	    } else {
+	        if (startDate && endDate) {
+	            const start = new Date(startDate);
+	            const end = new Date(endDate);
+	            const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1; // 시작일 포함
+	            durationField.value = duration > 0 ? duration : 0;
+	        } else {
+	            durationField.value = 0;
+	        }
+	    }
+	}
+
+	window.onload = function() {
+	    calculateDuration(); // 페이지가 로드될 때 휴가 일수 계산
+	    document.querySelector('input[name="startDate"]').addEventListener('change', calculateDuration);
+	    document.querySelector('input[name="endDate"]').addEventListener('change', calculateDuration);
+	    document.querySelector('select[name="leaveType"]').addEventListener('change', calculateDuration); // 휴가 종류 변경 시에도 계산
+	}
+
+
    
    
     

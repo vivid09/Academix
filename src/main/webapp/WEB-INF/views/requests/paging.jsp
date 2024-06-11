@@ -12,14 +12,77 @@
  </jsp:include>
 
 <style>
-
+.document-papers{
+  width:1000px;
+  height:200px;
+  display:flex;
+  justify-content: flex-end;
+  text-align: center;
+  
+  
+}
+.pending {
+  width:250px;
+  height:100px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-right: 50px; 
+  margin-left: 50px; 
+  display:flex;
+  align-items: center;
+  text-align: center;
+}
+.approval-document-papers {
+   width:250px;
+  height:100px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-right: 50px; 
+  margin-left: 50px;
+  display:flex;
+  align-items: center;
+  text-align: center;
+}
+.notapproval-document-papers {
+   width:250px;
+  height:100px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-right: 50px; 
+  margin-left: 50px;
+  display:flex;
+  align-items: center;
+  text-align: center;
+}
+.table{
+ background-color: white;
+ border-radius: 20px;
+}
+.table tbody tr {
+  border: 1px solid black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+  tfoot tr {
+        display: flex;
+    }
   
 </style>
   
   
   <div class="content-wrapper">
-  <h2 class="title">결제함</h2>
-  
+  <h2 class="title">결재함</h2>
+   <div class="document-papers">
+    <div class="pending">
+     대기문서:
+    </div>
+    <div class="approval-document-papers">
+      승인문서:
+  </div>
+    <div class="notapproval-document-papers">
+      반려문서:
+  </div>
+   </div>
   
   <div>
   <div>
@@ -44,6 +107,7 @@
       <option value="2">반려</option>
     </select> 
   </div>
+  
   <table class="table align-middle">
     <thead>
       <tr>
@@ -56,7 +120,7 @@
     </thead>
     <tbody>
       <c:forEach items="${requestsList}" var="leaveRequests" varStatus="vs">
-        <tr class="sta" data-request-status="${leaveRequests.requests.requestStatus}">
+        <tr class="sta" id="req-list" data-request-status="${leaveRequests.requests.requestStatus}">
           <td>${leaveRequests.requests.requestNo}</td>
           <td>
             <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requests.requestNo}">
@@ -87,7 +151,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="4">${paging}</td>
+        <td colspan="5">${paging}</td>
       </tr>
     </tfoot>
   </table>
@@ -136,12 +200,35 @@
 	    });
 	});
 
+	var requestStatus = document.getElementById('req-list').dataset.requestStatus;
+	
+	const fnpending = ()=> {
+		fetch('${contextPath}/requests/pending.do',{
+			 method: 'GET',
+		})
+		.then((response) => response.json())
+		.then(resData =>{
+			//console.log(requestStatus);
+			console.log(resData);
+			let str = '';
+			str += '<span>' + resData[0] + '</span>';
+			
+			$('.pending').append(str);
+			let str2 = '';
+			str2 += '<span>' + resData[1] + '</span>';
+			$('.approval-document-papers').append(str2);
+			let str3='';
+			str3 += '<span>' + resData[2] + '</span>';
+			$('.notapproval-document-papers').append(str3);
+		})
+	}
+	
 	
 	
 
-
+	    fnpending();
 		fnDisplay();
 		fnSort();
-		</script>
+ </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

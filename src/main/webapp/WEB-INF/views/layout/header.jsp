@@ -12,8 +12,14 @@
   <title>AdminLTE 2 | Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  
   <!-- Bootstrap 3.3.6 -->
+
   <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   <!-- Ionicons -->
@@ -264,22 +270,34 @@
           
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Alexander Pierce</span>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="profileDropdown">
+               <c:if test="${sessionScope.user.profilePicturePath != null}">
+		          ${sessionScope.user.profilePicturePath}
+		        </c:if>
+		        <c:if test="${sessionScope.user.profilePicturePath == null}">
+		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
+		        </c:if>
+              
+
+              <span class="hidden-xs">${sessionScope.user.name}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <c:if test="${sessionScope.user.profilePicturePath != null}">
+		          ${sessionScope.user.profilePicturePath}
+		        </c:if>
+		        <c:if test="${sessionScope.user.profilePicturePath == null}">
+		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
+		        </c:if>
 
                 <p>
-                  Alexander Pierce - Web Developer
+                  ${sessionScope.user.name}
                   <small>Member since Nov. 2012</small>
                 </p>
               </li>
               <!-- Menu Body -->
-              <li class="user-body">
+<!--               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
                     <a href="#">Followers</a>
@@ -291,15 +309,15 @@
                     <a href="#">Friends</a>
                   </div>
                 </div>
-                <!-- /.row -->
-              </li>
+                /.row
+              </li> -->
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <a href="#" class="btn btn-default btn-flat">마이페이지</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="${contextPath}/user/signout.do" class="btn btn-default btn-flat">로그아웃</a>
                 </div>
               </li>
             </ul>
@@ -320,10 +338,15 @@
       <!-- 프로필 -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+        <c:if test="${sessionScope.user.profilePicturePath != null}">
+          ${sessionScope.user.profilePicturePath}
+        </c:if>
+        <c:if test="${sessionScope.user.profilePicturePath == null}">
+          <img src="${contextPath}/resources/images/default_profile_image.png">
+        </c:if>
         </div>
         <div class="pull-left info">
-          <p>Alexander Pierce</p>
+          <p>${sessionScope.user.name}님</p>
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
       </div>
@@ -390,7 +413,7 @@
         </li>
         
         <li>
-          <a href="pages/chat.html">
+          <a href="${contextPath}/chatting/chat.page">
             <i class="fa fa-commenting"></i> <span>채팅</span>
           </a>
         </li> 
@@ -436,13 +459,11 @@
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
           </a>
-          <a href="${contextPath}/requests/write.page">작성</a>
-          <a href="${contextPath}/requests/requestsList.do">결제함</a>
-          <ul class="treeview-menu">
-            <li><a href="${contextPath}/approval/write.page">기안하기</a></li>
-            <li><a href="${contextPath}/approval/main.page">조회</a></li>
-            <li></li>
-          </ul>
+          <a href="${contextPath}/requests/write.page">기안하기</a>
+           <c:if test="${sessionScope.user.depart.departmentNo == 2}"> 
+          <a href="${contextPath}/requests/requestsList.do">결재함</a>
+          </c:if>
+       
         </li>
          
         
@@ -462,7 +483,7 @@
         </li> 
         
         <li class="treeview">
-          <a href="${contextPath}/hr/list.do">
+          <a href="${contextPath}/hr/list.page">
             <i class="fa fa-book"></i>
             <span>인사 관리</span>
             <span class="pull-right-container">
@@ -470,6 +491,7 @@
             </span>
           </a>
            <a href="${contexPath}/hr/employeeRegister.page">직원 및 강사 등록</a> 
+           
           <ul class="treeview-menu">
             <li><a href="pages/charts/chartjs.html">강사 및 직원관리</a></li>
           </ul>
@@ -660,3 +682,18 @@
     </section>
     <!-- /.sidebar -->
   </aside>  
+  
+ <script>
+    // Check if the profile picture exists
+    var profileImg = document.querySelector('#profileDropdown img');
+    if (profileImg) {
+        // If the profile picture exists, add the class and style
+        profileImg.classList.add('user-image');
+    } else {
+        // If using default profile image, ensure it has the correct class
+        var defaultImg = document.getElementById('defaultProfileImage');
+        if (defaultImg) {
+            defaultImg.classList.add('user-image');
+        }
+    }
+</script>
