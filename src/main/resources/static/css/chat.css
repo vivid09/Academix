@@ -452,16 +452,16 @@
 		}		 */ 
 		
 		.participant-body-row {
-	    overflow: auto;
-	    overflow-x: hidden;
-	    max-height: 220px;
+	      overflow: auto;
+	      overflow-x: hidden;
+	      max-height: 220px;
 		}
 		
 		/* 메신저 알림창 */
 		.notification-item img {
-      margin: 6px 10px auto auto;
-    	width: 20px;
-   	 	height: 20px;
+      	  margin: 6px 10px auto auto;
+    	  width: 20px;
+   	 	  height: 20px;
 		}
 		
 		

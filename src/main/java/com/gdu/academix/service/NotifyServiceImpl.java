@@ -50,7 +50,7 @@ public class NotifyServiceImpl implements NotifyService {
       List<EmployeesDto> notifierList = userMapper.getUserProfileList(notifierNoList);
       
       // employeeNo를 key로, name을 value로하는 map -> 이름을 미리 담아놓음.
-      Map<Integer, String> employeeMap = new HashMap();
+      Map<Integer, String> employeeMap = new HashMap<>();
       
       for(int i=0, size=notifierList.size(); i < size; i++) {
         

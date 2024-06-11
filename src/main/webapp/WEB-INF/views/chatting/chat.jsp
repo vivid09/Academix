@@ -1172,7 +1172,7 @@ window.addEventListener('beforeunload', function(event) {
     	$('.chat-box').css('display', '');
 	  
 		    // 채팅방 이름 변경
-    	$('.chat-box-title > span').text(chatroomDto.chatroomTitle);
+    	$('.chat-box-title > span:first').text(chatroomDto.chatroomTitle);
 		    
 		    // 채팅방 번호 data 속성 추가
     	$('.chat-box-title').attr('data-chatroom-no', chatroomDto.chatroomNo);

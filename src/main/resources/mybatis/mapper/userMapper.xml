@@ -135,12 +135,14 @@
 	</select>
 	
 	<select id="getUserProfileList"
-					parameterType="list"
-					resultMap="EmployeesMap">
+			resultMap="EmployeesMap">
 		SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
 		  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D ON D.DEPARTMENT_NO = E.DEPARTMENT_NO 
 		                     INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
-		 WHERE E.EMPLOYEE_NO = #{employeeNo}
+		 WHERE E.EMPLOYEE_NO IN 
+     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+         #{item}
+     </foreach>
 	</select>
   
   

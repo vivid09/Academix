@@ -89,7 +89,7 @@
 		msg += '<li class="notification-item" data-chatroom-no="' + chatroomNo + '">';
 		msg += '  <a href="#">';
 		msg += '    <div class="pull-left">';
-		msg += '      <img src="${contextPath}/resources/images/free-icon-star-1828884.png" class="img-circle" alt="User Image">';
+		msg += '      <img src="${contextPath}/resources/images/free-icon-star-1828884.png" class="img-circle" alt="User Image" style="width: 20px; height: 20px; margin: 6px auto auto 6px;">';
 		msg += '    </div>';
 		msg += '    <h4>';
 		msg += senderName;
@@ -99,7 +99,7 @@
 		msg += ' </a>';
 		msg += '</li>';
 		
-		$menu.append(msg);
+		$menu.prepend(msg);
         <!-- start message -->
 		
 	}
@@ -115,7 +115,66 @@
  		.then((response) => response.json())
  		.then(resData => {
  			
- 			console.log('알림리스트', resData);
+			  
+/*
+{
+   "notificationList": [
+       {
+           "notificationNo": 53,
+           "seenStatus": 0,
+           "employeeNo": 10,
+           "chatroomNo": 2,
+           "notifierNo": 5,
+           "message": "나도나감\n",
+           "notificationType": "CHAT",
+           "notifierName": "황지훈 사원",
+           "notificationDate": "2024-06-11T10:41:11.962+00:00"
+       },
+		...
+    ]
+} 
+*/
+				// 받아온 알림 리스트를 돌면서 알림창에 추가 
+				resData.notificationList.forEach((notification) => {
+					if(notification.seenStatus === 0) {
+			 			let messageContent = notification.message;
+			 			let senderName = notification.notifierName;
+			 			let chatroomNo = notification.chatroomNo;
+			 			
+			 			if (messageContent.length > 15) {
+			 				messageContent = messageContent.substring(0, 10) + '...';
+			 			}
+			 			
+			 			let $menu = $('.alert-menu');
+			 			// 받아온 메시지를 알림메시지에 추가한다.
+			 			let msg = '';
+			 			msg += '<li class="notification-item" data-chatroom-no="' + chatroomNo + '">';
+			 			msg += '  <a href="#">';
+			 			msg += '    <div class="pull-left">';
+			 			msg += '      <img src="${contextPath}/resources/images/free-icon-star-1828884.png" class="img-circle" alt="User Image" style="width: 20px; height: 20px; margin: 6px auto auto 6px;">';
+			 			msg += '    </div>';
+			 			msg += '    <h4>';
+			 			msg += senderName;
+			 			msg += '<small class="btn-removeMessageAlert"><i class="fa fa-times"></i></small>';
+			 			msg += '    </h4>';
+			 			msg += '    <p>' + messageContent + '</p>';
+			 			msg += ' </a>';
+			 			msg += '</li>';
+			 			
+			 			$menu.append(msg);			 			
+			 			
+					}
+				})
+				
+				$('.alert-menu-sub').text('총 ' + resData.notificationList.length + '개의 읽지않은 알람');
+				
+				
+							  
+							  
+							  
+							  
+							  
+ 			
  			
  		})
  		
