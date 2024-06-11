@@ -372,7 +372,7 @@
         
         <!-- 일정 -->
         <li>
-          <a href="${contextPath}/calendar">
+          <a href="${contextPath}/calendar/calendar.page">
             <i class="fa fa-calendar"></i> <span>일정</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-red">3</small>
@@ -421,8 +421,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${contextPath}/attendance/commute">출퇴근/근무관리</a></li>
-            <li><a href="${contextPath}/calendar">내 연차내역</a></li>
+            <li><a href="${contextPath}/attendance/commute.page">출퇴근/근무관리</a></li>
+            <li><a href="${contextPath}/attendance/annualLeave.page">내 연차내역</a></li>
           </ul>
         </li>                          
         
@@ -447,8 +447,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">강의 개설 신청</a></li>
-            <li><a href="pages/charts/morris.html">강의 관리</a></li>
+            <li><a href="${contextPath}/courses/createCourseRequest.page">강의 개설 신청</a></li>
+            <li><a href="${contextPath}/courses/manageCourses.page">강의 관리</a></li>
             <li><a href="pages/charts/morris.html">학생 주소록</a></li>
           </ul>
         </li> 

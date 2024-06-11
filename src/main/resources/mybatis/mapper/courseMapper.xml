@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.CourseMapper">
+
+  <resultMap type="CourseDto" id="CourseMap">
+    <id     property="courseNo"    column="COURSE_NO" />
+    <result property="title"       column="TITLE"/>
+    <result property="description"    column="DESCRIPTION"/>
+    <result property="startDate"    column="START_DATE"/>
+    <result property="endDate"    column="END_DATE"/>
+    <result property="coursePlan" column="COURSE_PLAN"/>
+    <result property="courseState" column="COURSE_STATE"/>
+    <association property="employee" javaType="EmployeesDto">
+      <id     property="employeeNo" column="EMPLOYEE_NO"/>
+      <result property="name"  column="NAME"/>
+      <result property="profilePicturePath"  column="PROFILE_PICTURE_PATH"/>
+    </association>
+  </resultMap>
+
+  <!-- INSERT 수행 이전에 파라미터 CourseDto의 courseNo 속성(필드)에 COURSE_SEQ.NEXTVAL 값을 저장한다. -->
+  <insert id="insertCourse"
+          parameterType="CourseDto">
+    <selectKey order="BEFORE" keyProperty="courseNo" resultType="int">
+      SELECT COURSE_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO COURSES_T (
+        COURSE_NO
+      , TITLE
+      , DESCRIPTION
+      , START_DATE
+      , END_DATE
+      , COURSE_PLAN
+    <if test="courseState!=null">, COURSE_STATE</if>
+      , EMPLOYEE_NO
+    ) VALUES (
+        #{courseNo}
+      , #{title}
+      , #{description}
+      , #{startDate}
+      , #{endDate}
+      , #{coursePlan}
+      <if test="courseState!=null">, #{courseState}</if>
+      , #{employee.employeeNo}
+    )
+  </insert>
+
+  <select id="getCourseCount">
+    SELECT COUNT(*)
+      FROM COURSES_T
+  </select>
+  
+  <select id="getCourseList"
+          parameterType="Map"
+          resultMap="CourseMap">
+    SELECT COURSE_NO, TITLE, DESCRIPTION, START_DATE, END_DATE, COURSE_STATE
+         , EMPLOYEE_NO, NAME
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY COURSE_NO ${sort}) AS RN
+                 , CRS.COURSE_NO, CRS.TITLE, CRS.DESCRIPTION, CRS.START_DATE, CRS.END_DATE, CRS.COURSE_STATE
+                 , EMP.EMPLOYEE_NO, EMP.NAME
+              FROM EMPLOYEES_T EMP INNER JOIN COURSES_T CRS
+                ON EMP.EMPLOYEE_NO = CRS.EMPLOYEE_NO)
+     WHERE RN BETWEEN #{begin} AND #{end}
+  </select>
+  
+  <select id="getCourseByNo"
+          resultMap="CourseMap">
+    SELECT CRS.COURSE_NO, CRS.TITLE, CRS.DESCRIPTION, CRS.COURSE_PLAN, CRS.START_DATE, CRS.END_DATE, CRS.COURSE_STATE
+         , EMP.EMPLOYEE_NO, EMP.NAME
+      FROM EMPLOYEES_T EMP INNER JOIN COURSES_T CRS
+        ON EMP.EMPLOYEE_NO = CRS.EMPLOYEE_NO
+     WHERE CRS.COURSE_NO = #{courseNo}
+  </select>
+
+  <update id="updateCourse"
+          parameterType="CourseDto">
+    UPDATE COURSES_T
+       SET TITLE = #{title}
+         , DESCRIPTION = #{description}
+         , START_DATE = #{startDate}
+         , END_DATE = #{endDate}
+         , COURSE_PLAN = #{coursePlan}
+         , COURSE_STATE = #{courseState}
+         , EMPLOYEE_NO = #{employee.employeeNo}
+     WHERE COURSE_NO = #{courseNo}
+  </update>
+  
+  <delete id="deleteCourse">
+    DELETE
+      FROM COURSES_T
+     WHERE COURSE_NO = #{courseNo}
+  </delete>
+  
+</mapper>

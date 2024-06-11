@@ -17,5 +17,4 @@ public class EmployeesDto {
 	Date hireDate, exitDate;
 	DepartmentsDto depart;
 	RanksDto rank;
-
 }

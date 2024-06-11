@@ -41,7 +41,7 @@ public class CaldendarServiceImpl implements CalendarService {
               .description((String) params.get("description"))
               .start(MyDateParseUtils.parseTimestamp((String) params.get("start"), dateTimeFormat, dateOnlyFormat))
               .end(MyDateParseUtils.parseTimestamp((String) params.get("end"), dateTimeFormat, dateOnlyFormat))
-              .ownerNo(1)
+              .ownerNo((int) params.get("ownerNo"))
               .allDay((boolean) params.get("allDay"))
               .lat((String) params.get("lat"))
               .lng((String) params.get("lng"))
@@ -54,10 +54,10 @@ public class CaldendarServiceImpl implements CalendarService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> getEventList(HttpServletRequest request) {
+	public ResponseEntity<Map<String, Object>> getEventList(int ownerNo) {
     // 목록 화면으로 반환할 값 (목록 + 전체 페이지 수)
-		Map<String, Object> map = Map.of("eventList", eventMapper.getEventListByOwnerNo(1));
-    return new ResponseEntity<>(Map.of("eventList", eventMapper.getEventListByOwnerNo(1))
+		Map<String, Object> map = Map.of("eventList", eventMapper.getEventListByOwnerNo(ownerNo));
+    return new ResponseEntity<>(Map.of("eventList", eventMapper.getEventListByOwnerNo(ownerNo))
                               , HttpStatus.OK);
 	}
 

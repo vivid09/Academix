@@ -5,7 +5,7 @@
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 <jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp">
-   <jsp:param value="일정" name="title"/>
+   <jsp:param value="출퇴근/근무관리" name="title"/>
  </jsp:include>
  
  <style>
@@ -26,6 +26,54 @@
   	margin-top: 15px;
   }
 
+   .content-wrapper {
+    padding: 20px;
+  }
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .content-header h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+  .status-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .status-item {
+    text-align: center;
+		height: 200px;
+    width: 200px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    margin: 30px 30px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  .status-number {
+    line-height: 90px;
+  }
+  .current-date-time {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .buttons button {
+    margin: 0 10px;
+  }
+  .calendar-header {
+    display: flex;
+    text-align: center;
+    margin-bottom: 20px;
+    justify-content: end;
+  }
  </style>
  
   <!-- fullCalendar 2.2.5-->
@@ -50,7 +98,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">일정 등록 / 수정</h5>
+          <h5 class="modal-title" id="exampleModalLabel">근태 조정 신청</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -66,10 +114,6 @@
 	              <label for="startDate">시작 일</label>
 	              <input type="date" class="form-control" id="startDate">
 	            </div>
-	            <div class="form-group col-md-6">
-	              <label for="endDate">종료 일</label>
-	              <input type="date" class="form-control" id="endDate">
-	            </div>
 	          </div>
 	          <div class="form-row">
 	            <div class="form-group col-md-4">
@@ -80,20 +124,6 @@
 	              <label for="endTime">종료 시간</label>
 	              <input type="time" class="form-control" id="endTime">
 	            </div>
-	            <div class="form-group col-md-4 all-day">
-	              <label for="allDay">종일</label>
-	              <input type="checkbox" class="form-check-input" id="allDay">
-	            </div>
-	          </div>
-	          <div class="form-row">
-	            <div class="form-group col-md-6">
-	              <label for="backgroundColor">배경 색</label>
-	              <input type="color" class="form-control" id="backgroundColor">
-	            </div>
-	            <div class="form-group col-md-6">
-	              <label for="textColor">글자 색</label>
-	              <input type="color" class="form-control" id="textColor">
-	            </div>
 	          </div>
  	          <div class="form-row">
 		          <div class="form-group col-md-12">
@@ -102,10 +132,7 @@
 		          </div>
 	          </div>
 		        <div class="modal-footer">
-	        		<input type="hidden" id="eventlat" name="eventlat">
-	            <input type="hidden" id="eventlng" name="eventlng">
-	            <input type="hidden" id="eventlocation" name="eventlocation">
-		        	<input type="hidden" id="eventNo" name="eventNo">
+		        	<input type="hidden" id="recordNo" name="recordNo">
 		          <button type="button" class="btn btn-danger" id="deleteEventBtn">Delete</button>
 		          <button type="submit" class="btn btn-primary" id="saveEventBtn">Save</button>
 		        </div>
@@ -115,8 +142,43 @@
     </div>
   </div>
 
+  <!-- Current Date and Time -->
+  <div class="current-date-time">
+    <h2 id="currentDateTime">1970-01-01(목)</h2>
+    <h3 id="currentTime">00:00:00</h3>
+	  <input type="hidden" id="recordNo" name="recordNo">
+  </div>
 
+  <!-- Buttons -->
+  <div class="buttons">
+    <button class="btn btn-success" id="inBtn">출근</button>
+    <button class="btn btn-danger" id="exitBtn">퇴근</button>
+  </div>
 
+  <!-- Status Boxes -->
+  <div class="status-box">
+    <div class="status-item">
+      <div>정상 출근</div>
+      <div class="status-number h1" id="attendance_normal">0</div>
+    </div>
+    <div class="status-item">
+      <div>지각 / 조퇴</div>
+      <div class="status-number h1" id="attendance_late_or_early_leave">0</div>
+    </div>
+    <div class="status-item">
+      <div>결근</div>
+      <div class="status-number h1" id="attendance_absence">0</div>
+    </div>
+    <div class="status-item">
+      <div>휴가</div>
+      <div class="status-number h1" id="attendance_annual_leave">0</div>
+    </div>
+  </div>
+
+  <!-- Calendar Header -->
+  <div class="calendar-header">
+    <button type="button" class="btn btn-flex btn-primary btn-lg">조정신청현황</button>
+  </div>
 
 
     <!-- Main content -->
@@ -160,21 +222,24 @@
 <script src="/plugins/fullcalendar/fullcalendar.min.js"></script>
 <script src='/plugins/fullcalendar/locale/ko.js'></script>
 <!-- Page specific script -->
+<script src="/resources/js/attendanceLabels.js?dt=${dt}"></script>
 <script>
+	
 
-	// 이벤트 목록 가져와서 캘린더 에 표시하기
-	const fnGetEventList = () => {
-	  fetch('/calendar/getEvents.do', {
-	    method: 'GET'
-	  })
-	  .then(response => response.json())
-	  .then(resData => {  // resData = {"event": []}
-	  	console.log(resData);
-	  	$.each(resData.eventList, (i, event) => {
-	    	$('#calendar').fullCalendar('renderEvent', event, true);
-	  	})
-    })
-  }
+	// 현재 날짜와 시간 표시
+	function updateDateTime() {
+	  var now = new Date();
+	  var formattedDate = now.getFullYear() + '-' +
+	                      ('0' + (now.getMonth() + 1)).slice(-2) + '-' +
+	                      ('0' + now.getDate()).slice(-2) + ' (' +
+	                      ['일', '월', '화', '수', '목', '금', '토'][now.getDay()] + ')';
+	  var formattedTime = ('0' + now.getHours()).slice(-2) + ':' +
+	                      ('0' + now.getMinutes()).slice(-2) + ':' +
+	                      ('0' + now.getSeconds()).slice(-2);
+	  document.getElementById('currentDateTime').textContent = formattedDate;
+	  document.getElementById('currentTime').textContent = formattedTime;
+	}
+	setInterval(updateDateTime, 1000);
 
   $(function () {
     /* initialize the calendar
@@ -248,39 +313,118 @@
 	        $('#eventModal').modal('show');
 
         },
+        events: function(start, end, timezone, callback) {
+      	  fetch('/attendance/commute/getAttendanceRecords.do?employeeNo=${sessionScope.user.employeeNo}', {
+      	    method: 'GET',
+      	  })
+          .then(response => response.json())
+          .then(resData => {
+            var records = [];
+            var attendance_normal = 0;
+            var	attendance_late_or_early_leave = 0;
+            var attendance_absence = 0;
+            var attendance_annual_leave = 0;
+            
+            resData.recordList.forEach(record => {
+            	if(record.recordDate.substring(0, 10) === moment(new Date()).utcOffset(9).format('YYYY-MM-DD')) {
+            		$('#recordNo').val(record.recordNo);
+            	}
+            	
+            	var inTitle = '';
+            	var outTitle = '';
+            	var color = '';
+            	var allDay = false;
+            	if(record.status === 1){
+            		attendance_normal++;
+            		inTitle = normal_in_title;
+            		outTitle = normal_out_title;
+            		color = normal_color;
+            	} else if(record.status === 2) {
+            		attendance_late_or_early_leave++;
+            		inTitle = late_title;
+            		outTitle = late_title;
+            		color = late_or_early_leave_color;
+            	} else if(record.status === 3) {
+            		attendance_late_or_early_leave++;
+            		inTitle = early_leave_title;
+            		outTitle = early_leave_title;
+            		color = late_or_early_leave_color;
+            	} else if(record.status === 4) {
+            		attendance_absence++;
+            		inTitle = absence_title;
+            		outTitle = absence_title;
+            		color = absence_color;
+            		allDay = true;
+            	} else if(record.status === 5) {
+            		attendance_annual_leave = attendance_annual_leave + 0.5;
+            		inTitle = half_day_off_am_title;
+            		outTitle = half_day_off_am_title;
+            		color = half_day_off_color;
+            	} else if(record.status === 6) {
+            		attendance_annual_leave = attendance_annual_leave + 0.5;
+            		inTitle = half_day_off_pm_title;
+            		outTitle = half_day_off_pm_title;
+            		color = half_day_off_color;
+            	} else if(record.status === 7) {
+            		attendance_annual_leave++;
+            		inTitle = annual_leave_title;
+            		color = annual_leave_color;
+            		allDay = true;
+            	}
+              // timeIn 이벤트 추가
+              records.push({
+                title: inTitle,
+                start: record.timeIn,
+                color: color,
+                allDay: allDay
+              });
+
+              // timeOut 이벤트 추가
+              if(record.timeOut && !allDay){
+	              records.push({
+	                title: outTitle,
+	                start: record.timeOut,
+	                color: color
+	              });
+              }
+            });
+
+            $('#attendance_normal').html(attendance_normal); 
+            $('#attendance_late_or_early_leave').html(attendance_late_or_early_leave); 
+            $('#attendance_absence').html(attendance_absence); 
+            $('#attendance_annual_leave').html(attendance_annual_leave); 
+            callback(records);
+          })
+          .catch(error => {
+            console.error('Error fetching events:', error);
+            callback([]); // 에러가 발생한 경우 빈 배열을 반환
+          });
+        }
 	    });
     });
 
-    $('#eventForm').submit(function(event) {
-         event.preventDefault();
+    $('#inBtn').click(function(event) {
+        event.preventDefault();
+        if($('#recordNo').val() !== ""){
+        	return;
+        }
         
-        var eventData = {
-        		eventNo: $('#eventNo').val(),
-            title: $('#eventTitle').val(),
-            start: $('#startDate').val() + 'T' + $('#startTime').val(),
-            end: $('#endDate').val() + 'T' + $('#endTime').val(),
-            allDay: $('#allDay').prop('checked'),
-            description: $('#eventDescription').val(),
-            backgroundColor: $('#backgroundColor').val(),
-            textColor: $('#textColor').val(),
-            lat: $('#eventlat').val(),
-            lng: $('#eventlng').val(),
-            location: $('#eventlocation').val()
+        var recordData = {
+            timeIn: moment(new Date()).utcOffset(9).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+            employeeNo: ${sessionScope.user.employeeNo}
         };
 
-        var url = eventData.eventNo ? '/calendar/updateEvent.do' : '/calendar/registerEvent.do';
-        fetch(url, { 
+        fetch('/attendance/commute/registerAttendanceRecord.do', { 
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(eventData)
+            body: JSON.stringify(recordData)
           }) 
           .then(response => response.json())
           .then(resData => {
         	  alert(resData.insertResult);
-            $('#calendar').fullCalendar('removeEvents');
-    		  	fnGetEventList();
+            $('#calendar').fullCalendar('refetchEvents');
           })
           .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -293,33 +437,34 @@
         $('#deleteEventBtn').hide(); // 모달이 닫힐 때 Delete 버튼을 숨깁니다.
     });
     
-    $('#deleteEventBtn').click(function() {
-    	fetch( '/calendar/removeEvent.do', { 
-        method: 'POST',
-        headers: {
+    $('#exitBtn').click(function() {
+      event.preventDefault();
+      
+      var recordData = {
+    		  recordNo: Number($('#recordNo').val()),
+          date: moment(new Date()).utcOffset(9).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+          timeOut: moment(new Date()).utcOffset(9).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+          employeeNo: ${sessionScope.user.employeeNo}
+      };
+
+      fetch('/attendance/commute/updateAttendanceRecord.do', { 
+          method: 'POST',
+          headers: {
             'Content-Type': 'application/json'
           },
-        body: $('#eventNo').val()
-      }) 
-      .then(response => response.json())
-      .then(resData => {
-    	  alert(resData.removeCount);
-
-        $('#eventModal').modal('hide');
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-      });
-        if (currentEvent) {
-            $('#calendar').fullCalendar('removeEvents', currentEvent._id);
-            $('#eventModal').modal('hide');
-            currentEvent = null;
-        }
+          body: JSON.stringify(recordData)
+        }) 
+        .then(response => response.json())
+        .then(resData => {
+      	  alert(resData.insertResult);
+          $('#calendar').fullCalendar('refetchEvents');
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
     });
 
   });
-  
-	fnGetEventList();
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

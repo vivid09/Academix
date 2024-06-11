@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface CalendarService {
 	
   int registerEvent(Map<String, Object> params) throws ParseException;
-  ResponseEntity<Map<String, Object>> getEventList(HttpServletRequest request);
+  ResponseEntity<Map<String, Object>> getEventList(int ownerNo);
   int updateEvent(Map<String, Object> params) throws ParseException;;
   int removeEvent(int eventNo);
 }

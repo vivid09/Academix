@@ -44,7 +44,7 @@
       , #{textColor}
       , #{location}
       , #{description}
-      , 1
+      , #{ownerNo}
       , #{allDay}
       , #{lat}
       , #{lng}

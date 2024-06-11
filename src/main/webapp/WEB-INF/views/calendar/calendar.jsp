@@ -472,8 +472,8 @@
 	}
 	// 이벤트 목록 가져와서 캘린더 에 표시하기
 	const fnGetEventList = () => {
-	  fetch('/calendar/getEvents.do', {
-	    method: 'GET'
+	  fetch('/calendar/getEvents.do?ownerNo=${sessionScope.user.employeeNo}', {
+	    method: 'GET',
 	  })
 	  .then(response => response.json())
 	  .then(resData => {  // resData = {"event": []}
@@ -514,6 +514,7 @@
         	// 처음 클릭했을 때 Delete 버튼 숨기기
         	$('#deleteEventBtn').hide(); 
         	// 이벤트 추가 모달을 띄우기 전에 모달 내용을 비운다.
+          $('#eventForm')[0].reset();
           $('#searchForm')[0].reset();
           placesList.innerHTML = '';
           pagination.innerHTML = '';
@@ -611,7 +612,7 @@
     
     $('#eventForm').submit(function(event) {
          event.preventDefault();
-        
+         
         var eventData = {
         		eventNo: $('#eventNo').val(),
             title: $('#eventTitle').val(),
@@ -623,7 +624,8 @@
             textColor: $('#textColor').val(),
             lat: $('#eventlat').val(),
             lng: $('#eventlng').val(),
-            location: $('#eventlocation').val()
+            location: $('#eventlocation').val(),
+            ownerNo: ${sessionScope.user.employeeNo}
         };
 
         var url = eventData.eventNo ? '/calendar/updateEvent.do' : '/calendar/registerEvent.do';

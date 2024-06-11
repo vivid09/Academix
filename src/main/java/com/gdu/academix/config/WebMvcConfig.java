@@ -1,5 +1,6 @@
 package com.gdu.academix.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -10,6 +11,9 @@ import com.gdu.academix.interceptor.RequiredSignoutInterceptor;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+  @Value("${service.file.uploadurl}")
+  public String UP_DIR;
+	
 	private final RequiredSigninInterceptor requiredSigninInterceptor;
 	private final RequiredSignoutInterceptor requiredSignoutInterceptor;
 	public WebMvcConfig(RequiredSigninInterceptor requiredSigninInterceptor,
@@ -23,6 +27,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
          .addResourceLocations("classpath:/static/");
 	    registry.addResourceHandler("/upload/**")
          .addResourceLocations("file:///upload/");
+	    registry.addResourceHandler("/coursePlan/**")
+	    	 .addResourceLocations("file:" + UP_DIR + "/coursePlan/");
 	    registry.addResourceHandler("/blog/**")
          .addResourceLocations("file:///blog/");
 	}

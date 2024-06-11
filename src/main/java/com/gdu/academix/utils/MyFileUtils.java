@@ -4,13 +4,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MyFileUtils {
-
+  @Value("${service.file.uploadurl}")
+  public String UP_DIR;
+  
   // 현재 날짜
   public static final LocalDate TODAY = LocalDate.now();
+  
+  // CoursePlan 업로드 경로 반환
+  public String getCoursePlanPath() {
+    return UP_DIR + "/coursePlan" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
+  }
   
   // 업로드 경로 반환
   public String getUploadPath() {
@@ -30,7 +38,7 @@ public class MyFileUtils {
   
   // 임시 파일 경로 반환
   public String getTempPath() {
-    return "/temporary";
+    return UP_DIR + "/temporary";
   }
   
   // 임시 파일 이름 반환 (확장자 제외)

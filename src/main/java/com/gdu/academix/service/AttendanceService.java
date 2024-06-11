@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface AttendanceService {
 	
-  int registerEvent(Map<String, Object> params) throws ParseException;
-  ResponseEntity<Map<String, Object>> getEventList(HttpServletRequest request);
-  int updateEvent(Map<String, Object> params) throws ParseException;;
-  int removeEvent(int eventNo);
+  int registerAttendanceRecord(Map<String, Object> params) throws ParseException;
+  ResponseEntity<Map<String, Object>> getAttendanceRecord(int employeeNo);
+  int updateAttendanceRecord(Map<String, Object> params) throws ParseException;;
+  int removeAttendanceRecord(int recordNo);
 }
