@@ -306,6 +306,11 @@ public class UserServiceImpl implements UserService {
     return ResponseEntity.ok(Map.of("employee", userMapper.getMemberList(), "departments", userMapper.getDepartmentsList()));
   }
   
+  @Override
+  public ResponseEntity<Map<String, Object>> getUserProfileByNo(int employeeNo) {
+    return ResponseEntity.ok(Map.of("employee", userMapper.getUserProfileByNo(employeeNo)));
+  }
+  
 
 
 }

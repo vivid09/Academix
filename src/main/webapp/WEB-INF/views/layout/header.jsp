@@ -46,6 +46,7 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -81,7 +82,7 @@
                   <li><!-- start message -->
                     <a href="#">
                       <div class="pull-left">
-                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                       </div>
                       <h4>
                         Support Team
@@ -94,7 +95,7 @@
                   <li>
                     <a href="#">
                       <div class="pull-left">
-                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                        <img src="/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
                       </div>
                       <h4>
                         AdminLTE Design Team
@@ -106,7 +107,7 @@
                   <li>
                     <a href="#">
                       <div class="pull-left">
-                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                        <img src="/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
                       </div>
                       <h4>
                         Developers
@@ -118,7 +119,7 @@
                   <li>
                     <a href="#">
                       <div class="pull-left">
-                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                        <img src="/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
                       </div>
                       <h4>
                         Sales Department
@@ -130,7 +131,7 @@
                   <li>
                     <a href="#">
                       <div class="pull-left">
-                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                        <img src="/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
                       </div>
                       <h4>
                         Reviewers
@@ -266,14 +267,26 @@
           
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="profileDropdown">
+               <c:if test="${sessionScope.user.profilePicturePath != null}">
+		          ${sessionScope.user.profilePicturePath}
+		        </c:if>
+		        <c:if test="${sessionScope.user.profilePicturePath == null}">
+		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
+		        </c:if>
+              
+
               <span class="hidden-xs">${sessionScope.user.name}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <c:if test="${sessionScope.user.profilePicturePath != null}">
+		          ${sessionScope.user.profilePicturePath}
+		        </c:if>
+		        <c:if test="${sessionScope.user.profilePicturePath == null}">
+		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
+		        </c:if>
 
                 <p>
                   ${sessionScope.user.name}
@@ -322,7 +335,12 @@
       <!-- 프로필 -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+        <c:if test="${sessionScope.user.profilePicturePath != null}">
+          ${sessionScope.user.profilePicturePath}
+        </c:if>
+        <c:if test="${sessionScope.user.profilePicturePath == null}">
+          <img src="${contextPath}/resources/images/default_profile_image.png">
+        </c:if>
         </div>
         <div class="pull-left info">
           <p>${sessionScope.user.name}님</p>
@@ -432,11 +450,19 @@
           </a>
         </li>
            
-        <li>
-          <a href="pages/chat.html">
+        <li class="treeview">
+          <a href="${contextPath}/requests/main.page">
             <i class="fa fa-pencil-square-o"></i> <span>전자결재</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
           </a>
-        </li>         
+          <a href="${contextPath}/requests/write.page">기안하기</a>
+           <c:if test="${sessionScope.user.depart.departmentNo == 2}"> 
+          <a href="${contextPath}/requests/requestsList.do">결재함</a>
+          </c:if>
+       
+        </li>
+         
         
         <li class="treeview">
           <a href="#">
@@ -454,13 +480,15 @@
         </li> 
         
         <li class="treeview">
-          <a href="#">
+          <a href="${contextPath}/hr/list.page">
             <i class="fa fa-book"></i>
             <span>인사 관리</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
+           <a href="${contexPath}/hr/employeeRegister.page">직원 및 강사 등록</a> 
+           
           <ul class="treeview-menu">
             <li><a href="pages/charts/chartjs.html">강사 및 직원관리</a></li>
           </ul>
@@ -651,3 +679,18 @@
     </section>
     <!-- /.sidebar -->
   </aside>  
+  
+ <script>
+    // Check if the profile picture exists
+    var profileImg = document.querySelector('#profileDropdown img');
+    if (profileImg) {
+        // If the profile picture exists, add the class and style
+        profileImg.classList.add('user-image');
+    } else {
+        // If using default profile image, ensure it has the correct class
+        var defaultImg = document.getElementById('defaultProfileImage');
+        if (defaultImg) {
+            defaultImg.classList.add('user-image');
+        }
+    }
+</script>

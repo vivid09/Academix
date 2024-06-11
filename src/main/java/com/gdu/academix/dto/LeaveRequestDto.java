@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class BbsDto {
-  private int bbsNo, state, depth, groupNo, groupOrder;
-  private String contents;
-  private Date createDt;
-  private UserDto user;
+public class LeaveRequestDto {
+  private int   leaveType;
+  private Double duration;
+  private Date startDate, endDate;
+  private RequestsDto requests;
+  private RequestAttachDto attach;
 }

@@ -13,7 +13,7 @@ import com.gdu.academix.interceptor.RequiredSignoutInterceptor;
 public class WebMvcConfig implements WebMvcConfigurer {
   @Value("${service.file.uploadurl}")
   public String UP_DIR;
-	
+
 	private final RequiredSigninInterceptor requiredSigninInterceptor;
 	private final RequiredSignoutInterceptor requiredSignoutInterceptor;
 	public WebMvcConfig(RequiredSigninInterceptor requiredSigninInterceptor,
@@ -31,6 +31,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	    	 .addResourceLocations("file:" + UP_DIR + "/coursePlan/");
 	    registry.addResourceHandler("/blog/**")
          .addResourceLocations("file:///blog/");
+	    registry.addResourceHandler(UP_DIR+"**")
+         .addResourceLocations("file://" + UP_DIR);
+	    registry.addResourceHandler("/profile/**")
+        .addResourceLocations("file:" + UP_DIR + "/profile/");
 	}
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

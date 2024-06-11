@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class UploadDto {
-  private int uploadNo;
-  private String title, contents, createDt, modifyDt;
-  private int attachCount;
-  private UserDto user;
+public class RequestAttachDto {
+  private int attachNo, requestNo;
+  private String uploadPath, filesystemName, originalFileName;
 }

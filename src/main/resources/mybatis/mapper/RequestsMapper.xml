@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.RequestsMapper">
+
+  <resultMap type="RequestsDto" id="RequestMap">
+  <id property="requestNo"  column="REQUEST_NO"/>
+  <result property="requestSort"  column="REQUEST_SORT"/>
+  <result property="requestDate"  column="REQUEST_DATE"/>
+  <result property="reason"  column="REASON"/>
+  <result property="requestStatus"  column="REQUEST_STATUS"/>
+  <result property="rejectReason"  column="REJECT_REASON"/>
+  <result property="picNo"  column="PIC_NO"/>
+  <association property="employees" javaType="EmployeesDto">
+   <id property="employeeNo" column="EMPLOYEE_NO"/>
+   <result property="name" column="NAME"/>
+  
+  <association property="depart" javaType="DepartmentsDto">
+   <id property="departmentNo" column="DEPARTMENT_NO"/>
+   <result property="departName" column="DEPART_NAME"/>
+  </association>
+  <association property="rank" javaType="RANKSDTO">
+   <id property="rankNo" column="RANK_NO"/>
+   <result property="rankTitle" column="RANK_TITLE"/>
+  </association>
+  </association>
+  </resultMap>
+  
+  <resultMap id="LeaveRequestMap" type="LeaveRequestDto">
+    <id property="requests.requestNo" column="REQUEST_NO"/>
+    <result property="duration" column="DURATION"/>
+    <result property="leaveType" column="LEAVE_TYPE"/>
+    <result property="startDate" column="START_DATE"/>
+    <result property="endDate" column="END_DATE"/>
+
+    <association property="requests" javaType="RequestsDto">
+        <id property="requestNo" column="REQUEST_NO"/>
+        <result property="requestSort" column="REQUEST_SORT"/>
+        <result property="requestStatus" column="REQUEST_STATUS"/>
+        <result property="picNo" column="PIC_NO"/>
+        <result property="reason" column="REASON"/>
+        <result property="rejectReason" column="REJECT_REASON"/>
+        <result property="requestDate" column="REQUEST_DATE"/>
+
+        <association property="employees" javaType="EmployeesDto">
+            <id property="employeeNo" column="EMPLOYEE_NO"/>
+            <result property="name" column="NAME"/>
+            <result property="email" column="EMAIL"/>
+            <result property="phone" column="PHONE"/>
+            <result property="address" column="ADDRESS"/>
+            <result property="password" column="PASSWORD"/>
+            <result property="profilePicturePath" column="PROFILE_PICTURE_PATH"/>
+            <result property="hireDate" column="HIRE_DATE"/>
+            <result property="endDate" column="EMPLOYEE_END_DATE"/> <!-- 컬럼명 변경 -->
+
+            <association property="depart" javaType="DepartmentsDto">
+                <id property="departmentNo" column="DEPARTMENT_NO"/>
+                <result property="departName" column="DEPART_NAME"/>
+                <result property="parentDepartNo" column="PARENT_DEPART_NO"/>
+            </association>
+
+            <association property="rank" javaType="RanksDto">
+                <id property="rankNo" column="RANK_NO"/>
+                <result property="rankTitle" column="RANK_TITLE"/>
+            </association>
+        </association>
+    </association>
+    <association property="attach" javaType="RequestAttachDto">
+		<id property="attachNo" column="ATTACH_NO"/>
+		<result property="requestNo" column="REQUEST_NO"/>
+		<result property="uploadPath" column="UPLOAD_PATH"/>
+		<result property="filesystemName" column="FILESYSTEM_NAME"/>
+		<result property="originalFileName" column="ORIGINAL_FILENAME"/>
+	</association>
+</resultMap>
+
+
+  <insert id="insertRequest" parameterType="RequestsDto" useGeneratedKeys="true" keyProperty="requestNo" keyColumn="REQUEST_NO">
+    <!-- REQUEST_NO를 미리 생성하고 keyProperty에 할당합니다 -->
+    <selectKey keyProperty="requestNo" resultType="int" order="BEFORE">
+        SELECT REQUESTS_SEQ.NEXTVAL AS requestNo FROM DUAL
+    </selectKey>
+    
+    INSERT INTO REQUESTS_T(
+        REQUEST_NO,
+        REQUEST_SORT,
+        REQUEST_DATE,
+        REASON,
+        REQUEST_STATUS,
+        REJECT_REASON,
+        PIC_NO,
+        EMPLOYEE_NO
+    ) VALUES (
+        #{requestNo},
+        #{requestSort},
+        CURRENT_DATE,
+        #{reason},
+        #{requestStatus},
+        null,
+        #{picNo},
+        #{employees.employeeNo}
+    )
+</insert>
+
+<insert id="insertLeaveRequest" parameterType="LeaveRequestDto">
+
+    INSERT INTO LEAVE_REQUEST_T(
+        REQUEST_NO,
+        START_DATE,
+        END_DATE,
+        DURATION,
+        LEAVE_TYPE,
+        NAME,
+        DEPART_NAME,
+        RANK_TITLE
+    ) VALUES (
+        #{requests.requestNo},
+        #{startDate}, 
+        #{endDate},
+        #{duration},
+        #{leaveType},
+        #{requests.employees.name},
+        #{requests.employees.depart.departName},
+        #{requests.employees.rank.rankTitle}
+    )
+</insert>
+
+
+<insert id="insertRequestsAttach"
+        parameterType="RequestAttachDto">   
+ INSERT INTO REQUEST_ATTACH_T (
+   ATTACH_NO,
+   UPLOAD_PATH,
+   FILESYSTEM_NAME,
+   ORIGINAL_FILENAME,
+   REQUEST_NO) VALUES(
+   REQUEST_ATTACH_SEQ.NEXTVAL,
+   #{uploadPath},
+   #{filesystemName},
+   #{originalFileName},
+   #{requestNo}
+ )
+</insert>
+
+<select id="getList"
+        parameterType="Map"
+        resultMap="RequestMap">
+   SELECT R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REJECT_REASON, R.PIC_NO, R.EMPLOYEE_NO, R.REQUEST_NO,NAME, D.DEPART_NAME, RA.RANK_TITLE, R.REQUEST_STATUS
+FROM (
+    SELECT ROW_NUMBER() OVER(ORDER BY R.REQUEST_NO DESC) AS RN, 
+           R.REQUEST_NO, R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REJECT_REASON, R.PIC_NO, R.EMPLOYEE_NO,R.REQUEST_STATUS,  E.NAME, E.DEPARTMENT_NO, E.RANK_NO
+    FROM REQUESTS_T R 
+    INNER JOIN EMPLOYEES_T E ON R.EMPLOYEE_NO = E.EMPLOYEE_NO
+) R
+INNER JOIN DEPARTMENTS_T D ON R.DEPARTMENT_NO = D.DEPARTMENT_NO
+INNER JOIN RANKS_T RA ON R.RANK_NO = RA.RANK_NO
+WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+  
+  <select id="getRequestsCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM REQUESTS_T
+  </select>
+  
+   <select id="getRequestsbyNo"
+        parameterType="int"
+        resultMap="LeaveRequestMap">
+   SELECT 
+    L.REQUEST_NO, L.START_DATE, L.END_DATE, L.LEAVE_TYPE,
+    R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REQUEST_STATUS, R.REJECT_REASON, R.PIC_NO, R.EMPLOYEE_NO,
+    L.NAME,L.RANK_TITLE, L.DEPART_NAME,A.ATTACH_NO,A.UPLOAD_PATH,A.FILESYSTEM_NAME,
+    A.ORIGINAL_FILENAME
+FROM 
+    LEAVE_REQUEST_T L 
+INNER JOIN 
+    REQUESTS_T R ON L.REQUEST_NO = R.REQUEST_NO
+LEFT JOIN 
+    REQUEST_ATTACH_T A ON L.REQUEST_NO = A.REQUEST_NO
+WHERE 
+    L.REQUEST_NO = #{requestNo}
+</select>
+
+
+<update id="requestApproval"
+	    parameterType="RequestsDto">
+	UPDATE REQUESTS_T
+	 SET REQUEST_STATUS = #{requestStatus},
+	  PIC_NO = #{picNo}
+	 WHERE REQUEST_NO = #{requestNo}
+	
+</update>
+
+<update id="requestReject"
+        parameterType="RequestsDto">
+	UPDATE REQUESTS_T
+	   SET REQUEST_STATUS = #{requestStatus},
+	       PIC_NO = #{picNo},
+	       REJECT_REASON = #{rejectReason}
+	 WHERE REQUEST_NO = #{requestNo}
+</update>
+
+<select id="getListPage"
+        parameterType="Map"
+        resultMap="LeaveRequestMap">
+      SELECT REQUEST_NO, REQUEST_SORT, REQUEST_DATE, REQUEST_STATUS,NAME
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY L.REQUEST_NO DESC) AS RN, L.REQUEST_NO, R.REQUEST_SORT, R.REQUEST_DATE, R.REQUEST_STATUS,L.NAME
+      FROM LEAVE_REQUEST_T L INNER JOIN REQUESTS_T R
+            ON R.REQUEST_NO = L.REQUEST_NO)
+       WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+<update id="requestModify" parameterType="LeaveRequestDto">
+    UPDATE LEAVE_REQUEST_T
+    SET DEPART_NAME = #{requests.employees.depart.departName ,jdbcType=VARCHAR},
+        NAME = #{requests.employees.name, jdbcType=VARCHAR},
+        RANK_TITLE = #{requests.employees.rank.rankTitle, jdbcType=VARCHAR},
+        LEAVE_TYPE = #{leaveType, jdbcType=VARCHAR},
+        START_DATE = #{startDate, jdbcType=DATE},
+        END_DATE = #{endDate, jdbcType=DATE},
+        DURATION = #{duration, jdbcType=INTEGER}
+    WHERE REQUEST_NO = #{requests.requestNo, jdbcType=INTEGER}
+</update>
+<update id="requestModify2"
+        parameterType="RequestsDto">
+	UPDATE REQUESTS_T
+	   SET REASON = #{reason}
+	   WHERE REQUEST_NO = #{requestNo}
+</update>
+
+<update id="requestModify3"
+        parameterType="RequestAttachDto">
+	UPDATE REQUEST_ATTACH_T
+	   SET UPLOAD_PATH =  #{uploadPath},
+	       FILESYSTEM_NAME = #{filesystemName},
+	       ORIGINAL_FILENAME = #{originalFileName}
+	 WHERE REQUEST_NO = #{requestNo}	       
+</update>
+
+
+<delete id="removeRequest2"
+        parameterType="int">
+	DELETE
+	  FROM LEAVE_REQUEST_T
+	WHERE REQUEST_NO = #{requestNo}  
+</delete>
+
+<delete id="removeRequest3"
+        parameterType="int">
+	DELETE
+	  FROM REQUEST_ATTACH_T
+	WHERE REQUEST_NO = #{requestNo}  
+</delete>
+
+<delete id="removeRequest"
+        parameterType="int">
+	DELETE
+	  FROM REQUESTS_T
+	WHERE REQUEST_NO = #{requestNo}  
+</delete>
+
+
+<select id="pending"
+        parameterType="int"
+        resultSetType="DEFAULT">
+  SELECT COUNT(REQUEST_STATUS)
+    FROM REQUESTS_T
+   WHERE REQUEST_STATUS =#{requestStatus}     
+</select>
+
+<update id="updateDownloadCount">
+   UPDATE REQUEST_ATTACH_T
+      SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
+    WHERE ATTACH_NO = #{attahcNo}  
+</update>
+
+<select id="getAttachByNo"
+        resultType="RequestAttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT
+    FROM REQUEST_ATTACH_T 
+   WHERE ATTACH_NO = #{attachNo} 
+</select>
+
+</mapper>

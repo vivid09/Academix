@@ -24,6 +24,7 @@ public interface UserService {
   
   // 오채원 - 추가(24/05/28)
   ResponseEntity<Map<String, Object>> getMemberList();
+  ResponseEntity<Map<String, Object>> getUserProfileByNo(int employeeNo);
   
   // 네이버 로그인
   //String getNaverLoginURL(HttpServletRequest request);
