@@ -132,6 +132,22 @@
               	<!-- 여기에 내용 넣으면 됨. -->
               	<h4 class="modal-title">선택한 멤버</h4>
               	<div class="selected-member-cover"> <!-- 여기에 선택 멤버 들어감. -->
+<<<<<<< HEAD
+=======
+<!-- 					        <p>이민형 대표이사</p>
+					        <p>강민지 주임</p>
+					        <p>권태현 책임</p>
+					        <p>한다혜 사원</p>
+					        <p>정우진 사원</p>
+					        <p>김지현 강사</p>
+					        <p>곽상태 강사</p>
+					        <p>황수아 주임</p>
+					        <p>김민주 책임</p>
+					        <p>한다혜 사원</p>
+					        <p>정우진 사원</p>
+					        <p>김지현 강사</p>
+					        <p>곽상태 강사</p>					 -->        
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
               	</div> 
               	<input class="form-control newGroupChatroom-input" type="text" maxlength='20' placeholder="채팅방 이름을 작성해주세요">
               </div>
@@ -148,6 +164,7 @@
       </div>
       
       <!-- 새 채팅방 생성 경고창 -->
+<<<<<<< HEAD
 <!--   			<div class="alert alert-info alert-dismissible" id="checkMemberAlert" style="display: none;">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 				<h4><i class="icon fa fa-info"></i> 이런! </h4>
@@ -157,6 +174,13 @@
 <!-- 			<div class="alert alert-light" id="checkMemberAlert" role="alert" style="display: none;">
 			  😁새로운 채팅방에 참여할 직원을 선택해주세요!😁
 			</div>			 -->      
+=======
+<!-- 			<div class="alert alert-info alert-dismissible" id="checkMemberAlert" style="display: none;">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<h4><i class="icon fa fa-info"></i> 이런! </h4>
+				😁새로운 채팅방에 참여할 직원을 선택해주세요!😁
+			</div>       -->
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
       
       
       <!-- 채팅방 부분 -->
@@ -182,6 +206,7 @@
 					      <div class="title-row">
 					        <p>현재 활동중</p>
 					      </div>
+<<<<<<< HEAD
 					      <div class="participant-body-row">
 								  <table class="participate_statusList">
 								    <tbody>
@@ -207,6 +232,31 @@
 							  <div class="menu-row-cover">
 					        <p href="#" class="modify-chatTitle"><i class="fa fa-pencil-square-o"></i> 채팅방 이름 수정</p>
 					        <p href="#" class="leave-chat"><i class="fa fa-share"></i> 채팅방 나가기</p>
+=======
+							  <table>
+							    <tbody>
+							      <tr class="employee-row">
+							        <td>황수아 주임</td>
+							        <td class="status offline">오프라인</td>
+							      </tr>
+							      <tr class="employee-row">
+							        <td>정은비 수석</td>
+							        <td class="status offline">오프라인</td>
+							      </tr>
+							      <tr class="employee-row">
+							        <td>한다혜 사원</td>
+							        <td class="status online">온라인</td>
+							      </tr>
+							      <tr class="employee-row">
+	 						        <td>권태현 책임</td>
+							        <td class="status offline">오프라인</td>
+							      </tr>
+							    </tbody>
+							  </table>
+							  <div class="menu-row-cover">
+					        <a href="#" class="modify-chatTitle"><i class="fa fa-pencil-square-o"></i> 채팅방 이름 수정</a>
+					        <a href="#" class="leave-chat"><i class="fa fa-share"></i> 채팅방 나가기</a>
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 							  </div>
 						  
 							  
@@ -230,7 +280,11 @@
         	</div>
         	<!-- 입력창 -->
          	<div class="chatMessage-input">
+<<<<<<< HEAD
 	        	<textarea class="form-control chat-message-input" type="text" maxlength='500' placeholder="메시지를 입력해주세요" style="height: 35px;"></textarea>
+=======
+	        	<input class="form-control chat-message-input" type="text" maxlength='500' placeholder="메시지를 입력해주세요">
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 	        	<button type="submit" class="btn btn-primary chatMessage-btn"><i class="fa fa-send"></i></button>
         	</div>
         </div>      
@@ -421,7 +475,11 @@
 			  }
 		  });
 		  
+<<<<<<< HEAD
 		  //console.log('jstreeData', jstreeData);
+=======
+		  console.log('jstreeData', jstreeData);
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 		  
 		  // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
 		  $('#memberArea').jstree({
@@ -1440,8 +1498,11 @@ window.addEventListener('beforeunload', function(event) {
 				// 채팅 내역 가져오기
 				fnOpenChatroom(chatroomDto);
 				
+<<<<<<< HEAD
 				//fnAddParticipateTab(chatroomDto.chatroomNo);
 				
+=======
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 			})
 		}
 		
@@ -1474,6 +1535,7 @@ window.addEventListener('beforeunload', function(event) {
         });
         
         // 위에서 필터링 한 값들 가져오기 - 직원번호
+<<<<<<< HEAD
 /*         let checkedMemberNo = filterResult
         .map((node) => {
         	return node.id.replace('emp_', '');
@@ -1492,6 +1554,11 @@ window.addEventListener('beforeunload', function(event) {
     	    .filter((id) => {
     	        return id !== userNo.toString();
     	    });
+=======
+        let checkedMemberNo = filterResult.map((node) => {
+        	return node.id.replace('emp_', '');
+        })
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
         
         // 모달창에 추가하기 전에 초기화.
         $('.selected-member-cover').empty();
@@ -1499,22 +1566,32 @@ window.addEventListener('beforeunload', function(event) {
         // 선택한 직원이 없거나 한명이라면 경고창
         if(checkedMemberText.length === 0 || checkedMemberText.length < 2) {
         	
+<<<<<<< HEAD
 /*         	$('#checkMemberAlert').show();
         	setTimeout(() => {
         		$('#checkMemberAlert').alert('close');
         	}, 2000); */
+=======
+        	//$('.checkMemberAlert').css('display', 'block');
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
         	alert('직원을 한명 이상 선택해주세요.');
         	
         } else {
      		// 반복문으로 output 돌면서 p 태그 추가
+<<<<<<< HEAD
      		  //$('.selected-member-cover').empty();
      		
+=======
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 	        checkedMemberText.forEach((member) => {
 	        	$('.selected-member-cover').append('<p>' + member + '</p>');
 	        })
 	        
 	        // 직원번호 리스트 input에 저장
+<<<<<<< HEAD
 	        //$('#hiddenList').remove();
+=======
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 	        $('.selected-member-cover').append('<input type="hidden" id="hiddenList" value="">');
 	        $('#hiddenList').val(JSON.stringify(checkedMemberNo));
 	        
@@ -1522,10 +1599,15 @@ window.addEventListener('beforeunload', function(event) {
         }
         
         
+<<<<<<< HEAD
         $('.btn-groupChat').off('click').on('click', () => {
         	
 
 					
+=======
+        $('.btn-groupChat').on('click', () => {
+        	
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
         	fetch('${contextPath}/chatting/insertNewGroupChatroom.do', {
         		method: 'POST',
         		headers: {
@@ -1539,6 +1621,7 @@ window.addEventListener('beforeunload', function(event) {
         	})
         	.then((response) => response.json())
         	.then(resData => {
+<<<<<<< HEAD
 
         		if(resData.insertGroupCount === 1) {
         			
@@ -1608,19 +1691,39 @@ window.addEventListener('beforeunload', function(event) {
         			
         		}
         		
+=======
+        		console.log(resData);
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
         	})
 			 		.catch(error => {
 			 			console.error('Error fetching sender data:', error);
 			 		}); 
         	
         	$('#modal-default2').modal('hide');
+<<<<<<< HEAD
         })
 	    });
 			
+=======
+        	
+        })
+        
+        
+        
+        
+        
+        
+	    });
+			
+			
+			
+			
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 			// jstree의 인원 선택 후 모달창 띄우기
 			//$('#modal-default2').modal('show');
 			
 		}
+<<<<<<< HEAD
 
 
 		// 처음 채팅방 세팅 후 상태 관리 탭 생성
@@ -1776,6 +1879,8 @@ window.addEventListener('beforeunload', function(event) {
 		
 		
 		
+=======
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
 		
 		
 		
@@ -1813,7 +1918,10 @@ window.addEventListener('beforeunload', function(event) {
   fnGochatroom();
   fnChatMessageScrollHandler();
   fnAddNewGroupChatroom();
+<<<<<<< HEAD
   fnExitChatroom();
+=======
+>>>>>>> 31b5fd6e6b5a09dd13e4ea706b71fbab3bc72843
   //fnMessageSend();
   
   </script>
