@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.NotifyMapper">
+  
+  <insert id="insertNotification"
+  				parameterType="NotificationsDto">
+     <selectKey order="BEFORE" keyProperty="notificationNo" resultType="int">
+      SELECT NOTIFICATION_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+  	INSERT INTO NOTIFICATIONS_T (
+        NOTIFICATION_NO, 
+        MESSAGE, 
+        NOTIFICATION_TYPE, 
+        NOTIFIER_NO, 
+        NOTIFICATION_DATE,
+        SEEN_STATUS,
+        EMPLOYEE_NO,
+        CHATROOM_NO
+		) VALUES (
+				#{notificationNo},
+        #{message},
+        #{notificationType},
+        #{notifierNo},
+        CURRENT_TIMESTAMP,
+        #{seenStatus},
+        #{employeeNo},
+        #{chatroomNo}
+		)
+	</insert>
+	
+	<select id="getNotificationList"
+					resultType="NotificationsDto">
+		 SELECT NOTIFICATION_NO, MESSAGE, NOTIFICATION_TYPE, NOTIFIER_NO, NOTIFICATION_DATE, SEEN_STATUS, EMPLOYEE_NO, CHATROOM_NO
+		   FROM NOTIFICATIONS_T
+		  WHERE EMPLOYEE_NO = #{employeeNo} 
+		  ORDER BY NOTIFICATION_DATE DESC
+	</select>
+  
+  
+
+</mapper>

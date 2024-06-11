@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 
+import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.UserDto;
 
 public interface UserService {
@@ -25,7 +26,7 @@ public interface UserService {
   
   // 오채원 - 추가(24/05/28)
   ResponseEntity<Map<String, Object>> getUserList();
-  ResponseEntity<Map<String, Object>> getUserProfileByNo(int employeeNo);
+  EmployeesDto getUserProfileByNo(int employeeNo);
   ResponseEntity<Map<String, Object>> getUserProfileListByNo(List<Integer> employeeNoList);
   
   // 네이버 로그인

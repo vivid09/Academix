@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,12 @@ public class ChatController {
     return chatService.addOneToOneChatroom(params);
   }
   
+  // 그룹 채팅방 생성
+  @PostMapping(value="/insertNewGroupChatroom.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> insertNewGroupChatroom(@RequestBody Map<String, Object> params) {
+    return chatService.addGroupChatroom(params);
+  }
+  
   // 채팅 내역 가져오기
   @GetMapping(value="/getChatMessageList.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> getChatMessageList(@RequestParam int chatroomNo, @RequestParam int page) {
@@ -73,6 +80,17 @@ public class ChatController {
   public ResponseEntity<Map<String, Object>> getChatroomParticipantList(@RequestParam int chatroomNo) {
     return chatService.getChatroomParticipantList(chatroomNo);
   }
+  
+  @DeleteMapping(value="/deleteParticipant.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> deleteParticipant(@RequestParam int chatroomNo, @RequestParam int participantNo) {
+    return chatService.deleteParticipant(chatroomNo, participantNo);
+  }
+  
+  
+  
+
+  
+  
   
   // 게시글 총 totalPage 알아내기
   /*

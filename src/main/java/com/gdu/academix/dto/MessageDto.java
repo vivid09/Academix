@@ -1,6 +1,8 @@
 package com.gdu.academix.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class MessageDto {
   
   public enum MessageType{
-    CHAT, JOIN, LEAVE;
+    CHAT, JOIN, LEAVE, UPDATE;
   }
   
   private MessageType messageType;
@@ -22,5 +24,6 @@ public class MessageDto {
   private int chatroomNo;
   private Timestamp sendDt;
   private String messageContent; 
+  private List<Integer> recipientNoList = new ArrayList<>();
 
 }

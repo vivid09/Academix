@@ -76,8 +76,11 @@
               <li class="header">You have 4 messages</li>
               <li>
                 <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- start message -->
+                <ul class="menu alert-menu">
+                
+                
+<!--
+                  <li>
                     <a href="#">
                       <div class="pull-left">
                         <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
@@ -89,7 +92,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
-                  <!-- end message -->
+              
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -102,6 +105,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -114,6 +118,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -126,6 +131,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -138,9 +144,12 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+-->           
+
+                  
                 </ul>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+              <li class="footer"><a href="#">모든 메시지 알림 지우기</a></li>
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->

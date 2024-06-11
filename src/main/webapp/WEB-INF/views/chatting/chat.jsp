@@ -8,7 +8,6 @@
    <jsp:param value="채팅" name="title"/>
  </jsp:include>
 
-<link rel="stylesheet" href="${contextPath}/resources/css/chat.css?dt=${dt}">
 
 <!-- Font Awesome 5.15.4 (unchanged as it's already the latest stable version for this specific major version) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
@@ -16,8 +15,13 @@
 <!-- jsTree 3.3.12 (unchanged as it's the latest stable version) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
 
+
+<link rel="stylesheet" href="${contextPath}/resources/css/chat.css?dt=${dt}">
+
 <!-- jQuery 3.6.0 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
 
 <!-- jQuery UI 1.12.1 (latest stable version) -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -40,12 +44,12 @@
         채팅
         <!-- <small>it all starts here</small> -->
       </h1>
-      <ol class="breadcrumb">
+<%--       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="#">Examples</a></li>
         <li class="active">Blank page</li>
         <input type="hidden" data-session-no="${sessionScope.user.employeeNo}">
-      </ol>
+      </ol> --%>
     </section>
 
     <!-- Main content -->
@@ -56,9 +60,10 @@
       <div class="box member-box">
          <div class="box-header with-border">
 	         <div class="box-title-choice">
-	           <i class="fa fa-user"></i>
-	           <i class="fa fa-commenting"></i>
+	           <i class="fa fa-user" style="cursor: pointer;"></i>
+	           <i class="fa fa-commenting" style="cursor: pointer;"></i>
 	         </div>
+
          
          	 <!-- 닫기 버튼이랑 메뉴 버튼 -->
 	         <div class="box-tools pull-right">
@@ -66,11 +71,19 @@
 	             <i class="fa fa-minus"></i>
 	           </button>
 	         </div>
-        </div>
+          </div>
+          <p class="chat-member-title">직원목록</p>
+<!--           <div class="searchInput-cover">
+            <input type="text" class="searchInput" placeholder="직원 검색">
+          </div> -->
         <div class="box-body chat-member"></div> 
+   			<div class="addChatroomBtn-cover">
+	       <button type="button" class="btn btn-block btn-primary addChatRoomBtn">+ 새 그룹채팅방 생성</button>
+	      </div>
       </div>
+
       
-            <!-- 모달창 -->
+            <!-- 프로필 조회 모달창 -->
       <div class="example-modal">
         <div class="modal fade" id="modal-default" style="display: none;">
           <div class="modal-dialog">
@@ -104,7 +117,46 @@
         <!-- /.modal -->
       </div>
       
+            <!-- 그룹 채팅 생성모달창 -->
+      <div class="example-modal">
+        <div class="modal fade" id="modal-default2" style="display: none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">새 채팅방 생성</h4>
+              </div>
+              <div class="modal-body chatModal-body">
+              	<!-- 여기에 내용 넣으면 됨. -->
+              	<h4 class="modal-title">선택한 멤버</h4>
+              	<div class="selected-member-cover"> <!-- 여기에 선택 멤버 들어감. -->
+              	</div> 
+              	<input class="form-control newGroupChatroom-input" type="text" maxlength='20' placeholder="채팅방 이름을 작성해주세요">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-groupChat">확인</button>
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">취소</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+      </div>
       
+      <!-- 새 채팅방 생성 경고창 -->
+<!--   			<div class="alert alert-info alert-dismissible" id="checkMemberAlert" style="display: none;">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<h4><i class="icon fa fa-info"></i> 이런! </h4>
+				😁새로운 채팅방에 참여할 직원을 선택해주세요!😁
+			</div> -->
+			
+<!-- 			<div class="alert alert-light" id="checkMemberAlert" role="alert" style="display: none;">
+			  😁새로운 채팅방에 참여할 직원을 선택해주세요!😁
+			</div>			 -->      
       
       
       <!-- 채팅방 부분 -->
@@ -114,7 +166,9 @@
       <div class="box chat-box" style="display: none">
         <div class="box-header with-border">
           <div class="chat-box-title">
+            <!-- <i class="fa fa-times"></i> -->
 						<span>채팅방 이름</span>
+						<span>2</span>
           </div>
           
           <!-- 상단 메뉴 -->
@@ -125,34 +179,36 @@
 						    <i class="fa fa-reorder"></i>
 						  </a>
 						  <div class="dropdown-menu chat-box-dropdown" aria-labelledby="dropdownMenuLink">
-							  <table>
-							    <tbody>
-							      <tr class="title-row">
-							        <td>현재 활동중</td>
-							      </tr>
-							      <tr class="employee-row">
-							        <td>황수아 주임</td>
-							        <td class="status offline">오프라인</td>
-							      </tr>
-							      <tr class="employee-row">
-							        <td>정은비 수석</td>
-							        <td class="status offline">오프라인</td>
-							      </tr>
-							      <tr class="employee-row">
-							        <td>한다혜 사원</td>
-							        <td class="status online">온라인</td>
-							      </tr>
-							      <tr class="employee-row">
-	 						        <td>권태현 책임</td>
-							        <td class="status offline">오프라인</td>
-							      </tr>
- 							      <tr class="employee-row">
-	 						        <td><a href="#" class="leave-chat"><i class="fa fa-share"></i> 채팅방 나가기</a></td>
-							        <td class="status offline"></td>
-							      </tr>
-							      
-							    </tbody>
-							  </table>
+					      <div class="title-row">
+					        <p>현재 활동중</p>
+					      </div>
+					      <div class="participant-body-row">
+								  <table class="participate_statusList">
+								    <tbody>
+<!-- 								      <tr class="employee-row">
+								        <td>황수아 주임</td>
+								        <td class="status offline">오프라인</td>
+								      </tr>
+								      <tr class="employee-row">
+								        <td>정은비 수석</td>
+								        <td class="status offline">오프라인</td>
+								      </tr>
+								      <tr class="employee-row">
+								        <td>한다혜 사원</td>
+								        <td class="status online">온라인</td>
+								      </tr>
+								      <tr class="employee-row">
+		 						        <td>권태현 책임</td>
+								        <td class="status offline">오프라인</td>
+								      </tr> -->
+								    </tbody>
+								  </table>
+					      </div>
+							  <div class="menu-row-cover">
+					        <p href="#" class="modify-chatTitle"><i class="fa fa-pencil-square-o"></i> 채팅방 이름 수정</p>
+					        <p href="#" class="leave-chat"><i class="fa fa-share"></i> 채팅방 나가기</p>
+							  </div>
+						  
 							  
 						  </div>
 						</div>
@@ -171,49 +227,10 @@
         	
         		<!-- 여기에 메시지 추가 -->
         	
-        	  <!-- 받은 메시지 -->
-         	  <div class="chatMessage-you">
-	        	  <div class="chatMessage-profile">
-	        	    <img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">
-	        	  </div>
-	        	  <div class="chatMessage-main">
-		        	  <div class="chatMessage-contents">
-		        	    <div class="chatMessage-senderName">정은비 수석</div>
-		        	    <div class="chatMessage-content">안녕하세요 지훈님. 혹시 오늘 회의록 정리해서 올려주실 수 있나요?</div>
-		        	  </div>
-		        	  <div class="chatMessage-info">
-		        	    <span class="hit-count">2</span>
-		        	    <span class="chatMessage-time">오후 18:30</span>
-		        	  </div>
-	        	  </div>
-        	  </div>
-        	  <!-- 받은 메시지 끝 -->
-        	  
-        	  <!-- 보낸 메시지 -->
-          	  <div class="chatMessage-me">
-	        	  <div class="chatMessage-main">
-		        	  <div class="chatMessage-contents">
-		        	    <div class="chatMessage-content">
-		        	    그나저나 너는 요즘 어떤 일들을 하고 있어? 새로 시작한 취미나, 
-									최근에 읽은 책, 혹은 관심 갖게 된 주제 같은 게 있니? 
-									예전엔 우리가 서로 이런저런 이야기 나누면서 시간을 보내곤 
-									했는데, 지금도 그때가 그리워. 때론 바쁜 일상 속에서 소중한
-									 사람들과의 대화가 큰 위로가 되잖아.
-									</div>
-		        	  </div>
-		        	  <div class="chatMessage-info">
-		        	    <span class="hit-count">2</span>
-		        	    <span class="chatMessage-time">오후 18:30</span>
-		        	  </div>
-	        	  </div>
-        	  </div> 
-        	  <!-- 보낸 메시지 끝 -->
-
-        	  
         	</div>
         	<!-- 입력창 -->
          	<div class="chatMessage-input">
-	        	<input class="form-control chat-message-input" type="text" maxlength='500' placeholder="Default input">
+	        	<textarea class="form-control chat-message-input" type="text" maxlength='500' placeholder="메시지를 입력해주세요" style="height: 35px;"></textarea>
 	        	<button type="submit" class="btn btn-primary chatMessage-btn"><i class="fa fa-send"></i></button>
         	</div>
         </div>      
@@ -228,6 +245,8 @@
   
   // stomp 연결 전역 객체
 	let stompClient = null;  
+	let currentChatroomNo = null;
+	let currentChatroomType = null;
   
   // 무한 스크롤 페이지
   let page = 1;
@@ -243,38 +262,79 @@
 	// 날짜 한글로
 	moment.locale('ko');
 	
+	// jvectorMap 이벤트 제거
+	$(document).ready(function() {
+	    // jQuery의 vectorMap 함수가 존재하는지 확인
+	    if (typeof $.fn.vectorMap !== 'undefined') {
+	        $('#world-map').vectorMap({
+	            map: 'world_mill_en',
+	            backgroundColor: "transparent",
+	            regionStyle: {
+	                initial: {
+	                    fill: '#e4e4e4',
+	                    "fill-opacity": 1,
+	                    stroke: 'none',
+	                    "stroke-width": 0,
+	                    "stroke-opacity": 1
+	                }
+	            }
+	        });
+	    } else {
+	        console.log('vectorMap function not defined');
+	    }
+	    
+	});
 	
+	// 화면 작아졌을 때
+/* 	$(document).ready(function() {
+		console.log('contacts-list-name 클릭됨.')
+	    $('.contacts-list-name').on('click', function() {
+	        if (window.innerWidth <= 768) {
+	            $('.member-box').addClass('hidden');
+	            $('.chat-box').addClass('active');
+	        }
+	    });
+	
+	    // 예시: 채팅방 화면에서 뒤로 가기 버튼 클릭 시 채팅 목록으로 돌아가기
+	    $('.fa-times').on('click', function() {
+	        $('.member-box').removeClass('hidden');
+	        $('.chat-box').removeClass('active');
+	    });
+	});	 */
+
 	
   // 직원 목록 & 채팅 목록 조회
   const fnShowChatList = () => {
 	  
-	  // 첫번째 사람 아이콘 클릭 시
-	  $('.box-title-choice i').eq(0).on('click', () => {
+  	// 첫번째 사람 아이콘 클릭 시
+  	$('.box-title-choice i').eq(0).on('click', () => {
+ 		  $('.addChatroomBtn-cover').css('display', ''); 
 		  $('.chat-member').empty();
 		  $('.box-title-choice i').eq(1).css('color', '#B5B5B5');
 		  $('.box-title-choice i').eq(0).css('color', 'black');
-		  $('.chat-member .chat-member-title').text('직원 목록');
+		  $('.chat-member-title').text('직원 목록');
 		  $('.chat-member .chat-member-title').remove();
-      $('.chat-member .searchInput').remove();
+      $('.searchInput-cover').remove();
       $('.chat-member #memberArea').remove();
 		  fnGetChatUserList();
 	  })
 	  
 	  // 두번째 채팅 아이콘 클릭 시
 	  $('.box-title-choice i').eq(1).on('click', () => {
+		  $('.addChatroomBtn-cover').css('display', 'none');  
+		  $('.chat-member').empty();
 		  $('.box-title-choice i').eq(0).css('color', '#B5B5B5');
 		  $('.box-title-choice i').eq(1).css('color', 'black');
       // input 태그 삭제
-      $('.chat-member .searchInput').remove();
+      $('.searchInput-cover').remove();
       // #memberArea div 요소 삭제
-      $('.chat-member #memberArea').remove();
-      $('.chat-member .chat-member-title').text('채팅 목록');
+      //$('.chat-member #memberArea').remove();
+      $('.chat-member-title').text('채팅 목록');
       
-      // 
-      $('.chat-member-title').after('<ul class="contacts-list"></ul>');
+      // 먼저 chat-member 요소 추가
+      //$('.chat-member-title').after('<div class="box-body chat-member"></div>');
       
-      
-      
+      $('.chat-member').append('<ul class="contacts-list"></ul>');
       
       
       // 채팅 목록 가져오기
@@ -291,8 +351,9 @@
   const fnGetChatUserList = () => {
 	  
  	  // 새로운 태그 추가
-    $('.chat-member').append('<p class="chat-member-title">직원 목록</p>');
-    $('.chat-member').append('<input type="text" class="searchInput" placeholder="직원 검색">')
+    //$('.chat-member').append('<p class="chat-member-title">직원 목록</p>');
+ 	  $('.chat-member-title').after('<div class="searchInput-cover"></div>');
+    $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="직원 검색">')
     $('.chat-member').append('<div id="memberArea"></div>');
 	  
 	  fetch('${contextPath}/user/getUserList.do',{
@@ -300,7 +361,7 @@
 	    })
 		.then((response) => response.json())
 	  .then(resData => {
-		
+		  
 		  // 변환한 데이터 담을 배열 선언
 		  var jstreeData = [];
 		  
@@ -360,6 +421,8 @@
 			  }
 		  });
 		  
+		  //console.log('jstreeData', jstreeData);
+		  
 		  // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
 		  $('#memberArea').jstree({
 			  'core': {
@@ -379,6 +442,7 @@
 		  }).on('ready.jstree', function() {
 			  $(this).jstree(true).open_all();
 		  })
+		  
 		  
 	    // 검색 기능 추가
 	    $('.searchInput').on('keyup', function() {
@@ -410,7 +474,6 @@
 		  } else {
 			  return;
 		  }
-		  
 
 		  fetch('${contextPath}/user/getUserProfileByNo.do?employeeNo=' + employeeNo,{
 		      method: 'GET',
@@ -483,7 +546,6 @@
 		    })
 			.then((response) => response.json())
 		  .then(resData => { 
-				  console.log(resData);
 				  /*
 				  resData
 				  {
@@ -538,6 +600,9 @@
 		    			  // 채팅방 열기
 		    			  fnOpenChatroom(resData.chatroom);
 		    			  
+		    			  // 상태값 받아오기
+		    			  //fnAddParticipateTab(chatroomNo);
+		    			  
 		    		 	  const chatBox = $('.chat-body'); 
 		    		 	  chatBox.scrollTop(chatBox.prop('scrollHeight'));
 			    			  
@@ -557,6 +622,9 @@
     	    
 						// 채팅방 열기
     	    	fnOpenChatroom(resData.chatroom);
+						
+						// 상태값 받아오기
+    	    	//fnAddParticipateTab(chatroomNo);
 
     	    	
     	    }
@@ -569,63 +637,245 @@
 	
 
 	
-	// STOMP 연결
- 	const fnConnect = (chatroomType) => {
-		let socket = new SockJS("/ws-stomp");
-		stompClient = Stomp.over(socket);
-		stompClient.connect({}, (frame) => {
-			//setConnected(true); 오프라인 -> 온라인 변경(혹은 그냥 세션에 해당 번호 있는걸로 판단.)
-			console.log('소켓 연결 성공: ' + frame);
-			
-			let chatroomNo = $('.chat-box-title').data('chatroom-no');  // (1)
-			
-			// 저장된 채팅 불러오기
-			fnGetChatMessage(chatroomNo);  // (2)
-			
-			
-			if(chatroomType === 'OneToOne') {  // (4) 끝까지
-				// 구독
-				console.log('구독되었습니다.');
-				stompClient.subscribe('/topic/' + chatroomNo, (chatroomMessage) =>{
-					console.log('받은 메시지: ' + JSON.stringify(JSON.parse(chatroomMessage.body)));
-					
-					// 받은 메시지 보여주기
-					fnShowChatMessage(JSON.parse(chatroomMessage.body));
-					
-					
-					
+		// STOMP 연결
+	const fnConnect = (chatroomType) => {
+		  let employeeNo = ${sessionScope.user.employeeNo};
+	    let socket = new SockJS("/ws-stomp?employeeNo=" + employeeNo);
+	    stompClient = Stomp.over(socket);
+	
+	    // 구독 정보를 저장할 객체 초기화
+	    if (!stompClient.subscriptionPaths) {
+	        stompClient.subscriptionPaths = {};
+	    }
+	    
+	    stompClient.connect({employeeNo: ${sessionScope.user.employeeNo}}, (frame) => {
+	        //console.log('소켓 연결 성공: ' + frame);
+	
+	        let chatroomNo = $('.chat-box-title').data('chatroom-no');  // (1)
+	        
+	        // 기존 채팅방 구독 해지
+	/*         if (currentChatroomNo !== null) {
+	            const previousChatroomType = chatroomType === 'OneToOne' ? 'OneToOne' : 'Group';
+	            fnDisconnect(previousChatroomType, currentChatroomNo);
+	        } */
+	
+	        // 새로운 채팅방 번호 저장
+	        currentChatroomNo = chatroomNo;
+	        currentChatroomType = chatroomType;
+	        
+	        
+	        // 저장된 채팅 불러오기
+	        fnGetChatMessage(chatroomNo);  // (2)
+	        
+	        const subscriptionPath = chatroomType === 'OneToOne' ? '/topic/' + chatroomNo : '/queue/' + chatroomNo;
+	
+	        // 기존 구독 해지
+	/*         if (stompClient.subscriptionPaths && stompClient.subscriptionPaths[subscriptionPath]) {
+	            stompClient.subscriptionPaths[subscriptionPath].unsubscribe();
+	            delete stompClient.subscriptionPaths[subscriptionPath];
+	            console.log('구독 해지되었습니다.');
+	        } */
+	        
+	        
+	        // 만약 다른 구독이 있을 경우 해지
+	/*          if (stompClient && stompClient.subscriptionPaths) {
+	            for (const key in stompClient.subscriptionPaths) {
+	                if (stompClient.subscriptionPaths.hasOwnProperty(key)) {
+	                    const previousChatroomNo = key.split('/').pop();
+	                    const previousChatroomType = key.includes('/topic/') ? 'OneToOne' : 'Group';
+	                    fnDisconnect(previousChatroomType, previousChatroomNo);
+	                }
+	            }
+	        }  */
+	        
+	/*         if(stompClient) {
+	        	fnDisconnect(chatroomType, chatroomNo);
+	        } */
+	
+	
+	        //console.log('구독되었습니다.');
+	        const subscription = stompClient.subscribe(subscriptionPath, (chatroomMessage) => {
+	            const message = JSON.parse(chatroomMessage.body);
+	
+	            if (message.messageType === 'UPDATE') {
+	                fnUpdateParticipateStatus(message); // status 관련 UPDATE 메시지 받으면 바로 탭 바꿔주는 함수.
+	            } else {
+	                // 받은 메시지 보여주기
+	                fnShowChatMessage(message);
+	            }
+	
+	        });
+	
+	        // 구독 정보를 저장
+	        if (!stompClient.subscriptionPaths) {
+	            stompClient.subscriptionPaths = {};
+	        }
+	        stompClient.subscriptionPaths[subscriptionPath] = subscription;
+	
+	        // 일정 시간 대기 후 상태 업데이트 메시지 전송
+	        setTimeout(() => {
+	            const sendPath = chatroomType === 'OneToOne' ? '/send/one/' + chatroomNo : '/send/group/' + chatroomNo;
+	
+	            stompClient.send(sendPath, {},
+	                JSON.stringify({
+	                    'chatroomNo': chatroomNo,
+	                    'messageType': 'UPDATE',
+	                    'messageContent': '1',
+	                    'isRead': 0,
+	                    'senderNo': ${sessionScope.user.employeeNo}
+	                })
+	            );
+	
+	            //console.log('첫 번째 상태 업데이트 메시지 전송됨');
+	        }, 500); // 500ms 대기
+	    }, (error) => {
+	        console.error('STOMP 연결 오류:', error);
+	    });
+	};
+	 	
+	const fnDisconnect = (chatroomType, chatroomNo) => {
+	    if (stompClient !== null) {
+	        const subscriptionPath = chatroomType === 'OneToOne' ? '/topic/' + chatroomNo : '/queue/' + chatroomNo;
+	        
+	        // 기존 구독 해지
+	        if (stompClient.subscriptionPaths && stompClient.subscriptionPaths[subscriptionPath]) {
+	            stompClient.subscriptionPaths[subscriptionPath].unsubscribe();
+	            delete stompClient.subscriptionPaths[subscriptionPath];
+	            //console.log('구독 해지되었습니다.');
+	        }
+	
+	        // 상태 업데이트 메시지 전송
+	        const sendPath = chatroomType === 'OneToOne' ? '/send/one/' + chatroomNo : '/send/group/' + chatroomNo;
+	
+	        stompClient.send(sendPath, {},
+	            JSON.stringify({
+	                'chatroomNo': chatroomNo,
+	                'messageType': 'UPDATE',
+	                'messageContent': '0', // 오프라인 상태
+	                'isRead': 0,
+	                'senderNo': ${sessionScope.user.employeeNo}
+	            })
+	        );
+	
+	        //console.log('오프라인 상태 업데이트 메시지 전송됨');
+	
+	        // WebSocket 연결 해제
+	        stompClient.disconnect(() => {
+	            console.log('WebSocket 연결이 해제되었습니다.');
+	        });
+	    }
+	};
 
-				})
-			} // elsel로 chatroomType이 group일때는 /queue 처리
-		})
-	} 
- 	
- 	// STOMP 연결 끊기
- 	const fnDisconnect = () => {
- 		if(stompClient !== null) {
- 			stompClient.disconnect();
- 		}
- 		// 상태 오프라인 설정
- 		console.log('disconnect');
- 		
- 	}
+// 페이지 떠날때 접속 해제
+window.addEventListener('beforeunload', function(event) {
+	
+	console.log('접속 해제!');
+	fnDisconnect(currentChatroomType, currentChatroomNo);
+	
+})
+
+
 	
 	// 메시지 전송
- 	const fnSendChat = () =>{
-		if($('.chat-message-input').val() != '') {
+ 	const fnSendChat = () => {
+		if($('.chat-message-input').val() != '' && $('.chat-message-input').val().trim() !== '') {
+			
+			// 내 employeeNo와 같은 직원 요소의 이름 가져옴. -> 알림 보낼때 사용
+	    let employeeNo = ${sessionScope.user.employeeNo};
+	    let employeeName = $('.chat-memberProfileList input[data-employee-no="' + employeeNo + '"]').data('employee-name');
 			
 			let chatroomNo = $('.chat-box-title').data('chatroom-no');
+			let chatroomType = $('.chat-box-title').data('chatroom-type');
 			
-			stompClient.send("/send/" + chatroomNo, {},
-					JSON.stringify({
+			// 수신자를 보내기 위해서 번호를 가져와서 리스트로 만듬 - 이때 알림용이므로 접속안한 애들만!
+			let offlineEmployeeNoList = [];
+			
+	    // 1. 테이블에서 오프라인 상태의 employee-no 값을 가져옴
+	    $('.participate_statusList td.status.offline').each(function() {
+	        let employeeNo = $(this).closest('tr').find('td[data-employee-no]').data('employee-no');
+	        offlineEmployeeNoList.push(employeeNo);
+	    });
+	    
+		 	// 2. chat-memberProfileList에서 오프라인인 employee들만 employeeNoList에 추가
+	    let employeeNoList = [];
+		 	
+	    // 3. chat-memberProfileList에서 오프라인인 employee들만 employeeNoList에 추가
+	    $('.chat-memberProfileList input').each(function() {
+	        let employeeNo = $(this).data('employee-no');
+	        if (offlineEmployeeNoList.includes(employeeNo)) {
+	            employeeNoList.push(employeeNo);
+	        }
+	    });
+	    
+	    // 알림용 - 메시지 콘텐츠에 이름이랑 내용 같이 넣어서 보냄.
+			if(chatroomType === 'OneToOne') { // 1:1의 경우
+				
+				// 채팅방에 전달
+				stompClient.send("/send/one/" + chatroomNo, {},
+						JSON.stringify({
+							'chatroomNo': chatroomNo,
+							'messageType': 'CHAT',
+							'messageContent': $('.chat-message-input').val(),
+							'isRead': 0,
+							'senderNo': ${sessionScope.user.employeeNo},
+							'recipientNos': employeeNoList
+						}));
+	    
+/* 		        stompClient.send("/send/notify", {}, JSON.stringify({
+		        	  'chatroomNo': chatroomNo,
+		            'messageContent': $('.chat-message-input').val(),
+		            'senderNo': ${sessionScope.user.employeeNo}, 
+		            'recipientNoList': employeeNoList
+		        }));	 */    
+
+
+			  // 알림을 위한 전달
+         stompClient.send("/send/notify", {}, JSON.stringify({
+					'chatroomNo': chatroomNo,
+					'messageContent': $('.chat-message-input').val(),
+					'isRead': 0,
+					'senderNo': employeeNo,
+					'recipientNoList': employeeNoList
+        })); 
+			
+			
+				//console.log('보낸 메시지: ' + $('.chat-message-input').val())
+				$('.chat-message-input').val('');
+			
+			} else {
+				
+				stompClient.send("/send/group/" + chatroomNo, {},
+						JSON.stringify({
+							'chatroomNo': chatroomNo,
+							'messageType': 'CHAT',
+							'messageContent': $('.chat-message-input').val(),
+							'isRead': 0,
+							'senderNo': ${sessionScope.user.employeeNo},
+							'recipientNos': employeeNoList
+						}));
+				
+/* 		        stompClient.send("/send/notify", {}, JSON.stringify({
+		        	  'chatroomNo': chatroomNo,
+		            'messageContent': $('.chat-message-input').val(),
+		            'senderNo': ${sessionScope.user.employeeNo}, 
+		            'recipientNoList': employeeNoList
+		        }));	 */			
+				
+			  // 알림을 위한 전달
+         stompClient.send("/send/notify", {}, JSON.stringify({
 						'chatroomNo': chatroomNo,
-						'messageType': 'CHAT',
 						'messageContent': $('.chat-message-input').val(),
-						'isRead': 0,  // 임시임..
-						'senderNo': ${sessionScope.user.employeeNo}
-					}));
-			console.log('보낸 메시지: ' + $('.chat-message-input').val())
-			$('.chat-message-input').val('');
+						'isRead': 0,
+						'senderNo': employeeNo,
+						'recipientNoList': employeeNoList
+	        })); 
+ 
+
+				  
+				//console.log('보낸 메시지: ' + $('.chat-message-input').val())
+				$('.chat-message-input').val('');
+				
+			}
 		}
 	}
  	
@@ -641,8 +891,16 @@
  		let input = $('.chat-message-input');
  		input.on('keyup', (evt) => {
  			if(evt.keyCode === 13) {
- 				evt.preventDefault();
- 				$('.chatMessage-btn').click();
+ 				if(evt.shiftKey) {
+ 					let cursorPosition = input.prop('selectionStart');
+ 					let value = input.val();
+ 					input.val(value.substring(0, cursorPosition) + '\n' + value.substring(cursorPosition));
+          input.prop('selectionStart', cursorPosition + 1);
+          input.prop('selectionEnd', cursorPosition + 1);
+ 				} else {
+ 					evt.preventDefault();
+ 					$('.chatMessage-btn').click();
+ 				}
  			}
  		})
  	}
@@ -695,6 +953,7 @@
 				const chatMemberProfileList = $('.chat-memberProfileList');
 				
 		    if (chatMemberProfileList.length) {
+		    	  //console.log('input 추가함.');
 		        chatMemberProfileList.append(hiddenInputHTML);
 		        //console.log('.chat-memberProfileList after append: ', chatMemberProfileList.html());
 		    } else {
@@ -712,7 +971,14 @@
 				
 				let messageHTML = ''; // (17)   (24)
 				
-				// chatMessageList를 반복문으로 돌면서 하나씩 번호를 비교한다.
+				if(message.messageType === 'JOIN') { // 맨 처음 환영메시지
+					
+					messageHTML += '<div class="joinChatMessage">' + message.messageContent + '</div>';
+					
+					
+				} else if(message.messageType === 'CHAT'){ // 그냥 채팅 메시지
+
+					// chatMessageList를 반복문으로 돌면서 하나씩 번호를 비교한다.
 					if(message.senderNo === ${sessionScope.user.employeeNo}) { // (18)
 						// 내가 보낸 메시지인 경우,
 					
@@ -732,6 +998,7 @@
 						  messageHTML += '  </div>';
 						  messageHTML += '</div>';
 						}
+						
 					} else {
 						// 아닌 경우에는 프로필번호를 가지고 와서 그거에 맞는 값 가져옴.
 						
@@ -754,9 +1021,31 @@
 							messageHTML += '    </div>';
 							messageHTML += '  </div>';
 							messageHTML += '</div>';
+							
+						} else {// 나간 회원..
+							
+							messageHTML += '<div class="chatMessage-you">';
+							messageHTML += '  <div class="chatMessage-profile">';
+							messageHTML += '    <img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">';
+							messageHTML += '  </div>';
+							messageHTML += '  <div class="chatMessage-main">';
+							messageHTML += '    <div class="chatMessage-contents">';
+							messageHTML += '      <div class="chatMessage-senderName">(알수없음)</div>';
+							messageHTML += '      <div class="chatMessage-content">' + message.messageContent + '</div>';
+							messageHTML += '    </div>';
+							messageHTML += '    <div class="chatMessage-info">';
+							messageHTML += '      <span class="chatMessage-time">' + moment(message.sendDt).format('A hh:mm') + '</span>';
+							messageHTML += '    </div>';
+							messageHTML += '  </div>';
+							messageHTML += '</div>';
 						}
+						
 					}
-				
+				} else {
+					// 퇴장 메시지
+					messageHTML += '<div class="leaveChatMessage">' + message.messageContent + '</div>';
+					
+				}
 				resolve({ // (21)
 					sendDt: message.sendDt,
 					html: messageHTML
@@ -805,14 +1094,13 @@
 		
 		
 		
-		
-		
-		
-		
-		
 	
  	// 채팅 내역 가져오기
  	const fnGetChatMessage = (chatroomNo) => { 
+ 		
+ 		if(chatroomNo === undefined) {
+ 			return;
+ 		}
  		
  		fetch('${contextPath}/chatting/getChatMessageList.do?chatroomNo=' + chatroomNo + '&page=' + page, {  // (3)
  			method: 'GET',
@@ -846,13 +1134,28 @@
  			// 1. fetchSenderUserData(회원 리스트 실행);
  			//$('.chat-memberProfileList').empty();
  			
+ 			if(chatMessageList.length > 0) {
 				fnGetParticipantsNoList(chatMessageList[0].chatroomNo)
 				.then(senderNoList => {
-				fetchSenderUserData(senderNoList);
-				//fnGetChatMessage(chatroomDto.chatroomNo);
-			})
+					
+					if($('.chat-memberProfileList').find('input').length < 0) {
+						fetchSenderUserData(senderNoList);
+						//fnGetChatMessage(chatroomDto.chatroomNo);
+					} else {
+						//fnAddParticipateTab(chatroomNo);
+						return;
+					}
+
+				})
  			
-      SetEmployeeMessageProfile(chatMessageList); // (16)
+      	SetEmployeeMessageProfile(chatMessageList); // (16)
+				fnAddParticipateTab(chatroomNo);
+ 			} else {
+ 				fnAddParticipateTab(chatroomNo);
+				return;
+ 			}
+ 			
+ 			
 
       
  		})
@@ -875,6 +1178,10 @@
     	$('.chat-box-title').attr('data-chatroom-no', chatroomDto.chatroomNo);
    	  $('.chat-box-title').data('chatroom-no', chatroomDto.chatroomNo);
    	  
+      $('.chat-box-title').attr('data-chatroom-type', chatroomDto.chatroomType);
+      $('.chat-box-title').data('chatroom-type', chatroomDto.chatroomType);
+   	  
+   	  
    		// 모달창 닫기
    	  $('#modal-default').modal('hide');
    		
@@ -882,13 +1189,17 @@
 	    let chatMessageBody = $('.chatMessage-body');
 	    chatMessageBody.empty();
    		
-   	  fnDisconnect();
+	    //console.log('fnOpenChatroom');
+	    fnDisconnect(currentChatroomType, currentChatroomNo);
    		
    		// stomp 연결
    	  fnConnect(chatroomDto.chatroomType);
    		
-
- 		
+			//if(chatroomDto.chatroomType === 'OneToOne') {
+ 			//fnAddParticipateTab(chatroomDto.chatroomNo);
+   		//}
+   		
+   	  
  	}
  	
  	
@@ -898,64 +1209,75 @@
  		
  		// 기본적으로 채팅 메시지 가져올때는 prepend로 앞에다 붙여주는데 메시지 보냈을 때는 끝에 붙여줘야 하니까..
  		
-		if(chatMessage.senderNo === ${sessionScope.user.employeeNo}) { 
-			// 내가 보낸 메시지인 경우,
-			 		
- 		  // 메시지 작성자의 번호를 통해 input 데이터 가져오기
- 		  const senderData = getEmployeeData(chatMessage.senderNo);
-			
-			// 날짜 추가
-			const messageDate = new Date(chatMessage.sendDt);
-			
-      if (gPreviousDate && !isSameDay(gPreviousDate, messageDate)) {
-        const dateString = moment(messageDate).format('YYYY년 MM월 DD일');
-        $('.chatMessage-body').append('<div class="date-divider">' + dateString + '</div>');
-      }
-      
-      gPreviousDate = messageDate;
-		
-			// 만약 가져온 데이터가 있다면..
-			if(senderData) { // (20)
-				let messageHTML = '';				
-				messageHTML += '<div class="chatMessage-me">';
-				messageHTML += '  <div class="chatMessage-main">';
-				messageHTML += '    <div class="chatMessage-contents">';
-				messageHTML += '      <div class="chatMessage-content">' + chatMessage.messageContent + '</div>';
-				messageHTML += '    </div>';
-			  messageHTML += '    <div class="chatMessage-info">';
-			  messageHTML += '      <span class="chatMessage-time">' + moment(chatMessage.sendDt).format('A hh:mm') + '</span>';
-			  messageHTML += '    </div>';
-			  messageHTML += '  </div>';
-			  messageHTML += '</div>';
-			  $('.chatMessage-body').append(messageHTML);
-			}
-			
-		} else {
-			// 아닌 경우에는 프로필번호를 가지고 와서 그거에 맞는 값 가져옴.
-			 		
-	 		// 메시지 작성자의 번호를 통해 input 데이터 가져오기
-	 		const senderData = getEmployeeData(chatMessage.senderNo);
-			
-			// 만약 가져온 데이터가 있다면..
-			if(senderData) {
-				let messageHTML = '';
-				messageHTML += '<div class="chatMessage-you">';
-				messageHTML += '  <div class="chatMessage-profile">';
-				messageHTML += '    <img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">';
-				messageHTML += '  </div>';
-				messageHTML += '  <div class="chatMessage-main">';
-				messageHTML += '    <div class="chatMessage-contents">';
-				messageHTML += '      <div class="chatMessage-senderName">' + senderData.name + '</div>';
-				messageHTML += '      <div class="chatMessage-content">' + chatMessage.messageContent + '</div>';
-				messageHTML += '    </div>';
-				messageHTML += '    <div class="chatMessage-info">';
-				messageHTML += '      <span class="chatMessage-time">' + moment(chatMessage.sendDt).format('A hh:mm') + '</span>';
-				messageHTML += '    </div>';
-				messageHTML += '  </div>';
-				messageHTML += '</div>';
-			  $('.chatMessage-body').append(messageHTML);				
-			}
-		}
+ 		if(chatMessage.messageType === 'CHAT') {
+ 			
+ 			if(chatMessage.senderNo === ${sessionScope.user.employeeNo}) { 
+ 				// 내가 보낸 메시지인 경우,
+ 				 		
+ 	 		  // 메시지 작성자의 번호를 통해 input 데이터 가져오기
+ 	 		  const senderData = getEmployeeData(chatMessage.senderNo);
+ 				
+ 				// 날짜 추가
+ 				//const messageDate = new Date(chatMessage.sendDt);
+ 				
+ 	/*       if (gPreviousDate && !isSameDay(gPreviousDate, messageDate)) {
+ 	        const dateString = moment(messageDate).format('YYYY년 MM월 DD일');
+ 	        $('.chatMessage-body').append('<div class="date-divider">' + dateString + '</div>');
+ 	      }
+ 	      
+ 	      gPreviousDate = messageDate; */
+ 			
+ 				// 만약 가져온 데이터가 있다면..
+ 				if(senderData) { // (20)
+ 					let messageHTML = '';				
+ 					messageHTML += '<div class="chatMessage-me">';
+ 					messageHTML += '  <div class="chatMessage-main">';
+ 					messageHTML += '    <div class="chatMessage-contents">';
+ 					messageHTML += '      <div class="chatMessage-content">' + chatMessage.messageContent + '</div>';
+ 					messageHTML += '    </div>';
+ 				  messageHTML += '    <div class="chatMessage-info">';
+ 				  messageHTML += '      <span class="chatMessage-time">' + moment(chatMessage.sendDt).format('A hh:mm') + '</span>';
+ 				  messageHTML += '    </div>';
+ 				  messageHTML += '  </div>';
+ 				  messageHTML += '</div>';
+ 				  $('.chatMessage-body').append(messageHTML);
+ 				}
+ 				
+ 			} else {
+ 				// 아닌 경우에는 프로필번호를 가지고 와서 그거에 맞는 값 가져옴.
+ 				 		
+ 		 		// 메시지 작성자의 번호를 통해 input 데이터 가져오기
+ 		 		const senderData = getEmployeeData(chatMessage.senderNo);
+ 				
+ 				// 만약 가져온 데이터가 있다면..
+ 				if(senderData) {
+ 					let messageHTML = '';
+ 					messageHTML += '<div class="chatMessage-you">';
+ 					messageHTML += '  <div class="chatMessage-profile">';
+ 					messageHTML += '    <img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">';
+ 					messageHTML += '  </div>';
+ 					messageHTML += '  <div class="chatMessage-main">';
+ 					messageHTML += '    <div class="chatMessage-contents">';
+ 					messageHTML += '      <div class="chatMessage-senderName">' + senderData.name + '</div>';
+ 					messageHTML += '      <div class="chatMessage-content">' + chatMessage.messageContent + '</div>';
+ 					messageHTML += '    </div>';
+ 					messageHTML += '    <div class="chatMessage-info">';
+ 					messageHTML += '      <span class="chatMessage-time">' + moment(chatMessage.sendDt).format('A hh:mm') + '</span>';
+ 					messageHTML += '    </div>';
+ 					messageHTML += '  </div>';
+ 					messageHTML += '</div>';
+ 				  $('.chatMessage-body').append(messageHTML);				
+ 				}
+ 			}
+ 		} else {
+ 			let messageHTML = '';
+ 			//퇴장 메시지일 경우
+ 			messageHTML += '<div class="leaveChatMessage">' + chatMessage.messageContent + '</div>';
+ 			$('.chatMessage-body').append(messageHTML);
+ 			
+ 		}
+ 		
+
 		// 스크롤 맨 밑으로 내리기
  	  const chatBox = $('.chat-body'); 
  	  chatBox.scrollTop(chatBox.prop('scrollHeight'));
@@ -997,6 +1319,8 @@
 		// 채팅 목록 가져오기
 		const fnGetChatList = (employeeNo) => {
 			
+			$('.contacts-list').empty();
+			
 			/*
 				1. DB에서 현재 로그인한 직원의 번호에 해당하는 chatroom 데이터를 List로 받아온다.
 				2. 받아온 데이터를 반복문으로 돌리면서 리스트로 화면에 뿌려준다.
@@ -1021,7 +1345,6 @@
 			})
 			.then((response) => response.json())
 			.then(resData => {
-				console.log(resData);
 				$.each(resData.chatroomList, (i, chatroom) => {
 					
 					
@@ -1062,6 +1385,9 @@
 				const chatMessageList = resData.employeeNoList;
 				const senderNoList = Array.from(new Set(chatMessageList.map(message => message.participantNo)));
 				
+				// 제목 옆의 숫자 바꾸기
+				$('.chat-box-title > span:nth-of-type(2)').text(senderNoList.length);
+				
 				return senderNoList;
 			})
 		}
@@ -1084,13 +1410,11 @@
 				
 				// 1. input 요소 가져오기
 				let $input = $(evt.target).find('input');
-				console.log('$input', $input.get(0).outerHTML);
 				
 				// 2. 제목 가져오기
 		    let title = $(evt.target).contents().filter(function() {
 		      return this.nodeType === Node.TEXT_NODE;
 		  	}).text().trim();
-				console.log('title', title);
 
 				// 2. chatroom 객체 생성
 		    let chatroomDto = {
@@ -1110,23 +1434,377 @@
 					//fnGetChatMessage(chatroomDto.chatroomNo);
 				})
 				
-				console.log('chatroomDto', chatroomDto);
+				//console.log('fnGochatroom');
+				//fnDisconnect(currentChatroomType, currentChatroomNo);
 				
 				// 채팅 내역 가져오기
-				//fnGetChatMessage(chatroomDto.chatroomNo);
 				fnOpenChatroom(chatroomDto);
-				//fnChatMessageScrollHandler();
 				
+				//fnAddParticipateTab(chatroomDto.chatroomNo);
 				
-/* 				fetch('${contextPath}/chatting/getChatroomByChatroomNo.do?chatroomNo=' + chatroomNo, {
-					method: 'GET',
-				})
-				.then((response) => response.json())
-				.then(resData => {
-					
-				}) */
 			})
 		}
+		
+		// 단체 채팅방 만들기
+		const fnAddNewGroupChatroom = () => {
+			
+			// 새 채팅방 만들기 버튼 클릭 시 선택한 노드의 텍스트 값 가져옴.
+	    $('.addChatRoomBtn').on('click', () => {
+	    	
+	    	// 'get_checked' 메서드로 선택된 노드 가져오기
+        let checked_ids = $('#memberArea').jstree('get_checked', true);
+	    	
+        // 각 node의 id가 emp_로 시작하는 것들만 가져옴. 텍스트 값 가져오기
+        let filterResult = checked_ids.filter((node) => {
+        	return node.id.startsWith('emp_');
+        })
+        
+        // 위에서 필터링 한 값들 가져오기 - 텍스트
+        // 내 이름 가져오기
+        let myName = $('.hidden-xs').text();
+        
+        // 내 이름 선택 시 제외하고 텍스트 가져오기
+        let checkedMemberText = filterResult
+        .map((node) => {
+        	return node.text;
+        })
+        .filter((text) => {
+        	let namePart = text.split(' ')[0];
+        	return namePart !== myName;
+        });
+        
+        // 위에서 필터링 한 값들 가져오기 - 직원번호
+/*         let checkedMemberNo = filterResult
+        .map((node) => {
+        	return node.id.replace('emp_', '');
+        })
+        .filter((id) => {
+        	
+          return id !== ${sessionScope.user.employeeNo};
+    		}); */
+    		let userNo = ${sessionScope.user.employeeNo};
+    		
+    		let checkedMemberNo = filterResult
+    	    .map((node) => {
+    	        let idWithoutPrefix = node.id.replace('emp_', '');
+    	        return idWithoutPrefix;
+    	    })
+    	    .filter((id) => {
+    	        return id !== userNo.toString();
+    	    });
+        
+        // 모달창에 추가하기 전에 초기화.
+        $('.selected-member-cover').empty();
+        
+        // 선택한 직원이 없거나 한명이라면 경고창
+        if(checkedMemberText.length === 0 || checkedMemberText.length < 2) {
+        	
+/*         	$('#checkMemberAlert').show();
+        	setTimeout(() => {
+        		$('#checkMemberAlert').alert('close');
+        	}, 2000); */
+        	alert('직원을 한명 이상 선택해주세요.');
+        	
+        } else {
+     		// 반복문으로 output 돌면서 p 태그 추가
+     		  //$('.selected-member-cover').empty();
+     		
+	        checkedMemberText.forEach((member) => {
+	        	$('.selected-member-cover').append('<p>' + member + '</p>');
+	        })
+	        
+	        // 직원번호 리스트 input에 저장
+	        //$('#hiddenList').remove();
+	        $('.selected-member-cover').append('<input type="hidden" id="hiddenList" value="">');
+	        $('#hiddenList').val(JSON.stringify(checkedMemberNo));
+	        
+	        $('#modal-default2').modal('show');
+        }
+        
+        
+        $('.btn-groupChat').off('click').on('click', () => {
+        	
+
+					
+        	fetch('${contextPath}/chatting/insertNewGroupChatroom.do', {
+        		method: 'POST',
+        		headers: {
+        			'Content-Type': 'application/json',
+        		},
+        		body: JSON.stringify ({
+        			'loginUserNo': ${sessionScope.user.employeeNo},
+        			'employeeNoList': $('#hiddenList').val(),
+        			'chatroomTitle': $('.newGroupChatroom-input').val()
+        		})
+        	})
+        	.then((response) => response.json())
+        	.then(resData => {
+
+        		if(resData.insertGroupCount === 1) {
+        			
+        			// 방 생성 성공
+        			$('.newGroupChatroom-input').val('');
+        			
+        			$('.chat-memberProfileList').empty();
+        			
+        			// 방 참여자 번호리스트 보냄(이때 나도 추가) - 화면 input에 추가해야 하기 때문
+	    			  const beforeEmployeeList = $('#hiddenList').val();
+	    			  const employeeList = JSON.parse(beforeEmployeeList).map(Number);
+	    			  const userEmployeeNo = Number('${sessionScope.user.employeeNo}');
+	    			  employeeList.push(userEmployeeNo);
+	    			  
+	    			  
+	    			  fetchSenderUserData(employeeList)
+   			  			.then(() => {
+   			  				
+   		    			  page = 1;
+   		    			  chatMessageTotalPage = 0;
+   		    			  gChatroomNo = resData.chatroom.chatroomNo;
+   		    			  
+   		    			  //console.log('fnAddNewGroupChatroom');
+   		    			  //fnDisconnect(currentChatroomType, currentChatroomNo);
+   		    			  
+   		    			  // 채팅방 열기
+   		    			  fnOpenChatroom(resData.chatroom); // 여기서 fnConnect 실행 후 fnGetChatMessage(채팅내역가져오기) 가 실행된다.
+   		    			  
+   								// 처음 채팅 메시지 보내주기 - 채팅방 열렸을 때만..
+/*    								let msg = $('.hidden-xs').text() + '님이 ';
+   		    			  let names = [];
+   		    			  
+   	 	            $('.chat-memberProfileList input[type="hidden"]').each(function() {
+   	 	              
+   	 	            	  let name = $(this).data('employee-name');
+   	 	            	  let employeeNo = $(this).data('employee-no');
+   	 	                if (employeeNo !== ${sessionScope.user.employeeNo}) {  // 자기자신 제거
+   	 	                    names.push(name);
+   	 	                }
+   	 	            });
+   	 	            
+   	 	            if (names.length > 0) {
+   	 	                msg += names.join('님, ') + '을(를) 초대하였습니다.';
+   	 	            }
+
+   	 	            console.log(msg); */
+   	 	            
+   	 	            // 초대 메시지 전송
+/* 		   	 	        stompClient.send("/group/send/" + resData.chatroom.chatroomNo, {},
+		   	 	    		JSON.stringify({
+		   	 	    			'chatroomNo': resData.chatroom.chatroomNo,
+		   	 	    			'messageType': 'JOIN',
+		   	 	    			'messageContent': msg,
+		   	 	    			'isRead': 0,
+		   	 	    			'senderNo': ${sessionScope.user.employeeNo}
+		   	 	    		})); */
+   	 	            
+		   	 	    	  //fnAddParticipateTab(resData.chatroom.chatroomNo);
+		   	 	    		
+   		    		 	  const chatBox = $('.chat-body'); 
+   		    		 	  chatBox.scrollTop(chatBox.prop('scrollHeight'));
+   			  				
+   			  			})
+        			
+        		} else {
+        			console.log('방 생성 실패하였습니다!');
+        			
+        		}
+        		
+        	})
+			 		.catch(error => {
+			 			console.error('Error fetching sender data:', error);
+			 		}); 
+        	
+        	$('#modal-default2').modal('hide');
+        })
+	    });
+			
+			// jstree의 인원 선택 후 모달창 띄우기
+			//$('#modal-default2').modal('show');
+			
+		}
+
+
+		// 처음 채팅방 세팅 후 상태 관리 탭 생성
+		const fnAddParticipateTab = (chatroomNo) => {
+			
+			// 참여자 리스트 데이터 (status 포함) 가져오기
+			fetch('${contextPath}/chatting/getChatroomParticipantList.do?chatroomNo=' + chatroomNo, {
+				method: 'GET',
+			})
+			.then((response) => response.json())
+			.then(resData => {
+			
+				//console.log(resData);
+				
+				// resData.employeeNoList.participate_status
+				// 반복문을 돌면서 status값에 맞게 
+				//$.each(resData.employeeNoList, (i, participant) => {
+				//})
+				
+				// 초기화
+				$('.participate_statusList tbody').empty();
+
+				// employeeNo와 participateStatus 매핑
+				let statusMap = {};
+				$.each(resData.employeeNoList, function(index, item) {
+					statusMap[item.participantNo] = item.participateStatus;
+				});
+				
+				// input에서 참여자 데이터 가져와서 추가
+				$('.chat-memberProfileList input[type="hidden"]').each(function() {
+					
+					let employeeNo = $(this).data('employee-no');
+					let employeeName = $(this).data('employee-name');
+					
+					let status = statusMap[employeeNo] === 1 ? '온라인' : '오프라인';
+					let statusClass = statusMap[employeeNo] === 1 ? 'online' : 'offline';
+					
+					let newRow = '<tr class="employee-row">'
+					newRow += '<td data-employee-no="' + employeeNo + '">' + employeeName + '</td>'
+					newRow += '<td class="status ' + statusClass + '">' + status + '</td>'
+					newRow += '</tr>';
+					
+					$('.participate_statusList tbody').append(newRow);
+					
+				})
+				
+			
+			
+		});
+		
+		}
+		
+		
+		// 상태 관리 함수
+		const fnUpdateParticipateStatus = (chatroomMessage) => {
+			
+			// 여기서는 상태 변경을 해주면 된다.
+			// chatroomMessage.senderNo값에 해당하는 employeeNo를 가진 td요소를 가져와서 그것의 친구 요소인 status값과 class를 오프라인으로 변경해준다.
+			
+			let statusCode = chatroomMessage.messageContent;
+			let employeeNo = chatroomMessage.senderNo;
+			
+	    let status = statusCode === '1' ? '온라인' : '오프라인';
+	    let statusClass = statusCode === '1' ? 'online' : 'offline';
+			
+	    let $employeeTd = $('td[data-employee-no="' + employeeNo + '"]');
+	    if ($employeeTd.length) {
+	        // 상태를 표시하는 td 요소를 찾아서 클래스와 내용을 업데이트해준다.
+	        let $statusTd = $employeeTd.siblings('.status');
+	        $statusTd.removeClass('online offline').addClass(statusClass).text(status);
+	    }
+		}
+		
+ 
+		// 채팅방 나가기
+ 		const fnExitChatroom = () => {
+ 			
+ 			// 채팅방 나가기 버튼 클릭 시..
+ 			$('.leave-chat').on('click', () => {
+ 				
+ 	 			let chatroomNo = $('.chat-box-title').data('chatroom-no');
+ 	 			let participantNo = ${sessionScope.user.employeeNo};
+ 	 			
+ 				// 나간 사용자 데이터 삭제
+ 				fetch('${contextPath}/chatting/deleteParticipant.do?chatroomNo=' + chatroomNo + '&participantNo=' + participantNo, {
+ 					method: 'delete',
+ 					headers: {
+ 						'Content-Type': 'application/json',
+ 					},
+ 				})
+ 				.then((response) => response.json())
+ 				.then(resData => {
+
+					/*
+					{
+					    "chatroomNo": 29,
+					    "LeaveMessage": "김의정 사원님이 채팅방을 나갔습니다.",
+					    "deleteCount": 1
+					} 
+					 */
+					 
+					 let chatroomNo = resData.chatroom.chatroomNo;
+					 let chatroomType = resData.chatroom.chatroomType;
+					 let leaveMessage = resData.LeaveMessage;
+					 
+					 if(resData.deleteCount === 1) {
+						 
+						 const sendPath = chatroomType === 'OneToOne' ? '/send/one/' + chatroomNo : '/send/group/' + chatroomNo;
+
+
+						 stompClient.send(sendPath, {},
+							    JSON.stringify({
+							        'chatroomNo': chatroomNo,
+							        'messageType': 'LEAVE',
+							        'messageContent': leaveMessage,
+							        'isRead': 0,
+							        'senderNo': ${sessionScope.user.employeeNo}
+							    })
+							);
+						 
+							    // chat-box 숨기기
+							    $('.chat-box').css('display', 'none');
+							    
+							    // 채팅방 연결 종료
+							    fnDisconnect(chatroomType, chatroomNo);
+							    
+							    // 채팅방 리스트 갱신
+							    fnGetChatList(${sessionScope.user.employeeNo});
+							    
+							    // 페이지 새로고침
+							    //window.location.reload();
+
+
+				
+
+						 
+					 } else {
+						 alert('채팅방 나가기에 실패했습니다 ㅜ');
+					 }
+ 					
+ 				})
+ 	 			.catch(error => {
+ 	 				console.error('delete 요청 에러: ' + error);
+ 	 			})
+ 			})
+ 			
+ 		}
+ 
+		
+		
+		
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
   
 	fnPressEnterSendBtn();		
   fnGetChatUserList();
@@ -1134,6 +1812,8 @@
   fnAddChatRoom();
   fnGochatroom();
   fnChatMessageScrollHandler();
+  fnAddNewGroupChatroom();
+  fnExitChatroom();
   //fnMessageSend();
   
   </script>
@@ -1147,11 +1827,12 @@
 <!-- Morris.js charts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 <script src="/plugins/morris/morris.min.js"></script>
+
 <!-- Sparkline -->
 <script src="/plugins/sparkline/jquery.sparkline.min.js"></script>
 <!-- jvectormap -->
-<script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<!-- <script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script> -->
+<!-- <script src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script> -->
 <!-- jQuery Knob Chart -->
 <script src="/plugins/knob/jquery.knob.js"></script>
 <!-- daterangepicker -->
@@ -1171,6 +1852,6 @@
 
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
-<script src="/dist/js/pages/dashboard.js"></script>  
+<!-- <script src="/dist/js/pages/dashboard.js"></script>   -->
     
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

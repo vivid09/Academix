@@ -16,8 +16,8 @@ public interface ChatMapper {
   ChatroomDto isOneToOneChatroomExits(Map<String, Object> map);
   
   // 1:1 채팅방 생성
-  int insertNewOneToOneChatroom(ChatroomDto chatroom);
-  int insertNewOneToOneParticipate(ChatroomParticipateDto participate);
+  int insertNewChatroom(ChatroomDto chatroom);
+  int insertNewParticipate(ChatroomParticipateDto participate);
   
   // 메시지 데이터 넣기
   int insertChatMessage(MessageDto message);
@@ -35,6 +35,18 @@ public interface ChatMapper {
   
   // 채팅방 번호 - 채팅방 데이터 가져오기
   ChatroomDto getChatroomByChatroomNo(int chatroomNo);
+  
+  // 채팅방 참여자 상태 업데이트
+  int updateParticipateStatus(Map<String, Object> map);
+  
+  // 채팅방 참여자 삭제
+  int deleteParticipant(Map<String, Object> map);
+  
+  // 채팅방 참여자가 0명인 채팅방 삭제
+  int deleteNoParticipateChatroom();
+  
+  // 채팅방 참여자가 0명인 채팅방 메시지 삭제
+  int deleteNoParticipateMessage();
   
   
 }

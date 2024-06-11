@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class ChatroomParticipateDto {
-  private int chatroomParticipateNo, participantNo;
-  private int chatroomNo;
+  private int chatroomParticipateNo, participantNo, chatroomNo, participateStatus;
 }

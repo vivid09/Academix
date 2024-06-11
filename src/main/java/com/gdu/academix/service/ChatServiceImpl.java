@@ -2,8 +2,10 @@ package com.gdu.academix.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import com.gdu.academix.dto.ChatroomDto;
 import com.gdu.academix.dto.ChatroomParticipateDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.MessageDto;
+import com.gdu.academix.dto.MessageDto.MessageType;
 import com.gdu.academix.mapper.ChatMapper;
 import com.gdu.academix.mapper.UserMapper;
 import com.gdu.academix.utils.MyPageUtils;
@@ -35,9 +38,11 @@ public class ChatServiceImpl implements ChatService {
   @Override
   public Map<String, Object> insertChatMessage(MessageDto message) {
     
+    String replaceMessageContent = message.getMessageContent().replace("\n", "<br>").replace("\r\n", "<br>");
+    
     MessageDto chatMessage = MessageDto.builder()
                                   .messageType(message.getMessageType())
-                                  .messageContent(message.getMessageContent())
+                                  .messageContent(replaceMessageContent)
                                   .isRead(message.getIsRead())
                                   .chatroomNo(message.getChatroomNo())
                                   .senderNo(message.getSenderNo())
@@ -84,10 +89,11 @@ public class ChatServiceImpl implements ChatService {
     ChatroomDto chatroomDto = ChatroomDto.builder()
                                   .chatroomTitle(loginUser.getName() + ", " + chatUser.getName())
                                   .chatroomType("OneToOne")
+                                  .creatorNo(loginUserNo)
                                 .build();
     
     // 2. 생성한 chatroomDto를 chatMapper에 보냄.
-    int insertOneToOneChatroomCount = chatMapper.insertNewOneToOneChatroom(chatroomDto);
+    int insertOneToOneChatroomCount = chatMapper.insertNewChatroom(chatroomDto);
     
 
     
@@ -105,8 +111,8 @@ public class ChatServiceImpl implements ChatService {
     
     // 4. 순서대로 chatroom_participate_t 삽입
     int insertOneToOneParticipantCount = 0;
-    insertOneToOneParticipantCount = chatMapper.insertNewOneToOneParticipate(chatroomParticipateDto1);
-    insertOneToOneParticipantCount += chatMapper.insertNewOneToOneParticipate(chatroomParticipateDto2);
+    insertOneToOneParticipantCount = chatMapper.insertNewParticipate(chatroomParticipateDto1);
+    insertOneToOneParticipantCount += chatMapper.insertNewParticipate(chatroomParticipateDto2);
     
     // 5. 채팅방 여부 메소드를 통해 새로 넣은 객체 가져옴.
     Map<String, Object> map = Map.of("loginUserNo", loginUserNo, "chatUserNo", chatUserNo);
@@ -121,6 +127,116 @@ public class ChatServiceImpl implements ChatService {
     }
     
   }
+  
+  
+  
+  @Override
+    public ResponseEntity<Map<String, Object>> addGroupChatroom(Map<String, Object> params) {
+    
+      // 보낸 데이터 가져오기
+      int loginUserNo = Integer.parseInt(String.valueOf(params.get("loginUserNo")));
+      //List<Integer> employeeNoList = (List<Integer>) params.get("employeeNoList");
+      String chatroomTitle = String.valueOf(params.get("chatroomTitle"));
+      
+      // employeeNoList 받아오기
+      // 1. 문자열을 리스트로 변환한다.
+      String employeeNoListStr = (String) params.get("employeeNoList");
+      employeeNoListStr = employeeNoListStr.replace("[", "").replace("]", "").replace("\"", "").replace(" ", "");
+      List<Integer> employeeNoList = Arrays.stream(employeeNoListStr.split(","))
+                                           .map(Integer::parseInt)
+                                           .collect(Collectors.toList());
+      
+      // 1. chatroomDto 생성
+      ChatroomDto chatroomDto = ChatroomDto.builder()
+                                      .chatroomTitle(chatroomTitle)
+                                      .chatroomType("Group")
+                                      .creatorNo(loginUserNo)
+                                    .build();
+      
+      // 2. 생성한 chatroomDto를 chatMapper에 보냄.
+      int insertGroupChatroomCount = chatMapper.insertNewChatroom(chatroomDto);
+      
+      // 메시지 만들때 사용할 회원 리스트
+      List<EmployeesDto> employeeList = new ArrayList<>();
+      
+      // 3. ChatroomParticipateDto 생성 후 순서대로 chatroom_participate_t 삽입
+      int insertGroupParticipantCount = 0;
+      for(int i = 0, size = employeeNoList.size(); i < size; i++) {
+        
+        // for문 돌면서 객체 생성
+        ChatroomParticipateDto chatroomParticipateDto = ChatroomParticipateDto.builder()
+                                                                  .chatroomNo(chatroomDto.getChatroomNo())
+                                                                  .participantNo(employeeNoList.get(i))
+                                                                .build();
+        
+        insertGroupParticipantCount += chatMapper.insertNewParticipate(chatroomParticipateDto);
+        
+        // 회원 객체 가져와서 리스트에 담기
+        employeeList.add(userMapper.getUserProfileByNo(employeeNoList.get(i)));
+      }
+      
+      // 4. 내것도 넣기
+      ChatroomParticipateDto chatroomParticipateDto = ChatroomParticipateDto.builder()
+                                                                .chatroomNo(chatroomDto.getChatroomNo())
+                                                                .participantNo(loginUserNo)
+                                                              .build();
+      
+      insertGroupParticipantCount += chatMapper.insertNewParticipate(chatroomParticipateDto);
+      
+      // 5. 채팅방 여부 메소드를 통해 새로 넣은 객체 가져옴. (프론트에서 띄워야 하기 때문에)
+      ChatroomDto newChatroomDto = chatMapper.getChatroomByChatroomNo(chatroomDto.getChatroomNo());
+      
+      // +++ 처음 환영 메시지 추가
+      // 1.1 내 객체 가져오기 - 이름 필요
+      EmployeesDto me = userMapper.getUserProfileByNo(loginUserNo);
+      
+      StringBuilder builder = new StringBuilder();
+      builder.append(me.getName() + " " + me.getRank().getRankTitle() + "님이 ");
+      for(int i = 0, size = employeeList.size(); i < size; i++) {
+        builder.append(employeeList.get(i).getName() + " " + employeeList.get(i).getRank().getRankTitle() + "님");
+        if (i < size - 1) {
+          builder.append(", ");
+        }
+      }
+      builder.append("을(를) 초대하였습니다.");
+      
+      String JoinMessage = builder.toString();
+      
+      // 1.2 메시지 객체 생성 후 추가하기
+      MessageDto message = MessageDto.builder()
+                                  .messageType(MessageType.JOIN)
+                                  .messageContent(JoinMessage)
+                                  .isRead(0)
+                                  .chatroomNo(newChatroomDto.getChatroomNo())
+                                  .senderNo(loginUserNo)
+                               .build();
+      int insertMessageCount = chatMapper.insertChatMessage(message);
+      
+      // 6. 삽입 성공 여부를 담은 값과 새로 생성한 chatroomDto 객체를 보낸다.
+      if(insertGroupChatroomCount == 1 && insertGroupParticipantCount == employeeNoList.size() + 1 && insertMessageCount == 1) {
+        return ResponseEntity.ok(Map.of("insertGroupCount", 1,
+                                        "chatroom", newChatroomDto));
+      } else {
+        return ResponseEntity.ok(Map.of("insertGroupCount", 0));
+      }
+    }  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   @Override
   public ResponseEntity<Map<String, Object>> getChatMessageList(int chatroomNo, int page) {
@@ -182,6 +298,50 @@ public class ChatServiceImpl implements ChatService {
   public ResponseEntity<Map<String, Object>> getChatroomParticipantList(int chatroomNo) {
     List<ChatroomParticipateDto> employeeNoList = chatMapper.getChatroomParticipantList(chatroomNo);
     return ResponseEntity.ok(Map.of("employeeNoList", employeeNoList));
+  }
+  
+  @Override
+  public int updateParticipateStatus(Map<String, Object> params) {
+    return chatMapper.updateParticipateStatus(params);
+  }
+  
+  @Override
+  public ResponseEntity<Map<String, Object>> deleteParticipant(int chatroomNo, int participantNo) {
+
+    // 1. 해당 값을 map에 담는다.
+    Map<String, Object> map = Map.of("chatroomNo", chatroomNo,
+                                     "participantNo", participantNo);
+    
+    // 2. map을 DB로 보낸다.
+    int deleteCount = chatMapper.deleteParticipant(map);
+    
+    // 3. 채팅방 퇴장 메시지를 만든다.
+    EmployeesDto me = userMapper.getUserProfileByNo(participantNo);
+
+    StringBuilder builder = new StringBuilder();
+    builder.append(me.getName() + " " + me.getRank().getRankTitle() + "님이 채팅방을 나갔습니다.");
+
+    String LeaveMessage = builder.toString();
+    
+    // 4. chatroomNo에 해당하는 chatroom객체를 가져온다.
+    ChatroomDto chatroom = chatMapper.getChatroomByChatroomNo(chatroomNo);
+    
+    // 5. 성공 여부를 담은 값, 채팅방 번호, 퇴장 메시지를 map에 담아서 반환한다.
+    return ResponseEntity.ok(Map.of("deleteCount", deleteCount,
+                                    "chatroom", chatroom,
+                                    "LeaveMessage", LeaveMessage));
+    
+    
+    
+  }
+  
+  @Override
+  public void deleteNoParticipateChatroom() {
+    
+    // 메시지 데이터 지우기
+    chatMapper.deleteNoParticipateMessage();
+    // 채팅방 데이터 지우기
+    chatMapper.deleteNoParticipateChatroom();
   }
   
   

@@ -19,6 +19,9 @@ public interface ChatService {
   // 1:1 채팅방 생성
   ResponseEntity<Map<String, Object>> addOneToOneChatroom(Map<String, Object> params);
   
+  // 그룹 채팅방 생성
+  ResponseEntity<Map<String, Object>> addGroupChatroom(Map<String, Object> params);
+  
   // 채팅 내역 가져오기
   ResponseEntity<Map<String, Object>> getChatMessageList(int chatroomNo, int page);
   
@@ -32,5 +35,13 @@ public interface ChatService {
   ResponseEntity<Map<String, Object>> getChatroomParticipantList(int chatroomNo);
   
   //ResponseEntity<Map<String, Object>> getChatTotalPageCount(int chatroomNo, int page);
+  // 채팅방 - 참여자 상태 업데이트
+  int updateParticipateStatus(Map<String, Object> params);
+  
+  // 채팅방 - 참여자 삭제
+  ResponseEntity<Map<String, Object>> deleteParticipant(int chatroomNo, int participantNo);
+  
+  // 채팅방 - 참여자가 0명인 채팅방 삭제
+  void deleteNoParticipateChatroom();
 
 }

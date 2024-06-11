@@ -58,8 +58,7 @@ public class UserController {
   // 오채원 - 직원 프로필 조회
   @GetMapping(value="/getUserProfileByNo.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> getUserProfileByNo(@RequestParam int employeeNo) {
-    System.out.println("employeeNo: " + employeeNo);
-    return userService.getUserProfileByNo(employeeNo);
+    return ResponseEntity.ok(Map.of("employee", userService.getUserProfileByNo(employeeNo)));
   }
   
   // 직원 프로필리스트 조회
