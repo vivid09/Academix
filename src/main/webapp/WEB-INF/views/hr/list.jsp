@@ -184,7 +184,7 @@
   display: block;
   margin: 20px auto 0;
 }
-	
+
 		
 		
 	
@@ -386,8 +386,11 @@
                 console.log(employee.employeeNo);
                 let str= '<div class="list-container"  id="list-emp">';
                 str += '<div class="profile-container">';
-                
-               //	 str +=  '<div>' + employee.profilePicturePath.replace('<img ', '<img style="width: 50px;" ') + '</div>';
+                if(employee.profilePicturePath != null){
+                str +=  '<span>' + employee.profilePicturePath+ '</span>';
+                } else {
+                	str += '<img src="/images/default_profile_image.png">';
+                }
                 
                 str += '</div>';
                 str += '<div class="not-profile-grid">';
@@ -398,7 +401,8 @@
                 str += '<div>주소: ' + employee.address + '</div>';
                 str += '<div>부서: ' + employee.depart.departName + '</div>';
                 str += '<div>직급: ' + employee.rank.rankTitle + '</div>';
-                str += '<div>상태: ' + employee.employeeStatus + '</div>';
+                const employeeStatusText = employee.employeeStatus === 1 ? '재직' : '퇴직';
+                str += '<div>상태: ' + employeeStatusText + '</div>';
                 str += '<div>입사일: ' + employee.hireDate + '</div>';
                 str += '<div>사원번호: ' + employee.employeeNo + '</div>';
                 str += '<div>퇴사일: ' + employee.exitDate + '</div>';

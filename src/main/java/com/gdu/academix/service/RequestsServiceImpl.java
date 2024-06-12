@@ -178,7 +178,7 @@ public class RequestsServiceImpl implements RequestsService {
 	                                   , "status", status);    
 	    
 	    model.addAttribute("beginNo", total - (page - 1) * display);
-	    model.addAttribute("requestsList", requestsMapper.getListPage(map));
+	    model.addAttribute("requestsList", requestsMapper.getList(map));
 	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/requests/maing.page", sort, display));
 	    model.addAttribute("display", display);
 	    model.addAttribute("sort", sort);
@@ -254,7 +254,7 @@ public class RequestsServiceImpl implements RequestsService {
 	                                   , "status", status);	    
 	    
 	    model.addAttribute("beginNo", total - (page - 1) * display);
-	    model.addAttribute("requestsList", requestsMapper.getListPage(map));
+	    model.addAttribute("requestsList", requestsMapper.getList(map));
 	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/requests/requestsList.do", sort, display));
 	    model.addAttribute("display", display);
 	    model.addAttribute("sort", sort);

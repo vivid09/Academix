@@ -120,29 +120,29 @@
     </thead>
     <tbody>
       <c:forEach items="${requestsList}" var="leaveRequests" varStatus="vs">
-        <tr class="sta" id="req-list" data-request-status="${leaveRequests.requests.requestStatus}">
-          <td>${leaveRequests.requests.requestNo}</td>
+        <tr class="sta" id="req-list" data-request-status="${leaveRequests.requestStatus}">
+          <td>${leaveRequests.requestNo}</td>
           <td>
-            <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requests.requestNo}">
+            <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requestNo}">
              <c:choose>
-                      <c:when test="${leaveRequests.requests.requestSort eq '0'}">
+                      <c:when test="${leaveRequests.requestSort eq '0'}">
                         근태조정서
 					 </c:when>
-                      <c:when test="${leaveRequests.requests.requestSort eq '1'}">
+                      <c:when test="${leaveRequests.requestSort eq '1'}">
                         연차신청서
 					 </c:when>
                 </c:choose></a>
           </td>
-          <td>${leaveRequests.requests.employees.name}</td>
-          <td>${leaveRequests.requests.requestDate}</td>
+          <td>${leaveRequests.employees.name}</td>
+          <td>${leaveRequests.requestDate}</td>
           <td> <c:choose>
-                      <c:when test="${leaveRequests.requests.requestStatus eq '0'}">
+                      <c:when test="${leaveRequests.requestStatus eq '0'}">
                         미결재
 					 </c:when>
-                      <c:when test="${leaveRequests.requests.requestStatus eq '1'}">
+                      <c:when test="${leaveRequests.requestStatus eq '1'}">
                         승인
 					 </c:when>
-                      <c:when test="${leaveRequests.requests.requestStatus eq '2'}">
+                      <c:when test="${leaveRequests.requestStatus eq '2'}">
                         반려
 					 </c:when>
                 </c:choose></td>
