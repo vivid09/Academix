@@ -8,6 +8,11 @@
   <jsp:param value="최근 파일" name="title"/>
 </jsp:include>
 
+<!-- Font Awesome 5.15.4 (unchanged as it's already the latest stable version for this specific major version) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<!-- jsTree 3.3.12 (unchanged as it's the latest stable version) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+
 <style>
   h5{
     margin-top: auto;
@@ -32,6 +37,17 @@
     padding: 5px 0;
     border-bottom: 1px solid #ccc;
   }
+  .addFolderBtn-cover {
+    position: relative;
+    display: flex;
+  }
+  .addFolderBtn {
+    position: absolute;
+    left: 1rem;
+    width: 90%;
+    bottom: 0;
+    margin: 0 auto;
+  }
 </style>
 
   <!-- Content Wrapper. Contains page content -->
@@ -50,17 +66,15 @@
           <div class="box box-solid">
             <div class="box-header with-border">
               <h3 class="box-title">Drive</h3>
-
               <div class="box-tools">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
               </div>
             </div>
-            <p class="chat-member-title">내 드라이브</p>
+            <div class="chat-member-title"></div>
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
                 <li class="active">
-                  <a href="${contextPath}/drive/main.page"><i class="fa fa-history"></i> 최근 파일</a>
+                  <a href="${contextPath}/drive/main.do"><i class="fa fa-history"></i> 최근 파일</a>
                 </li>
                 <li>
                   <a href="${contextPath}/drive/allList.page" class="chat-member"><i class="fa fa-envelope-o"></i> 모든 파일</a>
@@ -68,6 +82,9 @@
               </ul>
             </div>
             <!-- /.box-body -->
+            <div class="addFolderBtn">
+              <button type="button" class="btn btn-block btn-primary addFolderBtn" id="addFolderBtn">새 폴더 추가</button>
+            </div>
           </div>
           <!-- /. box -->
         </div>
@@ -129,118 +146,7 @@
                     <td class="mailbox-attachment"></td>
                     <td class="mailbox-date">5 mins ago</td>
                   </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">28 mins ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">11 hours ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">15 hours ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">Yesterday</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">2 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">2 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">2 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">2 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">2 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">4 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">12 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">12 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">14 days ago</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                    <td class="mailbox-date">15 days ago</td>
-                  </tr>
+                  
                   </tbody>
                 </table>
                 <!-- /.table -->
@@ -273,22 +179,21 @@
                         method="POST"
                         enctype="multipart/form-data"
                         action="${contextPath}/drive/register.do">
-                    <!-- 폴더 구조 가져와서 어디에 파일 저장할지 선택하도록 하기
-                          -> 선택한 폴더 번호 같이 서버로 갈 수 있도록 저장하기 -->
                     <h5>파일을 저장할 경로를 선택해주세요.</h5>
                     <div class="folder-list"></div>
-                    <input type="hidden" id="folderUploadPath" name="folderUploadPath">
+                    <input type="hidden" name="folderUploadPath" id="folderUploadPath">
+                    <input type="hidden" name="folderNo" id="folderNo">
                     <div class="drag-drop-area" id="dragDropArea">
                       <p>파일을 여기에 드래그 앤 드롭 하거나 클릭하여 선택하세요</p>
                     </div>
-                    <input type="file" id="files" multiple style="display:none">
+                    <input type="file" name="files" id="files" multiple style="display:none">
                     <div class="file-list" id="fileList"></div>
+                    <div class="modal-footer">
+                      <input type="hidden" name="ownerNo" value="${sessionScope.user.employeeNo}">
+                      <button type="submit" class="btn btn-primary pull-left">업로드</button>
+                      <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">닫기</button>
+                    </div>
                   </form>
-                </div>
-                <div class="modal-footer">
-                  <input type="hidden" name="ownerNo" value="${sessionScope.user.employeeNo}">
-                  <button type="submit" class="btn btn-primary pull-left">업로드</button>
-                  <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">닫기</button>
                 </div>
               </div>
               <!-- /.modal-content -->
@@ -298,6 +203,48 @@
           <!-- /.modal -->
         </div>
         <!-- /.example-modal -->
+        <!-- 폴더 추가 모달창 -->
+        <div class="example-modal">
+          <div class="modal fade" id="addFolderModal" style="display: none;">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <h4 class="modal-title">새 폴더 추가</h4>
+                </div>
+                <div class="modal-body">
+                  <!-- 여기에 내용 넣으면 됨. -->
+                  <form id="frm-addFolder"
+                        method="POST"
+                        action="${contextPath}/drive/addFolder.do">
+                    <h5>새 폴더 위치를 선택해주세요.</h5>
+                    <div class="folder-list"></div>
+                    
+                    <input type="hidden" name="folderUploadPath" id="folderUploadPath">
+                    <input type="hidden" name="folderNo" id="folderNo"><!-- parentFolderNo -->
+                    
+                    <h5>새 폴더명을 작성해주세요.</h5>
+                    <input type="text" name="folderName" id="folderName">
+                    
+                    <div class="modal-footer">
+                      <input type="hidden" name="ownerNo" value="${sessionScope.user.employeeNo}">
+                      <button type="submit" class="btn btn-primary pull-left">확인</button>
+                      <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">닫기</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        </div>
+        <!-- /.example-modal -->
+        
       </div>
       <!-- /.row -->
     </section>
@@ -395,6 +342,11 @@
       }
     }
   });
+  
+  // 폴더 추가하는 버튼
+  document.getElementById('addFolderBtn').addEventListener('click', () => {
+    $('#addFolderModal').modal('show');
+  }
   
   // -------------------------------------------- 폴더 구조 --------------------------------------------
   // 드라이브 리스트 가져오기
@@ -579,7 +531,7 @@
                'keep_selected_style': true,
                'three_state': false,
                'whole_node' : false,
-               'tie_selection' : false,
+               'tie_selection' : true,
                'cascade': 'down'
             }           
       }).on('ready.jstree', function() {
@@ -587,13 +539,17 @@
       }).on('changed.jstree', function (e, data) {
         var selectedNode = data.instance.get_node(data.selected[0]);
         if (selectedNode) {
-          var selectedFolderNo = selectedNode.id;
-          var selectedFolder = resData.folder.find(folder => folder.folderNo.toString() === selectedFolderNo);
+          var selectedFolderNo = parseInt(selectedNode.id, 10);
+          console.log(selectedFolderNo);
+          var selectedFolder = resData.folder.find(folder => folder.folderNo === selectedFolderNo);
           if (selectedFolder) {
+        	  console.log(selectedFolder);
             document.getElementById('folderUploadPath').value = selectedFolder.folderUploadPath;
+            document.getElementById('folderNo').value = selectedFolder.folderNo;
           }
         }
       });
+      
       
       /*
       // 검색 기능 추가
@@ -606,12 +562,23 @@
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);
     });
-    
+  }
+  
+  const fnUploadInserted = () => {
+	  const inserted = '${inserted}';
+	  if(inserted !== '') {
+		  if(inserted === 'true') {
+			  alert('업로드 되었습니다.');
+		  } else {
+	      alert('업로드 실패했습니다.');
+	    }
+	  } 
   }
   
   
   fnGetFileList();
   fnGetFileListForSave();
+  fnUploadInserted();
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

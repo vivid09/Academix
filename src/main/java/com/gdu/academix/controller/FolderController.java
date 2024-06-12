@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gdu.academix.service.FolderService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/drive")
@@ -25,8 +28,10 @@ public class FolderController {
     this.folderService = folderService;
   }
   
-  @GetMapping("/main.page")
-  public String main() {
+  @GetMapping("/main.do")
+  public String main(HttpServletRequest request, Model model) {
+    model.addAttribute("request", request);
+    folderService.loadUploadList(model);
     return "drive/main";
   }
   
@@ -49,12 +54,14 @@ public class FolderController {
   @PostMapping("/register.do")
   public String register(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("inserted", folderService.registerUpload(multipartRequest));
+    //return "redirect:/drive/main.page";
     return "redirect:/drive/main.do";
   }
   
-  @PostMapping(value="/createFolder.do", produces="application/json")
-  public ResponseEntity<Map<String, Object>> createFolder(@RequestBody Map<String, Object> params) {
-    return ResponseEntity.ok(Map.of("insertCount", folderService.createFolder(params)));
+  // 폴더 추가
+  @PostMapping(value="/addFolder.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> addFolder(@RequestBody Map<String, Object> params) {
+    return ResponseEntity.ok(Map.of("insertCount", folderService.addFolder(params)));
   }
 
   

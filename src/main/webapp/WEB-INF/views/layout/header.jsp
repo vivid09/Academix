@@ -431,7 +431,7 @@
         </li>                          
         
         <li class="drive">
-          <a href="${contextPath}/drive/main.page">
+          <a href="${contextPath}/drive/main.do">
             <i class="fa fa-folder-open"></i> <span>드라이브</span>
           </a>
           <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">

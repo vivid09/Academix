@@ -3,19 +3,24 @@ package com.gdu.academix.service;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.gdu.academix.dto.FileDto;
 import com.gdu.academix.dto.FolderDto;
 import com.gdu.academix.mapper.FolderMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Transactional
 @Service
@@ -69,8 +74,12 @@ public class FolderServiceImpl implements FolderService {
   }
   
   @Override
-  public int registerUpload(MultipartHttpServletRequest multipartRequest) {
+  public boolean registerUpload(MultipartHttpServletRequest multipartRequest) {
     int ownerNo = Integer.parseInt(multipartRequest.getParameter("ownerNo"));
+    int folderNo = Integer.parseInt(multipartRequest.getParameter("folderNo"));
+    FolderDto folder = new FolderDto();
+    folder.setFolderNo(folderNo);
+    
     List<MultipartFile> files = multipartRequest.getFiles("files");
     int insertFolderCount;
     if(files.get(0).getSize() == 0) {
@@ -79,27 +88,42 @@ public class FolderServiceImpl implements FolderService {
       insertFolderCount = 0;
     }
     
-    // int folderNo = ;
-    
-//    for (MultipartFile multipartFile : files) {
-//      if(multipartFile != null && !multipartFile.isEmpty()) {
-//        String fileUploadPath = ;
-//        File dir = new File(fileUploadPath);
-//      }
-//      String originalFilename = multipartFile.getOriginalFilename();
-//      String filesystemName = myFileUtils.getFilesystemName(originalFilename);
-//      File file = new File(dir, filesystemName);
-//    }
-    
-    
-    
-    return 0;
+    for (MultipartFile multipartFile : files) {
+      if(multipartFile != null && !multipartFile.isEmpty()) {
+        String fileUploadPath = multipartRequest.getParameter("folderUploadPath");
+        File dir = new File(fileUploadPath);
+        
+        String originalFilename = multipartFile.getOriginalFilename();
+        String filesystemName = myFileUtils.getFilesystemName(originalFilename);
+        File file = new File(dir, filesystemName);
+        
+        try {
+          multipartFile.transferTo(file);
+          
+          FileDto fileDto = FileDto.builder()
+                            .fileUploadPath(fileUploadPath)
+                            .filesystemName(filesystemName)
+                            .originalFilename(originalFilename)
+                            .folder(folder)
+                            .ownerNo(ownerNo)
+                          .build();
+          
+          insertFolderCount += folderMapper.insertFile(fileDto);
+          
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return insertFolderCount == files.size();
   }
   
   @Override
-  public int createFolder(Map<String, Object> params) {
+  public int addFolder(Map<String, Object> params) {
+    String parentFolderUploadPath = (String) params.get("folderUploadPath");
     String folderName = (String) params.get("folderName");
-    String folderUploadPath = "c:/" + folderName;
+    String folderUploadPath = parentFolderUploadPath + "/" + folderName;
+    
     int ownerNo = Integer.parseInt(String.valueOf(params.get("ownerNo")));
     int parentFolderNo = Integer.parseInt(String.valueOf(params.get("parentFolderNo")));
     
@@ -113,7 +137,35 @@ public class FolderServiceImpl implements FolderService {
     return folderMapper.insertFolder(folder);
   }
   
-  
+  @Override
+  public void loadUploadList(Model model) {
+//    Map<String, Object> modelMap = model.asMap();
+//    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+//    
+//    int total = uploadMapper.getUploadCount();
+//    
+//    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+//    int display = Integer.parseInt(optDisplay.orElse("20"));
+//    
+//    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+//    int page = Integer.parseInt(optPage.orElse("1"));
+//
+//    myPageUtils.setPaging(total, display, page);
+//    
+//    Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+//    String sort = optSort.orElse("DESC");
+//    
+//    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
+//                                   , "end", myPageUtils.getEnd()
+//                                   , "sort", sort);
+//    
+//    model.addAttribute("beginNo", total - (page - 1) * display);
+//    model.addAttribute("uploadList", uploadMapper.getUploadList(map));
+//    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/upload/list.do", sort, display));
+//    model.addAttribute("display", display);
+//    model.addAttribute("sort", sort);
+//    model.addAttribute("page", page);
+  }
   
   
   

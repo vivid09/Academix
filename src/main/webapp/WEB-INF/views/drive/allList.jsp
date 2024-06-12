@@ -45,8 +45,12 @@
             <p class="chat-member-title">내 드라이브</p><!-- .chat-member-title -->
             <div class="box-body no-padding chat-member"><!-- .chat-member -->
               <ul class="nav nav-pills nav-stacked">
-                <li><a href="${contextPath}/drive/main.page"><i class="fa fa-history"></i> 최근 파일</a></li>
-                <li class="active"><a href="${contextPath}/drive/allList.page"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
+                <li>
+                  <a href="${contextPath}/drive/main.do"><i class="fa fa-history"></i> 최근 파일</a>
+                </li>
+                <li class="active">
+                  <a href="${contextPath}/drive/allList.page"><i class="fa fa-envelope-o"></i> 모든 파일</a>
+                </li>
               </ul>
             </div>
             <!-- /.box-body -->
@@ -245,7 +249,8 @@
                 <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                   <h4 class="modal-title">파일 업로드</h4>
                 </div>
                 <div class="modal-body">

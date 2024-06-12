@@ -5,7 +5,7 @@
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 <script>
-  $.widget.bridge('uibutton', $.ui.button);
+  //$.widget.bridge('uibutton', $.ui.button);
 </script>
   <footer class="main-footer">
     
