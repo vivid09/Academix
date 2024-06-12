@@ -9,15 +9,29 @@
 </jsp:include>
 
 <style>
-    .drag-drop-area {
-        border: 2px dashed #007bff;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-    }
-    .drag-drop-area.dragover {
-        background-color: #e9ecef;
-    }
+  h5{
+    margin-top: auto;
+  }
+  .chat-member {
+    margin-bottom: 20px;
+  }
+  .drag-drop-area {
+    border: 2px dashed #007bff;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .drag-drop-area.dragover {
+      background-color: #e9ecef;
+  }
+  .file-list {
+    margin-top: 15px;
+  }
+  .file-item {
+    padding: 5px 0;
+    border-bottom: 1px solid #ccc;
+  }
 </style>
 
   <!-- Content Wrapper. Contains page content -->
@@ -42,10 +56,15 @@
                 </button>
               </div>
             </div>
+            <p class="chat-member-title">내 드라이브</p>
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="#"><i class="fa fa-history"></i> 최근 파일</a></li>
-                <li><a href="${contextPath}/drive/allList.page"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
+                <li class="active">
+                  <a href="${contextPath}/drive/main.page"><i class="fa fa-history"></i> 최근 파일</a>
+                </li>
+                <li>
+                  <a href="${contextPath}/drive/allList.page" class="chat-member"><i class="fa fa-envelope-o"></i> 모든 파일</a>
+                </li>
               </ul>
             </div>
             <!-- /.box-body -->
@@ -236,6 +255,7 @@
           <!-- /. box -->
         </div>
         <!-- /.col -->
+        <!-- 파일 업로드 모달창 -->
         <div class="example-modal">
           <div class="modal fade" id="uploadModal" style="display: none;">
             <div class="modal-dialog">
@@ -243,7 +263,8 @@
                 <!-- 이 부분 프로필 조회, 채팅방 이름 변경에 따라 동적 생성 -->
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                   <h4 class="modal-title">파일 업로드</h4>
                 </div>
                 <div class="modal-body">
@@ -254,6 +275,9 @@
                         action="${contextPath}/drive/register.do">
                     <!-- 폴더 구조 가져와서 어디에 파일 저장할지 선택하도록 하기
                           -> 선택한 폴더 번호 같이 서버로 갈 수 있도록 저장하기 -->
+                    <h5>파일을 저장할 경로를 선택해주세요.</h5>
+                    <div class="folder-list"></div>
+                    <input type="hidden" id="folderUploadPath" name="folderUploadPath">
                     <div class="drag-drop-area" id="dragDropArea">
                       <p>파일을 여기에 드래그 앤 드롭 하거나 클릭하여 선택하세요</p>
                     </div>
@@ -262,7 +286,7 @@
                   </form>
                 </div>
                 <div class="modal-footer">
-                  <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">
+                  <input type="hidden" name="ownerNo" value="${sessionScope.user.employeeNo}">
                   <button type="submit" class="btn btn-primary pull-left">업로드</button>
                   <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">닫기</button>
                 </div>
@@ -294,6 +318,9 @@
 <script src="../../dist/js/app.min.js"></script>
 <!-- iCheck -->
 <script src="../../plugins/iCheck/icheck.min.js"></script>
+<!-- jsTree 3.3.12 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+
 <!-- Page Script -->
 <script>
   $(function () {
@@ -370,36 +397,34 @@
   });
   
   // -------------------------------------------- 폴더 구조 --------------------------------------------
-  // 직원 리스트 가져오기
-  const fnGetChatUserList = () => {
-    
+  // 드라이브 리스트 가져오기
+  const fnGetFileList = () => {
     // 새로운 태그 추가
-    //$('.chat-member').append('<p class="chat-member-title">직원 목록</p>');
     $('.chat-member-title').after('<div class="searchInput-cover"></div>');
-    $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="직원 검색">')
-    $('.chat-member').append('<div id="memberArea"></div>');
+    $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="파일 검색">')
+    $('.chat-member').append('<div class="memberArea"></div>');
     
-    fetch('${contextPath}/user/getUserList.do',{
-        method: 'GET',
-      })
+    fetch('${contextPath}/drive/getFileList.do',{
+      method: 'GET',
+    })
     .then((response) => response.json())
     .then(resData => {
     
       // 변환한 데이터 담을 배열 선언
       var jstreeData = [];
       
-      
       // 회사 root node로 설정
-      var com = resData.departments.find(depart => depart.departName === 'Academix');
-      if(com) {
+      var drive = resData.folder.find(folder => folder.folderName === 'drive');
+      if(drive) {
         jstreeData.push({
-          id: com.departmentNo,
+          id: drive.folderNo,
           parent: '#',
-          text: com.departName,
+          text: drive.folderName,
           icon: "fas fa-building"
         });
       }
       
+      /*
       // employee 데이터에서 대표데이터만 빼서 설정
       var ceo = resData.employee.find(employee => employee.rank.rankTitle === '대표이사');
       if(ceo) {
@@ -410,19 +435,21 @@
           icon: "fas fa-user-tie"
         });
       }
+      */
       
-      // 부서 데이터
-      resData.departments.forEach(function(department) {
-        if(department.departName !== 'Academix'){
+      // 폴더 데이터
+      resData.folder.forEach(function(folder) {
+        if(folder.folderName !== 'drive'){
           jstreeData.push({
-            id: department.departmentNo.toString(),
-            parent: department.parentDepartNo.toString(),
-            text: department.departName,
+            id: folder.folderNo.toString(),
+            parent: folder.parentFolderNo.toString(),
+            text: folder.folderName,
             icon: "fas fa-layer-group"
           });
         }
       });
       
+      /*
       // 직원 데이터
       resData.employee.forEach(function(employee) {
         if(employee.depart.departmentNo !== 0 && employee.employeeStatus !== 0){ // 대표이사 제외
@@ -443,11 +470,104 @@
           }
         }
       });
+      */
+      
+      // 파일 데이터
+      resData.file.forEach(function(file) {
+        jstreeData.push({
+          id: 'file_' + file.fileNo,
+          parent: file.folder.folderNo.toString(),
+          text: file.originalFilename,
+          icon: "fas fa-user"
+        });
+      });
       
       console.log('jstreeData', jstreeData);
       
       // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
-      $('#memberArea').jstree({
+      $('.memberArea').jstree({
+        'core': {
+          'data': jstreeData,
+            'themes': {
+               'icons': true
+            }
+        },
+        'plugins': ['search'],           
+      }).on('ready.jstree', function() {
+        $(this).jstree(true).open_all();
+      })
+      
+      // 검색 기능 추가
+      $('.searchInput').on('keyup', function() {
+        var searchString = $(this).val();
+        $('.memberArea').jstree('search', searchString);
+      });
+      
+    })
+    .catch(error => {
+      console.error('There has been a problem with your fetch operation:', error);
+    });
+  }
+    
+  // -------------------------------------------- 모달 폴더 구조 --------------------------------------------
+  /*
+    체크박스 사용, 폴더경로 받아오도록,
+    
+    폴더 검색 가능하도록 위치 설정
+  */
+  
+  // 저장위치 설정할 폴더 리스트 가져오기
+  const fnGetFileListForSave = () => {
+    // $('.chat-member-title').after('<div class="searchInput-cover"></div>');
+    // $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="파일 검색">');
+    $('.folder-list').append('<div class="folderArea"></div>');
+    
+    fetch('${contextPath}/drive/getFileList.do',{
+      method: 'GET',
+    })
+    .then((response) => response.json())
+    .then(resData => {
+    
+      // 변환한 데이터 담을 배열 선언
+      var jstreeData = [];
+      
+      // drive root node로 설정
+      var drive = resData.folder.find(folder => folder.folderName === 'drive');
+      if(drive) {
+        jstreeData.push({
+          id: drive.folderNo,
+          parent: '#',
+          text: drive.folderName,
+          icon: "fas fa-building"
+        });
+      }
+      
+      // 폴더 데이터
+      resData.folder.forEach(function(folder) {
+        if(folder.folderName !== 'drive'){
+          jstreeData.push({
+            id: folder.folderNo.toString(),
+            parent: folder.parentFolderNo.toString(),
+            text: folder.folderName,
+            icon: "fas fa-layer-group"
+          });
+        }
+      });
+      
+      // 파일 데이터
+      resData.file.forEach(function(file) {
+        jstreeData.push({
+          id: 'file_' + file.fileNo,
+          parent: file.folder.folderNo.toString(),
+          text: file.originalFilename,
+          icon: "fas fa-user"
+        });
+      });
+      
+      console.log('jstreeData', jstreeData);
+      
+      // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
+      $('.folderArea').jstree({
         'core': {
           'data': jstreeData,
             'themes': {
@@ -464,23 +584,34 @@
             }           
       }).on('ready.jstree', function() {
         $(this).jstree(true).open_all();
-      })
+      }).on('changed.jstree', function (e, data) {
+        var selectedNode = data.instance.get_node(data.selected[0]);
+        if (selectedNode) {
+          var selectedFolderNo = selectedNode.id;
+          var selectedFolder = resData.folder.find(folder => folder.folderNo.toString() === selectedFolderNo);
+          if (selectedFolder) {
+            document.getElementById('folderUploadPath').value = selectedFolder.folderUploadPath;
+          }
+        }
+      });
       
+      /*
       // 검색 기능 추가
       $('.searchInput').on('keyup', function() {
         var searchString = $(this).val();
-        $('#memberArea').jstree('search', searchString);
+        $('.folderArea').jstree('search', searchString);
       });
-      
+      */
     })
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);
-    });  
-    
-    fnGetProfile();
+    });
     
   }
   
+  
+  fnGetFileList();
+  fnGetFileListForSave();
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

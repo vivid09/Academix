@@ -1,5 +1,6 @@
 package com.gdu.academix.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -12,6 +13,10 @@ public interface FolderMapper {
 
   int getDriveCount(int employeeNo);
   int insertDrive(FolderDto folderDto);
+  
+  List<FolderDto> getFolderList();
+  List<FileDto> getFileList();
+  
   int insertFile(FileDto fileDto);
   int insertFolder(FolderDto folderDto);
   

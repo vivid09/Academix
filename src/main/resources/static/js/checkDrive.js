@@ -73,7 +73,7 @@ const fnCreateDrive = () => {
     },
     body: JSON.stringify({
       'folderName': folderName,
-      'employeeNo': employeeNo,
+      'ownerNo': employeeNo,
     })
   })
   .then(response => response.json())

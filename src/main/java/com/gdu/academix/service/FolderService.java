@@ -9,6 +9,9 @@ public interface FolderService {
 	
   ResponseEntity<Map<String, Object>> checkDrive(int employeeNo);
   int createDrive(Map<String, Object> params);
+  
+  ResponseEntity<Map<String, Object>> getFileList();
+  
   int registerUpload(MultipartHttpServletRequest multipartRequest);
   int createFolder(Map<String, Object> params);
 

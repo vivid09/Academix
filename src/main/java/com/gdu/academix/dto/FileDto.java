@@ -22,13 +22,13 @@ public class FileDto {
    * @param filesystemName   : 파일 이름
    * @param originalFilename : 원본 이름
    * @param fileUploadDt     : 업로드 날짜
-   * @param folderNo         : 폴더 번호
-   * @param EmployeesDto employee -> employeeNo (ownerNo) : 파일 소유 직원 번호
+   * @param ownerNo          : 파일 소유 직원 번호
+   * @param FolderDto folder -> folderNo : 폴더 번호
    */
   
-  private int fileNo, folderNo;
+  private int fileNo, ownerNo;
   private String fileUploadPath, filesystemName, originalFilename;
   private Timestamp fileUploadDt;
-  private EmployeesDto employee;
+  private FolderDto folder;
   
 }

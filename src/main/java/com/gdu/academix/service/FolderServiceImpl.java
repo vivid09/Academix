@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.FolderDto;
 import com.gdu.academix.mapper.FolderMapper;
 import com.gdu.academix.utils.MyFileUtils;
@@ -43,27 +42,35 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public int createDrive(Map<String, Object> params) {
     String folderName = (String) params.get("folderName");
-    int employeeNo = Integer.parseInt(String.valueOf(params.get("employeeNo")));
-    String folderUploadPath = "/" + employeeNo + "_" + folderName;
+    int ownerNo = Integer.parseInt(String.valueOf(params.get("ownerNo")));
+    String folderUploadPath = "c:/" + ownerNo + "_" + folderName;
     File dir = new File(folderUploadPath);
     if(!dir.exists()) {
       dir.mkdirs();
     }
     
-    EmployeesDto employee = new EmployeesDto();
-    employee.setEmployeeNo(employeeNo);
     FolderDto folder = FolderDto.builder()
                           .folderName(MySecurityUtils.getPreventXss(folderName))
                           .folderUploadPath(folderUploadPath)
-                          .employee(employee)
+                          .ownerNo(ownerNo)
                         .build();
     
     return folderMapper.insertDrive(folder);
   }
   
   @Override
+  public ResponseEntity<Map<String, Object>> getFileList() {
+    
+    System.out.println("file" + folderMapper.getFileList());
+    System.out.println("folder" + folderMapper.getFolderList());
+    
+    Map<String, Object> map = Map.of("file", folderMapper.getFileList(), "folder", folderMapper.getFolderList());
+    return ResponseEntity.ok(map);
+  }
+  
+  @Override
   public int registerUpload(MultipartHttpServletRequest multipartRequest) {
-    int employeeNo = Integer.parseInt(multipartRequest.getParameter("employeeNo"));
+    int ownerNo = Integer.parseInt(multipartRequest.getParameter("ownerNo"));
     List<MultipartFile> files = multipartRequest.getFiles("files");
     int insertFolderCount;
     if(files.get(0).getSize() == 0) {
@@ -85,8 +92,6 @@ public class FolderServiceImpl implements FolderService {
 //    }
     
     
-    EmployeesDto employee = new EmployeesDto();
-    employee.setEmployeeNo(employeeNo);
     
     return 0;
   }
@@ -94,17 +99,15 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public int createFolder(Map<String, Object> params) {
     String folderName = (String) params.get("folderName");
-    String folderUploadPath = "/" + folderName;
-    int employeeNo = Integer.parseInt(String.valueOf(params.get("employeeNo")));
+    String folderUploadPath = "c:/" + folderName;
+    int ownerNo = Integer.parseInt(String.valueOf(params.get("ownerNo")));
     int parentFolderNo = Integer.parseInt(String.valueOf(params.get("parentFolderNo")));
     
-    EmployeesDto employee = new EmployeesDto();
-    employee.setEmployeeNo(employeeNo);
     FolderDto folder = FolderDto.builder()
                           .folderName(MySecurityUtils.getPreventXss(folderName))
                           .folderUploadPath(folderUploadPath)
                           .parentFolderNo(parentFolderNo)
-                          .employee(employee)
+                          .ownerNo(ownerNo)
                         .build();
     
     return folderMapper.insertFolder(folder);

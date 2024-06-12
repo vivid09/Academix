@@ -5,8 +5,20 @@
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 <jsp:include page="${contextPath}/WEB-INF/views/layout/header.jsp">
-  <jsp:param value="최근 파일" name="title"/>
+  <jsp:param value="모든 파일" name="title"/>
 </jsp:include>
+
+<style>
+    .drag-drop-area {
+        border: 2px dashed #007bff;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .drag-drop-area.dragover {
+        background-color: #e9ecef;
+    }
+</style>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -30,7 +42,8 @@
                 </button>
               </div>
             </div>
-            <div class="box-body no-padding">
+            <p class="chat-member-title">내 드라이브</p><!-- .chat-member-title -->
+            <div class="box-body no-padding chat-member"><!-- .chat-member -->
               <ul class="nav nav-pills nav-stacked">
                 <li><a href="${contextPath}/drive/main.page"><i class="fa fa-history"></i> 최근 파일</a></li>
                 <li class="active"><a href="${contextPath}/drive/allList.page"><i class="fa fa-envelope-o"></i> 모든 파일</a></li>
@@ -44,7 +57,7 @@
         <div class="col-md-9">
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">최근 파일</h3>
+              <h3 class="box-title">모든 파일</h3>
 
               <div class="box-tools pull-right">
                 <div class="has-feedback">
@@ -224,6 +237,7 @@
           <!-- /. box -->
         </div>
         <!-- /.col -->
+        <!-- 파일 업로드 모달창 -->
         <div class="example-modal">
           <div class="modal fade" id="uploadModal" style="display: none;">
             <div class="modal-dialog">
@@ -240,10 +254,6 @@
                         method="POST"
                         enctype="multipart/form-data"
                         action="${contextPath}/drive/register.do">
-                    <div class="form-group">
-                      <label for="fileInput">파일 선택</label>
-                      <input type="file" class="form-control-file" id="fileInput">
-                    </div>
                     <div class="drag-drop-area" id="dragDropArea">
                       <p>파일을 여기에 드래그 앤 드롭 하거나 클릭하여 선택하세요</p>
                     </div>
@@ -359,7 +369,115 @@
     }
 	});
   
-  
+  // -------------------------------------------- 폴더 구조 --------------------------------------------
+  // 직원 리스트 가져오기
+  const fnGetChatUserList = () => {
+    // 새로운 태그 추가
+    $('.chat-member-title').after('<div class="searchInput-cover"></div>');
+    $('.searchInput-cover').append('<input type="text" class="searchInput" placeholder="파일 검색">')
+    $('.chat-member').append('<div id="memberArea"></div>');
+    
+    fetch('${contextPath}/drive/getFileList.do',{
+        method: 'GET',
+      })
+    .then((response) => response.json())
+    .then(resData => {
+    
+      // 변환한 데이터 담을 배열 선언
+      var jstreeData = [];
+      
+      
+      // 회사 root node로 설정
+      var com = resData.departments.find(depart => depart.departName === 'Academix');
+      if(com) {
+        jstreeData.push({
+          id: com.departmentNo,
+          parent: '#',
+          text: com.departName,
+          icon: "fas fa-building"
+        });
+      }
+      
+      // employee 데이터에서 대표데이터만 빼서 설정
+      var ceo = resData.employee.find(employee => employee.rank.rankTitle === '대표이사');
+      if(ceo) {
+        jstreeData.push({
+          id: 'emp_' + ceo.employeeNo,
+          parent: '0',
+          text: ceo.name + ' ' + ceo.rank.rankTitle,
+          icon: "fas fa-user-tie"
+        });
+      }
+      
+      // 부서 데이터
+      resData.departments.forEach(function(department) {
+        if(department.departName !== 'Academix'){
+          jstreeData.push({
+            id: department.departmentNo.toString(),
+            parent: department.parentDepartNo.toString(),
+            text: department.departName,
+            icon: "fas fa-layer-group"
+          });
+        }
+      });
+      
+      // 직원 데이터
+      resData.employee.forEach(function(employee) {
+        if(employee.depart.departmentNo !== 0 && employee.employeeStatus !== 0){ // 대표이사 제외
+          if(employee.rank.rankNo === 5) {
+            jstreeData.push({
+              id: 'emp_' + employee.employeeNo,
+              parent: employee.depart.departmentNo.toString(),
+              text: employee.name + ' ' + employee.rank.rankTitle,
+              icon: "fas fa-chalkboard-teacher"
+            });
+          } else {
+            jstreeData.push({
+              id: 'emp_' + employee.employeeNo,
+              parent: employee.depart.departmentNo.toString(),
+              text: employee.name + ' ' + employee.rank.rankTitle,
+              icon: "fas fa-user"
+            });
+          }
+        }
+      });
+      
+      console.log('jstreeData', jstreeData);
+      
+      // jstree 데이터 추가 - jstree가 로드되면 모든 노드 열리게 설정
+      $('#memberArea').jstree({
+        'core': {
+          'data': jstreeData,
+            'themes': {
+               'icons': true
+            }
+        },
+        'plugins': ['search', 'checkbox'],
+            'checkbox': {
+               'keep_selected_style': true,
+               'three_state': false,
+               'whole_node' : false,
+               'tie_selection' : false,
+               'cascade': 'down'
+            }           
+      }).on('ready.jstree', function() {
+        $(this).jstree(true).open_all();
+      })
+      
+      // 검색 기능 추가
+      $('.searchInput').on('keyup', function() {
+        var searchString = $(this).val();
+        $('#memberArea').jstree('search', searchString);
+      });
+      
+    })
+    .catch(error => {
+      console.error('There has been a problem with your fetch operation:', error);
+    });  
+    
+    fnGetProfile();
+    
+  }
   
 </script>
 

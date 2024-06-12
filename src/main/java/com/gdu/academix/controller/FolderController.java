@@ -22,7 +22,6 @@ public class FolderController {
   private final FolderService folderService;
   
   public FolderController(FolderService folderService) {
-    super();
     this.folderService = folderService;
   }
   
@@ -41,6 +40,12 @@ public class FolderController {
     return ResponseEntity.ok(Map.of("insertCount", folderService.createDrive(params)));
   }
   
+  @GetMapping(value="/getFileList.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> getFileList() {
+    return folderService.getFileList();
+  }
+  
+  // 파일 업로드
   @PostMapping("/register.do")
   public String register(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("inserted", folderService.registerUpload(multipartRequest));
