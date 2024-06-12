@@ -379,7 +379,7 @@
                 let str= '<div class="list-container"  id="list-emp">';
                 str += '<div class="profile-container">';
                 
-                str +=  '<div>' + employee.profilePicturePath.replace('<img ', '<img style="width: 50px;" ') + '</div>';
+               // str +=  '<div>' + employee.profilePicturePath.replace('<img ', '<img style="width: 50px;" ') + '</div>';
                 
                 str += '</div>';
                 str += '<div class="not-profile-grid">';

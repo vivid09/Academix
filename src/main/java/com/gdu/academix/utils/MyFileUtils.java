@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @Component
 public class MyFileUtils {
 
-	@Value("${service.file-uploadurl}")
+	@Value("${service.file.uploadurl}")
 	public String UP_DIR;
 	
 	
