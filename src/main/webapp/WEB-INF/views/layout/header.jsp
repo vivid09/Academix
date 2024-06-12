@@ -73,7 +73,7 @@
               <span class="label label-success">4</span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header alert-menu-sub">You have 4 messages</li>
+               <li class="header alert-menu-sub">You have 4 messages</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu alert-menu">
@@ -149,7 +149,7 @@
                   
                 </ul>
               </li>
-              <li class="footer"><a href="#">모든 메시지 알림 지우기</a></li>
+              <li class="footer"><a href="#" class="remove-allMessageNoti">모든 메시지 알림 지우기</a></li>
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->

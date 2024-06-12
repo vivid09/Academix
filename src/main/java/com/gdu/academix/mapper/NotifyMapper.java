@@ -11,6 +11,7 @@ import com.gdu.academix.dto.NotificationsDto;
 public interface NotifyMapper {
   
   int insertNotification(NotificationsDto notification);
-  List<NotificationsDto> getNotificationList(int employeeNo);
-
+  List<NotificationsDto> getNotificationList(int employeeNo, int seenStatus);
+  int updateSeenStatus(List<Integer> notificationNoList);
+  
 }

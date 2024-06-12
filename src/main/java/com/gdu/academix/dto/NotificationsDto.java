@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class NotificationsDto {
 
   int notificationNo, seenStatus, employeeNo, chatroomNo, notifierNo;
-  String message, notificationType, notifierName;
+  String message, notificationType;
   Timestamp notificationDate;
-  //EmployeesDto notifier;
+  EmployeesDto notifier;
   
 }

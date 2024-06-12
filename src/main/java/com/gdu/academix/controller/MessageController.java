@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -203,9 +204,19 @@ public class MessageController {
           
           try {
             
+            // 내용 20자만 추출
+            String messageContent = message.getMessageContent();
+            String result;
+
+            if (messageContent.length() > 20) {
+                result = messageContent.substring(0, 20) + "...";
+            } else {
+                result = messageContent;
+            }
+
             // NotificationsDto 생성
             NotificationsDto notification = NotificationsDto.builder()
-                                                   .message(message.getMessageContent())
+                                                   .message(result)
                                                    .notificationType("CHAT")
                                                    .notifierNo(notifierNo)
                                                    .seenStatus(0)
@@ -218,17 +229,18 @@ public class MessageController {
             int insertNotificationCount = notifyService.insertNotification(notification);
             
             
-            // 보낸 객체에서 timestamp랑 송신자 이름 dto에 같이 실어서 보내기
-            Instant now = Instant.now();
-            Timestamp timestamp = Timestamp.from(now);
-            
-            notification.setNotificationDate(timestamp);
-            notification.setNotifierName(notifierName);
+            // 알림 조회 시 제일 최근 것만 보냄.
+            /*
+             * Instant now = Instant.now(); Timestamp timestamp = Timestamp.from(now);
+             * 
+             * notification.setNotificationDate(timestamp);
+             */
+            List<NotificationsDto> notificationList = notifyService.getNotificationList(recipientNo);
             
             
             // 수신자에게 메시지 전송
             String username = "user-" + recipientNo;
-            messagingTemplate.convertAndSendToUser(username, "/queue/notifications", notification);
+            messagingTemplate.convertAndSendToUser(username, "/queue/notifications", notificationList.get(0));
             
           } catch (Exception e) {
             

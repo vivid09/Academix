@@ -34,7 +34,10 @@
 <!-- stomp.js 2.3.3 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>  
   
-<script src="${contextPath}/resources/moment/moment-with-locales.min.js"></script>  
+<script src="${contextPath}/resources/moment/moment-with-locales.min.js"></script>
+<script>
+	moment.locale('ko');  
+</script>
   
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -261,6 +264,8 @@
 	
 	// 날짜 한글로
 	moment.locale('ko');
+	
+	console.log(moment().format('A h:mm'));
 	
 	// jvectorMap 이벤트 제거
 	$(document).ready(function() {
@@ -968,6 +973,8 @@ window.addEventListener('beforeunload', function(event) {
 	const SetEmployeeMessageProfile = (chatMessageList) => { // (13) - 함수 생성
 		const messagePromises = chatMessageList.map(message => {
 			return new Promise((resolve) => { // (23)
+				
+				moment.locale('ko');
 				
 				let messageHTML = ''; // (17)   (24)
 				
@@ -1752,15 +1759,9 @@ window.addEventListener('beforeunload', function(event) {
 							    
 							    // 페이지 새로고침
 							    //window.location.reload();
-
-
-				
-
-						 
 					 } else {
 						 alert('채팅방 나가기에 실패했습니다 ㅜ');
 					 }
- 					
  				})
  	 			.catch(error => {
  	 				console.error('delete 요청 에러: ' + error);
@@ -1768,6 +1769,52 @@ window.addEventListener('beforeunload', function(event) {
  			})
  			
  		}
+ 		
+ 		// 쿼리 파라미터 가져옴.
+    const getQueryParams = () => {
+        const params = {};
+        window.location.search.slice(1).split('&').forEach(param => {
+            const [key, value] = param.split('=');
+            params[key] = decodeURIComponent(value);
+        });
+        return params;
+    }
+    
+    // 쿼리 파라미터에 따라 값이 있으면 chatroom데이터 가져와서 열기
+    window.onload = () => {
+    	// 페이지 로드 후 쿼리 파라미터 가져옴.
+      const params = getQueryParams();
+      if (params.chatroomNo) { // 파라미터 있으면?
+    		  
+    		  // 해당 chatroomNo에 해당하는 chatroomDto 가져오기
+    		  fetch('${contextPath}/chatting/getChatroomByChatroomNo.do?chatroomNo=' + params.chatroomNo, {
+    			  method: 'GET',
+    		  })
+    			.then((response) => response.json())
+    			.then(resData => {
+    				
+    					let chatroom = resData.chatroom;
+    				
+    				  page = 1;	
+    				  chatMessageTotalPage = 0;
+    					$('.chat-memberProfileList').empty();
+
+    					gChatroomNo = chatroom.chatroomNo;
+
+    					fnGetParticipantsNoList(chatroom.chatroomNo)
+    					.then(senderNoList => {
+    						fetchSenderUserData(senderNoList);
+    					})
+    				
+	    				// 채팅방 열기
+	    				fnOpenChatroom(resData.chatroom);
+    					
+    			})
+    		  
+      } else { //쿼리 파라미터 없음
+          return;
+      }
+    };
  
 		
 		

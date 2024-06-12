@@ -8,5 +8,6 @@ public interface NotifyService {
   
   int insertNotification(NotificationsDto notification);
   List<NotificationsDto> getNotificationList(int employeeNo);
+  int updateSeenStatus(List<Integer> notificationNoList);
 
 }
