@@ -151,32 +151,40 @@
     
     
  .empList {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 50%;
-    position: fixed;
-    
-    right: 0;
- }
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-left: 20px; /* 왼쪽 목록과의 간격 조정 */
+  width: calc(100% - 250px); /* 전체 너비에서 왼쪽 목록의 너비를 뺀 값 */
+  float: right; /* 오른쪽에 위치 */
+}
 
-  .profile-container {
-    display: flex;
-    flex-direction: column;
-    width: 1000px;
-    padding: 10px;
-    border: 1px solid #ccc;
-     margin: 10px;
-  }
-  .profile-container div {
-    margin-bottom: 10px;
- }
- 
- .list-container{
-   width:1500px;
-   height:1500px;
- }		
+.profile-container img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 20px;
+}
+
+.not-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
+}
+
+.not-profile-grid div {
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.btn-empEdit {
+  display: block;
+  margin: 20px auto 0;
+}
+	
 		
 		
 	
@@ -379,7 +387,7 @@
                 let str= '<div class="list-container"  id="list-emp">';
                 str += '<div class="profile-container">';
                 
-               // str +=  '<div>' + employee.profilePicturePath.replace('<img ', '<img style="width: 50px;" ') + '</div>';
+               //	 str +=  '<div>' + employee.profilePicturePath.replace('<img ', '<img style="width: 50px;" ') + '</div>';
                 
                 str += '</div>';
                 str += '<div class="not-profile-grid">';

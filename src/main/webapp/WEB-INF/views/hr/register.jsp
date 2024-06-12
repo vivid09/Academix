@@ -84,8 +84,8 @@
                 <input type="text" name="address" id="address">
             </div>
             <div>
-                <label for="departName">부서명</label>
-                <select name="departName" id="departName">
+                <label for="departmentNo">부서명</label>
+                <select name="departmentNo" id="departmentNo">
                   <option>부서 선택</option>
                   <option value="0">대표실</option>
                   <option value="1">행정부</option>
@@ -95,8 +95,8 @@
                 </select>
             </div>
             <div>
-                <label for="rankTitle">직급명</label>
-                <select name="rankTitle" id="rankTitle">
+                <label for="rankNo">직급명</label>
+                <select name="rankNo" id="rankNo">
                  <option>직급 선택</option>
                  <option value="0">대표이사</option>
                  <option value="1">수석</option>
@@ -116,14 +116,6 @@
                 </select>
             </div>
             <div>
-                <label for="departmentNo">부서번호</label>
-                <input type="text" name="departmentNo" id="departmentNo">
-            </div>
-            <div>
-                <label for="rankNo">직책번호</label>
-                <input type="text" name="rankNo" id="rankNo">
-            </div>
-            <div>
                 <label for="hireDate">입사일</label>
                 <input type="date" name="hireDate" id="hireDate" >
             </div>
@@ -131,20 +123,13 @@
                 <label for="exitDate">퇴사일</label>
                 <input type="date" name="exitDate" id="exitDate">
             </div>
-            <div>
-                <label for="parentDepartNo">부모부서번호</label>
-                <select name="parentDepartNo" id="parentDepartNo">
-                  <option>-----</option>
-                  <option value="1">행정부</option>
-                </select>
-            </div>
             <button type="submit">등록하기</button>
         </form>
     </div>
   
   <script >
   
-
+ 
   
   
   

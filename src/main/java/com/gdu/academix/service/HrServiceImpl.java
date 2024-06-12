@@ -43,8 +43,6 @@ public class HrServiceImpl implements HrService {
 		String pw =  MySecurityUtils.getSha256(multipartRequest.getParameter("pw"));
 		String phone = multipartRequest.getParameter("phone");
 		String address = multipartRequest.getParameter("address");
-		String departName = multipartRequest.getParameter("departName");
-		String rankTitle = multipartRequest.getParameter("rankTitle");
 		int employeeStatus = Integer.parseInt(multipartRequest.getParameter("employeeStatus"));
 		int departmentNo = Integer.parseInt(multipartRequest.getParameter("departmentNo"));
 		int rankNo = Integer.parseInt(multipartRequest.getParameter("rankNo"));
@@ -67,7 +65,6 @@ public class HrServiceImpl implements HrService {
 	    Date sqlHireDate = (hireDate != null) ? Date.valueOf(hireDate) : null;
 	    Date sqlExitDate = (exitDate != null) ? Date.valueOf(exitDate) : null;
 
-		int parentDepartNo = Integer.parseInt(multipartRequest.getParameter("parentDepartNo"));
 		
 		/*
 		 * String parentDepartNoStr = multipartRequest.getParameter("parentDepartNo");
@@ -78,12 +75,9 @@ public class HrServiceImpl implements HrService {
 		
 		RanksDto ranks = RanksDto.builder()
 							  	 .rankNo(rankNo)
-				                 .rankTitle(rankTitle)
 				                 .build();
 		DepartmentsDto depart = DepartmentsDto.builder()
 				                             .departmentNo(departmentNo)
-				                             .departName(departName)
-				                             .parentDepartNo(parentDepartNo)
 				                             .build();
 		
 		EmployeesDto employees = EmployeesDto.builder()
