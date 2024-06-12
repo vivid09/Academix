@@ -12,9 +12,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Component
 public class MyFileUtils {
-  @Value("${service.file.uploadurl}")
-  public String UP_DIR;
-  
+
+	@Value("${service.file.uploadurl}")
+	public String UP_DIR;
+	
   // 현재 날짜
   public static final LocalDate TODAY = LocalDate.now();
   

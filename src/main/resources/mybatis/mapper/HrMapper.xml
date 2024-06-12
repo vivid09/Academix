@@ -104,4 +104,15 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
 </update>
 
 
+<insert id="insertAnnualLeaves"
+        >
+  INSERT INTO ANNUAL_LEAVES_T( LEAVE_NO,
+                             YEAR,
+                             TOTAL_LEAVES,
+                             EMPLOYEE_NO) VALUES(
+                             ANNUAL_LEAVES_SEQ.NEXTVAL,
+                             #{total_leaves},
+                             #{employeeNo})
+</insert> 
+
 </mapper>

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartRequest;
 
+import com.gdu.academix.dto.AnnualLeavesDto;
 import com.gdu.academix.dto.DepartmentsDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.RanksDto;
@@ -194,6 +195,16 @@ public class HrServiceImpl implements HrService {
 		int modifyCount = hrMapper.employeeModify(employees);
 		System.out.println(employees);
 		return modifyCount;
+		
+	}
+	
+	@Override
+	public void annualLeaves() {
+		int leaveDay = 1;
+		
+		
+		AnnualLeavesDto annualLeaves = AnnualLeavesDto.builder()
+				                                      .build();
 		
 	}
 	

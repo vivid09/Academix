@@ -11,6 +11,7 @@ import com.gdu.academix.interceptor.RequiredSignoutInterceptor;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+	
   @Value("${service.file.uploadurl}")
   public String UP_DIR;
 

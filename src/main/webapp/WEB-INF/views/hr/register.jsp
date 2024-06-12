@@ -87,23 +87,23 @@
                 <label for="departName">부서명</label>
                 <select name="departName" id="departName">
                   <option>부서 선택</option>
-                  <option value="대표실">대표실</option>
-                  <option value="행정부">행정부</option>
-                  <option value="인사팀">인사팀</option>
-                  <option value="운영팀">운영팀</option>
-                  <option value="강사">강사</option>
+                  <option value="0">대표실</option>
+                  <option value="1">행정부</option>
+                  <option value="2">인사팀</option>
+                  <option value="3">운영팀</option>
+                  <option value="4">강사</option>
                 </select>
             </div>
             <div>
                 <label for="rankTitle">직급명</label>
                 <select name="rankTitle" id="rankTitle">
                  <option>직급 선택</option>
-                 <option value="대표이사">대표이사</option>
-                 <option value="수석">수석</option>
-                 <option value="책임">책임</option>
-                 <option value="주임">주임</option>
-                 <option value="사원">사원</option>
-                 <option value="강사">강사</option>
+                 <option value="0">대표이사</option>
+                 <option value="1">수석</option>
+                 <option value="2">책임</option>
+                 <option value="3">주임</option>
+                 <option value="4">사원</option>
+                 <option value="5">강사</option>
                 </select>
             </div>
             <div>
@@ -144,36 +144,7 @@
   
   <script >
   
-  // 부서명과 번호 매핑
-  const departmentMap = {
-      '대표실': 0,
-      '행정부': 1,
-      '인사팀': 2,
-      '운영팀': 3,
-      '강사': 4
-  };
 
-  // 직급명과 번호 매핑
-  const rankMap = {
-      '대표이사': 0,
-      '수석': 1,
-      '책임': 2,
-      '주임': 3,
-      '사원': 4,
-      '강사': 5
-  };
-
-  // 부서명 입력 필드에 이벤트 리스너 추가
-  document.getElementById('departName').addEventListener('input', function() {
-      const departmentNo = departmentMap[this.value] !== undefined ? departmentMap[this.value] : '';
-      document.getElementById('departmentNo').value = departmentNo;
-  });
-
-  // 직급명 입력 필드에 이벤트 리스너 추가
-  document.getElementById('rankTitle').addEventListener('input', function() {
-      const rankNo = rankMap[this.value] !== undefined ? rankMap[this.value] : '';
-      document.getElementById('rankNo').value = rankNo;
-  });
   
   
   

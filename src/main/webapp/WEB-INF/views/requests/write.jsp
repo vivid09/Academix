@@ -138,13 +138,13 @@ button:hover {
             </div>
             <div class="form-group">
                 <label for="departName">부서명</label>
-                <input type="text" name="departName" id="departName">
+                <input type="text" name="departName" id="departName" value="${sessionScope.user.depart.departmentNo}" readonly>
                 <label for="name">성명</label>
-                <input type="text" name="name" id="name">
+                <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
             </div>
             <div class="form-group">
                 <label for="rankTitle">직책</label>
-                <input type="text" name="rankTitle" id="rankTitle">
+                <input type="text" name="rankTitle" id="rankTitle" value="${sessionScope.user.rank.rankNo}" readonly>
                 <select name="leaveType" id="leaveType">
                         <option value="0">연차</option>
                         <option value="1">오전 반차</option>
@@ -179,24 +179,30 @@ button:hover {
 </div>
 <script>
 
-  
-// 폼 제출 이벤트 리스너를 추가합니다.
-document.querySelector('form').addEventListener('submit', function(event) {
-    // 휴가종류 필드의 값을 가져옵니다.
-    var leaveTypeValue = document.getElementById('leaveType').value;
-    
-    // 만약 휴가종류가 "연차"라면
-    if (leaveTypeValue === "연차") {
-        // 해당 필드의 값을 "0"으로 변경합니다.
-        document.getElementById('leaveType').value = "0";
-    }
-    // 만약 휴가종류가 "반차"라면
-    else if (leaveTypeValue === "반차") {
-        // 해당 필드의 값을 "1"으로 변경합니다.
-        document.getElementById('leaveType').value = "1";
-    }
-    // 그 외의 경우에는 아무 작업도 하지 않습니다.
-});
+// 부서명과 번호 매핑
+const departmentMap = {
+    0: '대표실',
+    1: '행정부',
+    2: '인사팀',
+    3: '운영팀',
+    4: '강사'
+};
+
+// 직급명과 번호 매핑
+const rankMap = {
+    0: '대표이사',
+    1: '수석',
+    2: '책임',
+    3: '주임',
+    4: '사원',
+    5: '강사'
+};
+
+function formFill() {
+	
+   	document.getElementById('departName').value = departmentMap[${sessionScope.user.depart.departmentNo}];
+   	document.getElementById('rankTitle').value = rankMap[${sessionScope.user.rank.rankNo}];
+}
   
   const selectElement = document.getElementById('optionSelect');
   const option1Div = document.getElementById('option1');
@@ -250,7 +256,7 @@ document.querySelector('form').addEventListener('submit', function(event) {
       document.getElementById('leaveType').addEventListener('change', calculateDuration);
   });
   
-  
+  formFill();
   
 </script>
 
