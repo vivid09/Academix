@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.gdu.academix.dto.AttachDto;
 import com.gdu.academix.dto.CourseDto;
-import com.gdu.academix.dto.UploadDto;
 
 @Mapper
 public interface CourseMapper {

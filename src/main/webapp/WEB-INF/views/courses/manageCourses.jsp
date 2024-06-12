@@ -132,6 +132,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
 <!-- Page specific script -->
+<script src="/resources/js/courseState.js?dt=${dt}"></script>
 <script>
 	//전역 변수
 	var page = 1;
@@ -159,11 +160,11 @@
 	    	  var state;
 	    	  var href = "location.href='${contextPath}/courses/manageCourses/detail.do?courseNo=" + course.courseNo + '\'';
 		      if(course.courseState == 0){
-		    	  state = '<span class="state bg-gray-active color-palette"> 미처리 </span>';
+		    	  state = course_unprocessed;
 		      } else if(course.courseState == 1) {
-		    	  state = '<span class="state bg-green-active color-palette"> 승인완료 </span>';
+		    	  state = course_accept;
 		      } else if(course.courseState == 2) {
-		    	  state = '<span class="state bg-red-active color-palette"> 반려 </span>';
+		    	  state = course_reject;
 		      }
 	    	  
 	    	  

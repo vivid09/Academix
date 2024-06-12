@@ -127,17 +127,7 @@
 	      <p><span class="field-label">강의명</span><span class="field-value">${course.title}</span></p>
 	      <p><span class="field-label">기간</span><span class="field-value">${fn:substring(course.startDate, 0, 10)} ~ ${fn:substring(course.endDate, 0, 10)}</span></p>
 	      <p><span class="field-label">강사명</span><span class="field-value">${course.employee.name}</span></p>
-	      <p><span class="field-label">상태</span><span class="field-value">
-	        <c:if test="${course.courseState == 0}">
-	          <span class="state bg-gray-active color-palette"> 미처리 </span>
-	        </c:if>
-	        <c:if test="${course.courseState == 1}">
-	          <span class="state bg-green-active color-palette"> 승인완료 </span>
-	        </c:if>
-	        <c:if test="${course.courseState == 2}">
-	          <span class="state bg-red-active color-palette"> 반려 </span>
-	        </c:if>
-	      </span></p>
+	      <p id="courseStateContainer"><span class="field-label">상태</span></p>
 	      <div>
 	        <p><span class="field-label">설명:</span></p>
 	        <textarea class="description" placeholder="description" readonly>${course.description}</textarea>
@@ -168,6 +158,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
 <!-- Page specific script -->
+<script src="/resources/js/courseState.js?dt=${dt}"></script>
 <script>
 
 	function showCourseInfo() {
@@ -187,6 +178,22 @@
 	  document.getElementById('course-plan').classList.add('hidden');
 	  document.getElementById('student-list').classList.remove('hidden');
 	}
+	
+  var courseState = ${course.courseState};
+
+  var stateHtml = '';
+  if (courseState == 0) {
+    stateHtml = course_unprocessed;
+  } else if (courseState == 1) {
+    stateHtml = course_accept;
+  } else if (courseState == 2) {
+    stateHtml = course_reject;
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('courseStateContainer').innerHTML += stateHtml;
+  });
+	
   
 //전역 객체
 var frmBtn = $('#frm-btn');

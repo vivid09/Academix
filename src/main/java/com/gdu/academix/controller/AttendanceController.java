@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gdu.academix.service.AttendanceService;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @RequestMapping("/attendance")
 @Controller
 public class AttendanceController {

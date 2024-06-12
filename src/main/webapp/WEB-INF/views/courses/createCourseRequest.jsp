@@ -71,7 +71,7 @@
 							        <div class="form-group col-md-6">
 							            <label for="coursePlan">강의계획서</label>
 							            <div class="custom-file">
-							                <input type="file" class="custom-file-input" id="coursePlan" name="coursePlan">
+							                <input type="file" accept=".pdf" class="custom-file-input" id="coursePlan" name="coursePlan">
 							            </div>
 							        </div>
 							    </div>
