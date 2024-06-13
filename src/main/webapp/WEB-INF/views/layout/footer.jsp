@@ -1,9 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+    
 <!-- sockjs-client 1.6.1 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js" integrity="sha512-1QvjE7BtotQjkq8PxLeF6P46gEpBRXuskzIVgjFpekzFVF4yjRgrQvTG1MTOJ3yQgvTteKAcO7DSZI92+u/yZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- stomp.js 2.3.3 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>  
+
+<!-- include custom css/js -->
+<link rel="stylesheet" href="${contextPath}/resources/css/footer.css?dt=${dt}">
 
 <script>
   $.widget.bridge('uibutton', $.ui.button);
@@ -82,6 +87,10 @@
 		let notificationDate = notification.notificationDate;
 		let notificationTime = getTimeDifference(notificationDate);
 		
+		let redIcon = $('.messages-menu span');
+		let redIconCount = parseInt(redIcon.text(), 10);
+		let readAlert = $('.alert-menu-sub');
+		
 		let $menu = $('.alert-menu');
 		// 받아온 메시지를 알림메시지에 추가한다.
 		let msg = '';
@@ -93,13 +102,17 @@
 		msg += '    <h4>';
 		msg += senderName;
 		msg += '<small style="margin-right: 15px;"><i class="fa fa-clock-o" style="margin-right: 2px;"></i>' + notificationTime + '</small>'
-		msg += '<small class="btn-removeMessageAlert"><i class="fa fa-times"></i></small>';
+		msg += '<small class="btn-removeMessageAlert"><i class="fa fa-times" style="margin-left: 10px;"></i></small>';
 		msg += '    </h4>';
 		msg += '    <p>' + messageContent + '</p>';
 		msg += ' </a>';
 		msg += '</li>';
 		
 		$menu.prepend(msg);
+		
+		redIcon.css('display', ''); 	
+		redIcon.text(redIconCount + 1);
+		readAlert.text('총 ' + (redIconCount + 1) + '개의 읽지않은 알람');
         <!-- start message -->
 		
 	}
@@ -170,21 +183,34 @@
 			 			msg += '    <h4>';
 			 			msg += senderName;
 			 			msg += '<small style="margin-right: 15px;"><i class="fa fa-clock-o" style="margin-right: 2px;"></i>' + notificationTime + '</small>'
-			 			msg += '<small class="btn-removeMessageAlert"><i class="fa fa-times"></i></small>';
+			 			msg += '<small class="btn-removeMessageAlert"><i class="fa fa-times" style="margin-left: 10px;"></i></small>';
 			 			msg += '    </h4>';
 			 			msg += '    <p>' + messageContent + '</p>';
 			 			msg += ' </a>';
 			 			msg += '</li>';
 			 			
-			 			$menu.append(msg);			 			
+			 			$menu.append(msg);
+			 			//$alertIcon.text(resData.notificationList.length);
 			 			
 				})
+				
+	 			let redIcon = $('.messages-menu span');
+		        let redIconCount = parseInt(redIcon.text(), 10);
+	 			let readAlert = $('.alert-menu-sub');
+	 			
 				if(resData.notificationList.length > 0) {
-					$('.alert-menu-sub').text('총 ' + resData.notificationList.length + '개의 읽지않은 알람');
+					redIcon.css('display', ''); 
+					redIcon.text(resData.notificationList.length);
+					readAlert.text('총 ' + resData.notificationList.length + '개의 읽지않은 알람');
 				} else {
-					$('.alert-menu-sub').text('알람을 모두 확인했어요!');
+					redIcon.text(0);				
+					redIcon.css('display', 'none'); 
+					readAlert.text('알람을 모두 확인했어요!');
 				}
  			})
+		    .catch(error => {
+		      console.error('There has been a problem with your fetch operation:', error);
+		    });
   }
  	
  	
@@ -201,16 +227,32 @@
    	// x 버튼 눌러서 메시지 알림 삭제
    	const fnRemoveMessageAlert = () => {
    		$(document).on('click', '.btn-removeMessageAlert', (evt) => {
-				
+   			console.log('x 버튼 클릭');
+   			evt.stopPropagation();  			
    			// 해당 요소의 notification_no 넘겨줌
    			let notificationNo = $(evt.target).closest('.notification-item').data('notification-no');
    			let notificationNoList = [];
    			notificationNoList.push(notificationNo);
    			fnUpdateSeendStatus(notificationNoList);
 
+ 			let redIcon = $('.messages-menu span');
+ 			let redIconCount = parseInt(redIcon.text(), 10);
+ 			let readAlert = $('.alert-menu-sub');
+   			
    			// 해당 요소 삭제
    			evt.preventDefault();
    			$(evt.target).closest('.notification-item').remove();
+   		    
+   			// 해당 알림 개수 업데이트
+   			if(redIconCount - 1 > 0) {
+   				redIcon.text(redIconCount - 1);
+   				readAlert.text('총 ' + (redIconCount - 1) + '개의 읽지않은 알람');
+   			} else {
+   				redIcon.text(0);   				
+   				redIcon.css('display', 'none'); 			
+   				readAlert.text('알람을 모두 확인했어요!');
+   			}
+   				
    		})
    	}
     
@@ -230,6 +272,9 @@
     	.then(resData => {
     		console.log(resData);
     	})
+	    .catch(error => {
+	      console.error('There has been a problem with your fetch operation:', error);
+	    });
    	} 	
     
     
@@ -254,37 +299,68 @@
     }
     
     // 메시지 알림 모두 삭제
-		const fnRemoveAllMessageNotify = () => {
-			// 모든 메시지 알림 삭제 버튼 클릭 시
-	    $('.remove-allMessageNoti').on('click', () => {
-	        let notificationNoList = [];
+	const fnRemoveAllMessageNotify = () => {
+		// 모든 메시지 알림 삭제 버튼 클릭 시
+    $('.remove-allMessageNoti').on('click', () => {
+        let notificationNoList = [];
 
-	        $('.notification-item').each(function() {
-	        	notificationNoList.push($(this).data('notification-no'));
-	        });
-	        
-	        if(notificationNoList.length > 0) {
-		        fnUpdateSeendStatus(notificationNoList);
-		        $('.alert-menu').empty();
-		        $('.alert-menu-sub').text('알람을 모두 확인했어요!');
-	        } else {
-	        	return;
-	        }
-	    });
-		}
+        $('.notification-item').each(function() {
+        	notificationNoList.push($(this).data('notification-no'));
+        });
+        
+        if(notificationNoList.length > 0) {
+	        fnUpdateSeendStatus(notificationNoList);
+	        $('.alert-menu').empty();
+	        $('.alert-menu-sub').text('알람을 모두 확인했어요!');
+	        $('.messages-menu span').text(0);
+	        $('.messages-menu span').css('display', 'none');
+        } else {
+        	return;
+        }
+    });
+	}
+	
+	// 채팅방 별 모든 알림 지우기
+	const fnUpdateChatroomSeenStatus = (pChatroomNo) => {
+	  
+	  let employeeNo = ${sessionScope.user.employeeNo};
+	  let chatroomNo = pChatroomNo;
+	  
+	  // 해당 번호 보내서 채팅방에 해당하는 모든 알림 업데이트
+      return fetch('${contextPath}/notification/updateChatroomSeenStatus.do', {
+   		  method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            employeeNo: employeeNo,
+            chatroomNo: chatroomNo
+          })
+    	})
+	}
     
 
 		
     // 알림 클릭 시 해당 채팅방으로 이동
      const fnDirectChatroom = () => {
-    	$(document).on('click', '.notification-item', (evt) => {
-    		
-    		let notificationNo = $(evt.currentTarget).data('notification-no');
-    		let chatroomNo = $(evt.currentTarget).data('chatroom-no');
-    		let notificationNoList = [notificationNo];
-    		fnUpdateSeendStatus(notificationNoList);
-    		window.location.href = '${contextPath}/chatting/chat.page?chatroomNo=' + chatroomNo;
-    	})
+   	   $(document).on('click', '.notification-item', (evt) => {
+	     console.log('item 클릭');
+   		 let notificationNo = $(evt.currentTarget).data('notification-no');
+   		 let chatroomNo = $(evt.currentTarget).data('chatroom-no');
+   		 let notificationNoList = [notificationNo];
+   		 fnUpdateChatroomSeenStatus(chatroomNo)
+   		   .then((response) => response.json())
+   		   .then(resData => {
+		     if(resData.updateStatusCount !== 0) {
+   		   	   window.location.href = '${contextPath}/chatting/chat.page?chatroomNo=' + chatroomNo;
+		     } else {
+		       alert('채팅방 이동으로 실패했습니다.');
+		     }
+   		 })
+	    .catch(error => {
+	      console.error('There has been a problem with your fetch operation:', error);
+	    });
+   	  })
     } 
     
 	

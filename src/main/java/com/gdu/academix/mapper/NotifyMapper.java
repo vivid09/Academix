@@ -13,5 +13,6 @@ public interface NotifyMapper {
   int insertNotification(NotificationsDto notification);
   List<NotificationsDto> getNotificationList(int employeeNo, int seenStatus);
   int updateSeenStatus(List<Integer> notificationNoList);
+  int updateChatroomSeenStatus(Map<String, Object> map);
   
 }

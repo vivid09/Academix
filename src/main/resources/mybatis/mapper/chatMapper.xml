@@ -178,5 +178,13 @@
 	                          GROUP BY C.CHATROOM_NO
 	                         HAVING COUNT(P.PARTICIPANT_NO) = 0)
   </delete>
+  
+  <!-- 채팅방 이름 수정 -->
+  <update id="updateChatroomTitle"
+		  parameterType="Map">
+	  UPDATE CHATROOM_T
+	     SET CHATROOM_TITLE = #{chatroomTitle}
+	   WHERE CHATROOM_NO = #{chatroomNo}
+  </update>
 
 </mapper>

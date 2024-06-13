@@ -43,5 +43,8 @@ public interface ChatService {
   
   // 채팅방 - 참여자가 0명인 채팅방 삭제
   void deleteNoParticipateChatroom();
+  
+  // 채팅방 - 채팅방 이름 수정
+  int updateChatroomTitle(Map<String, Object> params);
 
 }

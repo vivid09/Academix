@@ -30,7 +30,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
       registry.addInterceptor(requiredSigninInterceptor)
         .addPathPatterns
-     ("/bbs/write.page", "/blog/write.page", "/upload/write.page", "/blog/editBlog.do", "/main.page");
+     ("/bbs/write.page", "/blog/write.page", "/upload/write.page", "/blog/editBlog.do", "/main.page", "/chatting/chat.page");
       registry.addInterceptor(requiredSignoutInterceptor)
         .addPathPatterns("/user/signin.page", "/user/signup.page");
     }

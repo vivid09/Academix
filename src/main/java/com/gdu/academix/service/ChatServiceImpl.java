@@ -344,6 +344,30 @@ public class ChatServiceImpl implements ChatService {
     chatMapper.deleteNoParticipateChatroom();
   }
   
+  @Override
+  public int updateChatroomTitle(Map<String, Object> params) {
+	  
+	try {
+	    int chatroomNo =  Integer.parseInt(String.valueOf(params.get("chatroomNo"))); 
+	    String chatroomTitle = (String) params.get("chatroomTitle");
+	    
+	    // 파라미터를 map으로 만듬
+	    Map<String, Object> map = Map.of("chatroomNo", chatroomNo
+	                                   , "chatroomTitle", chatroomTitle);
+	    
+	    int updateTitleCount = chatMapper.updateChatroomTitle(map);
+
+	    return updateTitleCount;
+	    
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	
+	return 0;
+    
+
+  }
+  
   
 
 }

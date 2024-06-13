@@ -32,7 +32,7 @@
   
   
   <insert id="insertNotification"
-  				parameterType="NotificationsDto">
+		  parameterType="NotificationsDto">
      <selectKey order="BEFORE" keyProperty="notificationNo" resultType="int">
       SELECT NOTIFICATION_SEQ.NEXTVAL
         FROM DUAL
@@ -59,7 +59,7 @@
 	</insert>
 	
 	<select id="getNotificationList"
-					resultMap="NotificationMap">
+			resultMap="NotificationMap">
 		SELECT N.NOTIFICATION_NO, N.MESSAGE, N.NOTIFICATION_TYPE, N.NOTIFIER_NO, N.NOTIFICATION_DATE, N.SEEN_STATUS, E.EMPLOYEE_NO, R.RANK_NO, R.RANK_TITLE, E.RANK_NO, E.NAME, N.CHATROOM_NO
 		  FROM NOTIFICATIONS_T N INNER JOIN EMPLOYEES_T E ON E.EMPLOYEE_NO = N.NOTIFIER_NO
 		                         INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
@@ -68,13 +68,20 @@
 	</select>
 	
 	<update id="updateSeenStatus"
-					parameterType="list">
+			parameterType="list">
 		UPDATE NOTIFICATIONS_T
 		   SET SEEN_STATUS = 1
 		 WHERE NOTIFICATION_NO IN
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
     	#{item}
     </foreach>
+	</update>
+	
+	<update id="updateChatroomSeenStatus"
+			parameterType="Map">
+	  UPDATE NOTIFICATIONS_T
+	     SET SEEN_STATUS = 1
+	   WHERE EMPLOYEE_NO = #{employeeNo} AND CHATROOM_NO = #{chatroomNo}
 	</update>
   
   

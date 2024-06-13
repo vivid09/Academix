@@ -50,5 +50,10 @@ public class NotifyServiceImpl implements NotifyService {
   public int updateSeenStatus(List<Integer> notificationNoList) {
     return notifyMapper.updateSeenStatus(notificationNoList);
   }
+  
+  @Override
+	public int updateChatroomSeenStatus(Map<String, Object> map) {
+	  return notifyMapper.updateChatroomSeenStatus(map);
+	}
 
 }

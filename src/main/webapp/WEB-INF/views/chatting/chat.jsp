@@ -150,6 +150,31 @@
         <!-- /.modal -->
       </div>
       
+      <!-- 채팅방 이름 수정 -->
+      <div class="example-modal">
+        <div class="modal fade" id="modal-default3" style="display: none;">
+          <div class="modal-dialog" style="margin: 30rem auto;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">채팅방 이름 수정</h4>
+              </div>
+              <div class="modal-body chatModal-body">
+              	<input class="form-control newChatroomTitle-input" type="text" maxlength='20' placeholder="채팅방 이름을 작성해주세요">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-modifyChatroomTitle">확인</button>
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">취소</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+      </div>
+      
       <!-- 새 채팅방 생성 경고창 -->
 <!--   			<div class="alert alert-info alert-dismissible" id="checkMemberAlert" style="display: none;">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -896,16 +921,16 @@ window.addEventListener('beforeunload', function(event) {
  		let input = $('.chat-message-input');
  		input.on('keyup', (evt) => {
  			if(evt.keyCode === 13) {
- 				if(evt.shiftKey) {
- 					let cursorPosition = input.prop('selectionStart');
- 					let value = input.val();
- 					input.val(value.substring(0, cursorPosition) + '\n' + value.substring(cursorPosition));
-          input.prop('selectionStart', cursorPosition + 1);
-          input.prop('selectionEnd', cursorPosition + 1);
+  				if(evt.shiftKey) {
+ 			      let cursorPosition = input.prop('selectionStart');
+ 				  let value = input.val();
+ 				  input.val(value.substring(0, cursorPosition) + '\n' + value.substring(cursorPosition));
+		          input.prop('selectionStart', cursorPosition + 1);
+		          input.prop('selectionEnd', cursorPosition + 1);
  				} else {
- 					evt.preventDefault();
- 					$('.chatMessage-btn').click();
- 				}
+ 				  evt.preventDefault();
+ 				  $('.chatMessage-btn').click();
+ 				} 
  			}
  		})
  	}
@@ -1174,20 +1199,19 @@ window.addEventListener('beforeunload', function(event) {
  	
  	// 채팅방 열기
  	const fnOpenChatroom = (chatroomDto) => {
- 		
-    	// 채팅방 화면 display:none 없애기
-    	$('.chat-box').css('display', '');
-	  
-		    // 채팅방 이름 변경
-    	$('.chat-box-title > span:first').text(chatroomDto.chatroomTitle);
-		    
-		    // 채팅방 번호 data 속성 추가
-    	$('.chat-box-title').attr('data-chatroom-no', chatroomDto.chatroomNo);
+ 	  
+   	  // 채팅방 화면 display:none 없애기
+   	  $('.chat-box').css('display', '');
+  
+      // 채팅방 이름 변경
+   	  $('.chat-box-title > span:first').text(chatroomDto.chatroomTitle);
+	    
+      // 채팅방 번호 data 속성 추가
+   	  $('.chat-box-title').attr('data-chatroom-no', chatroomDto.chatroomNo);
    	  $('.chat-box-title').data('chatroom-no', chatroomDto.chatroomNo);
    	  
       $('.chat-box-title').attr('data-chatroom-type', chatroomDto.chatroomType);
       $('.chat-box-title').data('chatroom-type', chatroomDto.chatroomType);
-   	  
    	  
    		// 모달창 닫기
    	  $('#modal-default').modal('hide');
@@ -1795,8 +1819,8 @@ window.addEventListener('beforeunload', function(event) {
     				
     					let chatroom = resData.chatroom;
     				
-    				  page = 1;	
-    				  chatMessageTotalPage = 0;
+    				  	page = 1;	
+    				  	chatMessageTotalPage = 0;
     					$('.chat-memberProfileList').empty();
 
     					gChatroomNo = chatroom.chatroomNo;
@@ -1816,44 +1840,85 @@ window.addEventListener('beforeunload', function(event) {
       }
     };
  
-		
-		
-		
+    // 채팅방 이름 수정 모달 표시
+    const fnUpdateChatroomTitleModal = () => {
+   	  $('.modify-chatTitle').on('click', () => {
+   	    let chatroomTitle = $('.chat-box-title > span:first').text();
+   	    let chatroomNo = $('.chat-box-title').data('chatroom-no');
+   	
+   	    // 모달창에 원래 제목 데이터 넣어주기
+   	    $('.newChatroomTitle-input').val(chatroomTitle);
+   	    $('.newChatroomTitle-input').after('<input type="hidden" class="chatroomNo" data-chatroom-no="' + chatroomNo + '" placeholder="채팅방 이름을 작성해주세요"');
+   	
+   	    // 모달창 표시
+   	    $('#modal-default3').modal('show');
+   	    fnUpdateChatroomTitle();
+   	  })
+    }
+    
+    // 채팅방 이름 수정
+    const fnUpdateChatroomTitle = () => {
+   	  $('.btn-modifyChatroomTitle').on('click', () => {
+   	    
+        // input값, 현재 로그인한 직원 번호 서버로 보내기
+        let chatroomTitle = $('.newChatroomTitle-input').val();
+        let chatroomNo = $('.chat-box-title').data('chatroom-no');
+        
+        fetch('${contextPath}/chatting/updateChatroomTitle.do',{
+          method: 'PATCH',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              'chatroomTitle': chatroomTitle,
+              'chatroomNo': chatroomNo
+          })
+        })
+        .then((response) => response.json())
+        .then(resData => {
+        
+          if(resData.updateChatroomTitleCount === 1) {
+        	// 업데이트 성공시
+        	
+        	// 채팅방 이름 바꾸기
+       	    $('.chat-box-title > span:first').text(chatroomTitle);
+			// 모달창 input 초기화        	
+       	    $('.newChatroomTitle-input').val('');
+       	    // 모달창 닫기
+       	    $('#modal-default3').modal('hide');
+			        	 
+	       	 // 모든 .chatroom-info 요소를 선택
+	       	 $('.chatroom-info').each(function() {
+	       	     // data-chatroom-no 값을 가져오기
+	       	     let chatroomListNo = $(this).data('chatroom-no');
+	       	     
+	       	     // chatroomNo 값과 비교
+	       	     if (chatroomListNo == chatroomNo) {
+	       	         // 부모 요소를 선택
+	       	         var parentElement = $(this).parent();
+	       	         // 부모 요소의 값을 변경 (예: 텍스트 내용 변경)
+	       	         parentElement.text(chatroomTitle);
+	       	     }
+	       	 });
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-  
-	fnPressEnterSendBtn();		
+        	  
+          } else {
+        	alert('채팅방 이름 수정에 실패하였습니다!!');
+          }
+        	
+        	
+        	
+        })
+     })
+   }
+    
+    
+    
+    
+    
+    
+    
+  fnPressEnterSendBtn();
   fnGetChatUserList();
   fnShowChatList();
   fnAddChatRoom();
@@ -1861,6 +1926,8 @@ window.addEventListener('beforeunload', function(event) {
   fnChatMessageScrollHandler();
   fnAddNewGroupChatroom();
   fnExitChatroom();
+  fnUpdateChatroomTitleModal();
+  
   //fnMessageSend();
   
   </script>

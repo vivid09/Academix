@@ -48,5 +48,8 @@ public interface ChatMapper {
   // 채팅방 참여자가 0명인 채팅방 메시지 삭제
   int deleteNoParticipateMessage();
   
+  // 채팅방 이름 수정
+  int updateChatroomTitle(Map<String, Object> map);
+  
   
 }

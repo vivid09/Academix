@@ -35,4 +35,9 @@ public class NotificationController {
     return ResponseEntity.ok(Map.of("updateStatusCount", notifyService.updateSeenStatus(params.get("notificationNoList"))));
   }
   
+  @PatchMapping(value="/updateChatroomSeenStatus.do", produces = "application/json")
+  public ResponseEntity<Map<String, Object>> updateChatroomSeenStatus(@RequestBody Map<String, Object> params) {
+    return ResponseEntity.ok(Map.of("updateStatusCount", notifyService.updateChatroomSeenStatus(params)));
+  }
+  
 }
