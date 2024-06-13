@@ -362,6 +362,19 @@
 	    });
    	  })
     } 
+     
+    // 알림 받았을 때 채팅방에 표시해주기 
+    const fnShowChatroomIcon = (notification) => {
+	  
+      // 채팅방 번호 가져오기
+   	  let chatroomNo = notification.chatroomNo;
+   	  
+      // 채팅방 목록
+   	  
+    	
+    	
+    }
+    
     
 	
 	window.addEventListener('load', fnConnectGlobalStompClient);
