@@ -13,78 +13,114 @@
 
 <style>
        
-        .content-wrapper {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 500px;
-           
-        }
-        .title {
+     .title {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
         }
-        form div {
+        .form-st {
+            background-color: white;
+            width: 95%;
+            margin: 0 auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            gap: 15px;
         }
-        label {
-            flex-basis: 45%;
-            display: flex;
-            align-items: center;
+        .form-group {
+            flex: 1;
         }
-        input[type="text"], input[type="password"], input[type="date"], input[type="file"], select {
-            flex-basis: 45%;
-            padding: 5px;
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group input[type="text"], 
+        .form-group input[type="password"], 
+        .form-group input[type="date"], 
+        .form-group input[type="file"], 
+        .form-group select {
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        .form-group input[type="file"] {
+            padding: 3px;
+        }
         button {
-            width: 100%;
             padding: 10px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
             background-color: #0056b3;
+        }
+        .upload-cover-photo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .upload-cover-photo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
         }
     </style>
   
   
   <div class="content-wrapper">
         <h2 class="title">직원 및 강사 수정</h2>
-        <form action="${contextPath}/hr/employeeModify.do" 
+        <div class="form-st">
+         <form action="${contextPath}/hr/employeeModify.do" 
               method="POST" enctype="multipart/form-data">
-            <div>
+           <div class="form-row">
+             <div class="form-group">
                 <label for="profile">프로필</label>
                 <input type="file" name="profile" id="profile" value="${employee.profilePicturePath}">
-            </div>
-            <div>
+             </div>
+           </div> 
+           <div class="form-row">
+              <div class="form-group">
                 <label for="name">이름</label>
                 <input type="text" name="name" id="name" value="${employee.name}">
-            </div>
-            <div>
+              </div>
+              <div class="form-group">
                 <label for="email">이메일</label>
                 <input type="text" name="email" id="email" value="${employee.email}">
+              </div>
             </div>
-            <div>
+            
+           <div class="form-row">
+             <div class="form-group">
                 <label for="pw">비밀번호</label>
                 <input type="password" name="pw" id="pw" value="${employee.password}">
-            </div>
-            <div>
+             </div>
+             <div class="form-group">
                 <label for="phone">전화번호</label>
                 <input type="text" name="phone" id="phone" value="${employee.phone}">
-            </div>
-            <div>
+             </div>
+           </div>
+           <div class="form-row">
+             <div class="form-group">
                 <label for="address">주소</label>
                 <input type="text" name="address" id="address" value="${employee.address}">
-            </div>
-            <div>
+             </div>
+             <div class="form-group">
                 <label for="departName">부서명</label>
                 <select name="departName" id="departName">
                   <option>${employee.depart.departName}</option>
@@ -95,7 +131,9 @@
                   <option value="강사">강사</option>
                 </select>
             </div>
-            <div>
+           </div> 
+           <div class="form-row">
+             <div class="form-group">
                 <label for="rankTitle">직급명</label>
                 <select name="rankTitle" id="rankTitle" >
                  <option>${employee.rank.rankTitle}</option>
@@ -106,8 +144,8 @@
                  <option value="사원">사원</option>
                  <option value="강사">강사</option>
                 </select>
-            </div>
-            <div>
+             </div >
+             <div class="form-group">
                 <label for="employeeStatus">사원상태</label>
                 <select name="employeeStatus" id="employeeStatus">
                   <option value="${employee.employeeStatus}">
@@ -121,35 +159,32 @@
                   <option></option>
                 </select>
             </div>
+           </div>
             <div>
 	                <input type="hidden" name="departmentNo" id="departmentNo" value="${employee.depart.departmentNo}">
             </div>
             <div>
                 <input type="hidden" name="rankNo" id="rankNo" value="${employee.rank.rankNo}">
             </div>
-            <div>
+            <div class="form-row">
+             <div class="form-group">
                 <label for="hireDate">입사일</label>
                 <input type="date" name="hireDate" id="hireDate"  value="${employee.hireDate}">
-            </div>
-            <div>
+             </div>
+             <div class="form-group">
                 <label for="exitDate">퇴사일</label>
                 <input type="date" name="exitDate" id="exitDate" value="${employee.exitDate}">
-            </div>
+             </div>
+           </div>
             <div>
-                <label for="parentDepartNo">부모부서번호</label>
-                <select name="parentDepartNo" id="parentDepartNo" >
-                  <option value="${employee.depart.parentDepartNo}">
-                   <c:choose>
-				        <c:when test="${employee.depart.parentDepartNo eq '1'}">행정부</c:when>
-				        </c:choose>
-                  </option>
-                  <option value="1">행정부</option>
-                </select>
+                
                 <input type="hidden" name="employeeNo" value="${employee.employeeNo}">
                 
             </div>
             <button type="submit">수정하기</button>
         </form>
+        </div>
+        
     </div>
   
   <script >

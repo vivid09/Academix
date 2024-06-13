@@ -2,11 +2,15 @@ package com.gdu.academix.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -193,13 +197,27 @@ public class HrServiceImpl implements HrService {
 	}
 	
 	@Override
-	public void annualLeaves() {
-		int leaveDay = 1;
+	//@Scheduled(cron = "1 * * * * *")
+	public void grantAnnualLeave() {
+		List<EmployeesDto> employees =   hrMapper.getAllEmployees();
+		java.util.Date now= new java.util.Date();
+		for (EmployeesDto employee : employees) {
+			long diffInMillies = Math.abs(now.getTime() - employee.getHireDate().getTime());
+            long diffInYears = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) / 365;
+
+            int annualLeaveDays = (diffInYears >= 2) ? 15 : 12;
+            annualLeaves(employee.getEmployeeNo(), annualLeaveDays);
 		
-		
-		AnnualLeavesDto annualLeaves = AnnualLeavesDto.builder()
-				                                      .build();
-		
+	 }
+  }
+	@Override
+	public void annualLeaves(int employeeNo, int annualLeaveDays) {
+		 AnnualLeavesDto annualLeave = new AnnualLeavesDto();
+		    annualLeave.setEmployeeNo(employeeNo);
+		    annualLeave.setTotalLeaves(annualLeaveDays);
+		    annualLeave.setYear(Calendar.getInstance().get(Calendar.YEAR)); // 현재 연도 설정
+
+		    hrMapper.insertAnnualLeaves(annualLeave);
 	}
 	
 }

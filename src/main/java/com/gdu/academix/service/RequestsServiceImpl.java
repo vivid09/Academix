@@ -3,6 +3,8 @@ package com.gdu.academix.service;
 import java.io.File;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.gdu.academix.dto.AttendanceAdjustmentRequestDto;
 import com.gdu.academix.dto.DepartmentsDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.LeaveRequestDto;
@@ -51,9 +54,9 @@ public class RequestsServiceImpl implements RequestsService {
 	    String rankTitle = multipartRequest.getParameter("rankTitle");
 	    String reason = multipartRequest.getParameter("reason");
 	    int employeeNo = Integer.parseInt(multipartRequest.getParameter("employeeNo"));
+	    int requestSort = Integer.parseInt(multipartRequest.getParameter("requestSort"));
 	    int picNo = Integer.parseInt(multipartRequest.getParameter("picNo"));
 	    int requestStatus = Integer.parseInt(multipartRequest.getParameter("requestStatus"));
-	    int requestSort = Integer.parseInt(multipartRequest.getParameter("requestSort"));
 	    
 	    DepartmentsDto depart = new DepartmentsDto();
 	    depart.setDepartName(departName);
@@ -153,6 +156,101 @@ public class RequestsServiceImpl implements RequestsService {
 	    return (insertCount == 1) && (insertAttachCount == files.size());
   }
   
+  @Transactional
+  @Override
+  public boolean createAttendanceRequest(MultipartHttpServletRequest multipartRequest) {
+	    int employeeNo = Integer.parseInt(multipartRequest.getParameter("employeeNo"));
+	    int requestStatus = Integer.parseInt(multipartRequest.getParameter("requestStatus"));
+	    String reason = multipartRequest.getParameter("reason");
+	    int requestSort = Integer.parseInt(multipartRequest.getParameter("requestSort"));
+	    int picNo = Integer.parseInt(multipartRequest.getParameter("picNo"));
+	    
+		
+		  String adjustmentDateString = multipartRequest.getParameter("adjustmentDate"); 
+		  //LocalDate adjustmentDate =  LocalDate.parse(adjustmentDateString);
+		  // LocalDate를 SQL Date로 변환 Date sqlStartDate = Date.valueOf(adjustmentDate);
+		 
+
+	    int insertAttendanceCount = 0;
+	    int insertAttachCount = 0;
+	    List<MultipartFile> files = null;
+
+	    try {
+	        String timeInString = multipartRequest.getParameter("timeIn");
+	        String timeOutString = multipartRequest.getParameter("timeOut");
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+	        java.util.Date parsedDate = timeFormat.parse(timeInString);
+	        java.util.Date parsedDate2 = timeFormat.parse(timeOutString);
+	        java.util.Date parsedDate3 = dateFormat.parse(adjustmentDateString);
+	        Timestamp timeIn = new Timestamp(parsedDate.getTime());
+	        Timestamp timeOut = new Timestamp(parsedDate2.getTime());
+	        Timestamp adjustmentDate = new Timestamp(parsedDate3.getTime());
+
+	        EmployeesDto employees = EmployeesDto.builder()
+	                                             .employeeNo(employeeNo)
+	                                             .build();
+
+	        RequestsDto requests = RequestsDto.builder()
+	                                          .requestStatus(requestStatus)
+	                                          .employees(employees)
+	                                          .reason(reason)
+	                                          .picNo(picNo)
+	                                          .requestSort(requestSort)
+	                                          .build();
+
+	        AttendanceAdjustmentRequestDto attendanceAdjustment = AttendanceAdjustmentRequestDto.builder()
+	                                                                                           .timeIn(timeIn)
+	                                                                                           .timeOut(timeOut)
+	                                                                                           .requests(requests)
+	                                                                                           .adjustmentDate(adjustmentDate)
+	                                                                                           .build();
+
+	        insertAttendanceCount = requestsMapper.insertRequest(requests);
+	        insertAttendanceCount += requestsMapper.insertAttendanceRequests(attendanceAdjustment);
+
+	        files = multipartRequest.getFiles("files");
+
+	        if (files != null && !files.isEmpty()) {
+	            if (files.get(0).getSize() == 0) {
+	                insertAttachCount = 1;  // 첨부가 없어도 files.size() 는 1 이다.
+	            } else {
+	                insertAttachCount = 0;
+	            }
+
+	            for (MultipartFile multipartFile : files) {
+	                if (multipartFile != null && !multipartFile.isEmpty()) {
+	                    String uploadPath = myfileUtils.getUploadPath();
+	                    File dir = new File(uploadPath);
+	                    if (!dir.exists()) {
+	                        dir.mkdirs();
+	                    }
+
+	                    String originalFilename = multipartFile.getOriginalFilename();
+	                    String filesystemName = myfileUtils.getFilesystemName(originalFilename);
+	                    File file = new File(dir, filesystemName);
+	                    multipartFile.transferTo(file);
+
+	                    int requestNo = requests.getRequestNo();
+	                    RequestAttachDto attach = RequestAttachDto.builder()
+	                                                              .requestNo(requestNo)
+	                                                              .uploadPath(uploadPath)
+	                                                              .filesystemName(filesystemName)
+	                                                              .originalFileName(originalFilename)
+	                                                              .build();
+	                    insertAttachCount += requestsMapper.insertRequestsAttach(attach);
+	                }
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return (insertAttendanceCount == 2) && (insertAttachCount == files.size());
+	}
+
+  
  
   @Override
   public void prepareRequestsList(HttpServletRequest request, Model model) {
@@ -191,6 +289,11 @@ public class RequestsServiceImpl implements RequestsService {
 	public LeaveRequestDto getRequestsbyNo(int requestNo) {
 		
 		return requestsMapper.getRequestsbyNo(requestNo);
+	}
+  
+  @Override
+	public AttendanceAdjustmentRequestDto getAttendanceRequestNo(int requestNo) {
+		return requestsMapper.getAttendanceRequestNo(requestNo);
 	}
 
   
@@ -356,6 +459,93 @@ public class RequestsServiceImpl implements RequestsService {
 
 	    
 		return modifyCount;
+	}
+  
+  @Transactional
+  @Override
+	public int attendanceModify(MultipartHttpServletRequest multipartRequest) {
+		
+	    String reason = multipartRequest.getParameter("reason");
+	    int requestNo = Integer.parseInt(multipartRequest.getParameter("requestNo"));
+		
+		  String adjustmentDateString = multipartRequest.getParameter("adjustmentDate"); 
+		  //LocalDate adjustmentDate =  LocalDate.parse(adjustmentDateString);
+		  // LocalDate를 SQL Date로 변환 Date sqlStartDate = Date.valueOf(adjustmentDate);
+		 
+
+	    int modifyCount = 0;
+	    List<MultipartFile> files = null;
+
+	    try {
+	        String timeInString = multipartRequest.getParameter("timeIn");
+	        String timeOutString = multipartRequest.getParameter("timeOut");
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+	        java.util.Date parsedDate = timeFormat.parse(timeInString);
+	        java.util.Date parsedDate2 = timeFormat.parse(timeOutString);
+	        java.util.Date parsedDate3 = dateFormat.parse(adjustmentDateString);
+	        Timestamp timeIn = new Timestamp(parsedDate.getTime());
+	        Timestamp timeOut = new Timestamp(parsedDate2.getTime());
+	        Timestamp adjustmentDate = new Timestamp(parsedDate3.getTime());
+
+	        EmployeesDto employees = EmployeesDto.builder()
+	                                             .build();
+
+	        RequestsDto requests = RequestsDto.builder()
+	        		                          .requestNo(requestNo)
+	                                          .employees(employees)
+	                                          .reason(reason)
+	                                          .build();
+
+	        AttendanceAdjustmentRequestDto attendanceAdjustment = AttendanceAdjustmentRequestDto.builder()
+	                                                                                           .timeIn(timeIn)
+	                                                                                           .timeOut(timeOut)
+	                                                                                           .requests(requests)
+	                                                                                           .adjustmentDate(adjustmentDate)
+	                                                                                           .build();
+
+	        modifyCount = requestsMapper.attendanceModify(attendanceAdjustment);
+	        modifyCount += requestsMapper.attendanceModify2(requests);
+
+	        files = multipartRequest.getFiles("files");
+
+	        if (files != null && !files.isEmpty()) {
+	            if (files.get(0).getSize() == 0) {
+	            	modifyCount = 1;  // 첨부가 없어도 files.size() 는 1 이다.
+	            } else {
+	            	modifyCount = 0;
+	            }
+
+	            for (MultipartFile multipartFile : files) {
+	                if (multipartFile != null && !multipartFile.isEmpty()) {
+	                    String uploadPath = myfileUtils.getUploadPath();
+	                    File dir = new File(uploadPath);
+	                    if (!dir.exists()) {
+	                        dir.mkdirs();
+	                    }
+
+	                    String originalFilename = multipartFile.getOriginalFilename();
+	                    String filesystemName = myfileUtils.getFilesystemName(originalFilename);
+	                    File file = new File(dir, filesystemName);
+	                    multipartFile.transferTo(file);
+
+	                     int requestNo2 = requests.getRequestNo();
+	                    RequestAttachDto attach = RequestAttachDto.builder()
+	                                                              .requestNo(requestNo2)
+	                                                              .uploadPath(uploadPath)
+	                                                              .filesystemName(filesystemName)
+	                                                              .originalFileName(originalFilename)
+	                                                              .build();
+	                    modifyCount += requestsMapper.attendanceModify3(attach);
+	                }
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return modifyCount;
 	}
   
   @Override

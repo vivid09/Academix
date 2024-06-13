@@ -73,7 +73,12 @@
         <tr class="sta" data-request-status="${leaveRequests.requestStatus}">
           <td>${leaveRequests.requestNo}</td>
           <td>
+          <c:if test="${leaveRequests.requestSort == 1}">
             <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requestNo}">
+            </c:if>
+            <c:if test="${leaveRequests.requestSort == 0}">
+              <a href="${contextPath}/requests/attendanceDetail.do?requestNo=${leaveRequests.requestNo}">
+            </c:if>
              <c:choose>
                       <c:when test="${leaveRequests.requestSort eq '0'}">
                         근태조정서

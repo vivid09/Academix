@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.gdu.academix.dto.AttendanceAdjustmentRequestDto;
 import com.gdu.academix.dto.LeaveRequestDto;
 import com.gdu.academix.dto.RequestsDto;
 
@@ -16,12 +17,15 @@ public interface RequestsService {
 
  
   boolean createLeaveRequest(MultipartHttpServletRequest multipartRequest);
+  boolean createAttendanceRequest(MultipartHttpServletRequest multipartRequest);
   void prepareRequestsList(HttpServletRequest request, Model model);
   LeaveRequestDto getRequestsbyNo(int requestNo);
+  AttendanceAdjustmentRequestDto getAttendanceRequestNo(int requestNo);
   int requestApproval(HttpServletRequest request);
   int requestReject(HttpServletRequest request);
   void getRequestsList(HttpServletRequest request,Model model);
   int modifyRequest(MultipartHttpServletRequest multipartRequest);
+  int attendanceModify(MultipartHttpServletRequest multipartRequest);
   int removeRequest(int requestNo);
   ResponseEntity<Map<String, Object>> pending();
   ResponseEntity<Resource> download(HttpServletRequest request);

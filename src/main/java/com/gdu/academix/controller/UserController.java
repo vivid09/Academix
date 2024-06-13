@@ -56,9 +56,8 @@ public class UserController {
   
   @GetMapping(value="/getUserProfileByNo.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> getUserProfileByNo(@RequestParam int employeeNo) {
-    System.out.println("employeeNo: " + employeeNo);
-    return userService.getUserProfileByNo(employeeNo);
-  }
+	  return ResponseEntity.ok(Map.of("employee", userService.getUserProfileByNo(employeeNo)));
+  }	
   
   
 /*

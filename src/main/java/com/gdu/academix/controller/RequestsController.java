@@ -47,11 +47,24 @@ public class RequestsController {
 	    return "redirect:/requests/main.page"; // 리디렉션
 	}
   
+  @PostMapping("/writeAttendance.do")
+   public String createAttendanceRequest(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+	  redirectAttributes.addFlashAttribute("insertCount", requestsService.createAttendanceRequest(multipartRequest));
+	  
+	  return "redirect:/requests/main.page";
+  }
+  
   @GetMapping(value="/main.page")
   public String getList(HttpServletRequest request, Model model) {
 	  requestsService.prepareRequestsList(request, model);
 	  return "requests/main";
    }
+  
+  @GetMapping("attendanceDetail.do")
+   public String attendance(@RequestParam int requestNo, Model model) {
+	  model.addAttribute("attendance", requestsService.getAttendanceRequestNo(requestNo));
+	  return"requests/attendaceDetail";
+  }
   
 	
   @GetMapping("/detail.do")
@@ -105,6 +118,11 @@ public class RequestsController {
       .addFlashAttribute("modifyResult", requestsService.modifyRequest(multipartRequest) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
        return "redirect:/requests/detail.do?requestNo=" +requestNo;
 	  
+  }
+  @PostMapping("attendanceModify.do")
+   public String attendanceModify(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+	  redirectAttributes.addFlashAttribute("modifyResult", requestsService.attendanceModify(multipartRequest) == 1 ? "수정" : "수정되지않았습니다");
+      return "requests/main"; 
   }
   
   @PostMapping("/removeRequest.do")

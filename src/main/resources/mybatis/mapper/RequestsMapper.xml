@@ -76,6 +76,29 @@
 	</association>
 </resultMap>
 
+<resultMap type="AttendanceAdjustmentRequestDto" id="AttendanceMap">
+ <id property="requests.requestNo" column="REQUEST_NO"/>
+ <result property="adjustmentDate" column="ADJUSTMENT_DATE"/>
+ <result property="timeIn" column="TIME_IN"/>
+ <result property="timeOut" column="TIME_OUT"/>
+ <association property="requests" javaType="RequestsDto">
+  <id property="requestNo" column="REQUEST_NO"/>
+  <result property="requestSort" column="REQUEST_SORT"/>
+  <result property="requestStatus" column="REQUEST_STATUS"/>
+  <result property="picNo" column="PIC_NO"/>
+  <result property="reason" column="REASON"/>
+  <result property="rejectReason" column="REJECT_REASON"/>
+  <result property="requestDate" column="REQUEST_DATE"/>
+ </association>
+ <association property="attach" javaType="RequestAttachDto">
+		<id property="attachNo" column="ATTACH_NO"/>
+		<result property="requestNo" column="REQUEST_NO"/>
+		<result property="uploadPath" column="UPLOAD_PATH"/>
+		<result property="filesystemName" column="FILESYSTEM_NAME"/>
+		<result property="originalFileName" column="ORIGINAL_FILENAME"/>
+	</association>
+</resultMap>
+
 
   <insert id="insertRequest" parameterType="RequestsDto" useGeneratedKeys="true" keyProperty="requestNo" keyColumn="REQUEST_NO">
     <!-- REQUEST_NO를 미리 생성하고 keyProperty에 할당합니다 -->
@@ -127,6 +150,20 @@
     )
 </insert>
 
+
+
+<insert id="insertAttendanceRequests"
+        parameterType="AttendanceAdjustmentRequestDto">
+   INSERT INTO ATTENDANCE_ADJUSTMENT_REQUEST_T(
+          REQUEST_NO,
+          ADJUSTMENT_DATE,
+          TIME_IN,
+          TIME_OUT) VALUES(
+          #{requests.requestNo},
+          #{adjustmentDate},
+          #{timeIn},
+          #{timeOut})       
+</insert>
 
 <insert id="insertRequestsAttach"
         parameterType="RequestAttachDto">   
@@ -181,6 +218,24 @@ LEFT JOIN
     REQUEST_ATTACH_T A ON L.REQUEST_NO = A.REQUEST_NO
 WHERE 
     L.REQUEST_NO = #{requestNo}
+</select>
+
+<select id="getAttendanceRequestNo"
+        parameterType="int"
+        resultMap="AttendanceMap">
+   SELECT 
+    R.REQUEST_NO, R.REQUEST_STATUS, R.REASON, R.REQUEST_SORT, PIC_NO, R.REJECT_REASON, REQUEST_DATE,
+    A.TIME_IN, A.TIME_OUT, A.ADJUSTMENT_DATE, 
+    E.NAME,E.EMPLOYEE_NO, E.DEPARTMENT_NO, E.RANK_NO,  D.DEPART_NAME,RA.RANK_TITLE,
+    AT.ATTACH_NO, AT.UPLOAD_PATH, AT.FILESYSTEM_NAME, AT.ORIGINAL_FILENAME, AT.DOWNLOAD_COUNT
+     FROM 
+    REQUESTS_T R INNER JOIN ATTENDANCE_ADJUSTMENT_REQUEST_T A 
+            ON R.REQUEST_NO = A.REQUEST_NO INNER JOIN EMPLOYEES_T E 
+                      ON R.EMPLOYEE_NO = E.EMPLOYEE_NO INNER JOIN DEPARTMENTS_T D
+                      ON E.DEPARTMENT_NO = D.DEPARTMENT_NO INNER JOIN RANKS_T RA
+                      ON E.RANK_NO = RA.RANK_NO INNER JOIN REQUEST_ATTACH_T AT
+                      ON R.REQUEST_NO = AT.REQUEST_NO
+                       WHERE R.REQUEST_NO = #{requestNo}
 </select>
 
 
@@ -239,6 +294,30 @@ WHERE
 	 WHERE REQUEST_NO = #{requestNo}	       
 </update>
 
+<update id="attendanceModify"
+        parameterType="AttendanceAdjustmentRequestDto">
+ UPDATE ATTENDANCE_ADJUSTMENT_REQUEST_T
+    SET ADJUSTMENT_DATE = #{adjustmentDate},
+        TIME_IN = #{timeIn},
+        TIME_OUT = #{timeOut}
+  WHERE REQUEST_NO = #{requests.requestNo}      
+</update>
+
+<update id="attendanceModify2"
+        parameterType="RequestsDto">
+   UPDATE REQUESTS_T
+      SET REASON = #{reason}
+   WHERE REQUEST_NO = #{requestNo}   
+</update>
+
+<update id="attendanceModify3"
+        parameterType="RequestAttachDto">
+       UPDATE REQUEST_ATTACH_T
+	   SET UPLOAD_PATH =  #{uploadPath},
+	       FILESYSTEM_NAME = #{filesystemName},
+	       ORIGINAL_FILENAME = #{originalFileName}
+	 WHERE REQUEST_NO = #{requestNo}
+</update>
 
 <delete id="removeRequest2"
         parameterType="int">
