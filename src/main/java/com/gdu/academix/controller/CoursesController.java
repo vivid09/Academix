@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gdu.academix.dto.CourseDto;
 import com.gdu.academix.service.CoursesService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public class CoursesController {
   @PostMapping(value="/createCourseRequest.do", produces="application/json")
   public String registerAttendanceRecord(MultipartHttpServletRequest multipartRequest
       																 , RedirectAttributes redirectAttributes) throws Exception {
-    boolean insertCount = coursesService.registerCourse(multipartRequest);
+  	redirectAttributes.addFlashAttribute("insertResult", coursesService.registerCourse(multipartRequest));
     return "redirect:/courses/manageCourses.page";
   }
   
@@ -58,11 +59,24 @@ public class CoursesController {
     model.addAttribute("course", coursesService.getCourseByNo(courseNo));
     return "courses/detail";
   }
+  
+  @PostMapping("/manageCourses/edit.do")
+  public String edit(@RequestParam int courseNo, Model model) {
+    model.addAttribute("course", coursesService.getCourseByNo(courseNo));
+    return "courses/edit";
+  }
+  
+  @PostMapping(value="/manageCourses/modify.do", produces="application/json")
+  public String modify(MultipartHttpServletRequest multipartRequest
+			 							 , RedirectAttributes redirectAttributes) throws Exception{
+	  redirectAttributes.addFlashAttribute("modifyResult", coursesService.modifyCourse(multipartRequest));
+    return "redirect:/courses/manageCourses/detail.do?courseNo=" + Integer.parseInt(multipartRequest.getParameter("courseNo"));
+  }
 
-  @PostMapping(value="/removeEvent.do", produces="application/json")
-  public ResponseEntity<Map<String, Object>> removeEvent(@RequestBody int courseNo) {
-    int removeCount = coursesService.removeCourse(courseNo);
-    return ResponseEntity.ok(Map.of("removeCount", removeCount == 1 ? "강의가 삭제되었습니다." : "강의가 삭제되지 않았습니다."));
+  @PostMapping(value="/manageCourses/removeCourse.do", produces="application/json")
+  public String removeEvent(@RequestParam int courseNo, RedirectAttributes redirectAttributes) {
+	  redirectAttributes.addFlashAttribute("removeResult", coursesService.removeCourse(courseNo));
+  	return "redirect:/courses/manageCourses.page";
   }
   
   

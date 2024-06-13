@@ -19,13 +19,15 @@
     INSERT INTO ATTENDANCE_RECORDS_T (
        RECORD_NO
      , RECORD_DATE
-     , TIME_IN
+     <if test="timeIn!=null">, TIME_IN</if>
+     <if test="timeOut!=null">, TIME_OUT</if>
      , STATUS
      , EMPLOYEE_NO
     ) VALUES (
         ATTENDANCE_RECORD_SEQ.NEXTVAL
       , #{recordDate}
-      , #{timeIn}
+      <if test="timeIn!=null">, #{timeIn}</if>
+      <if test="timeOut!=null">, #{timeOut}</if>
       , #{status}
       , #{employeeNo}
     )

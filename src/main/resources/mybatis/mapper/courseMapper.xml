@@ -82,7 +82,7 @@
          , DESCRIPTION = #{description}
          , START_DATE = #{startDate}
          , END_DATE = #{endDate}
-         , COURSE_PLAN = #{coursePlan}
+        <if test="coursePlan!=null">, COURSE_PLAN = #{coursePlan}</if>
          , COURSE_STATE = #{courseState}
          , EMPLOYEE_NO = #{employee.employeeNo}
      WHERE COURSE_NO = #{courseNo}

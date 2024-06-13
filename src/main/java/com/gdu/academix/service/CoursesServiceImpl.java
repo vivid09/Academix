@@ -2,6 +2,7 @@ package com.gdu.academix.service;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -99,8 +100,8 @@ public class CoursesServiceImpl implements CoursesService {
                           .employee(emp)
                         .build();
     
-    if(multipartRequest.getParameter("status") != null) {
-    	status = Integer.parseInt(multipartRequest.getParameter("status"));
+    if(multipartRequest.getParameter("courseState") != null) {
+    	status = Integer.parseInt(multipartRequest.getParameter("courseState"));
     	course.setCourseState(status);
     }
     
@@ -148,14 +149,80 @@ public class CoursesServiceImpl implements CoursesService {
   }
   
   @Override
-  public int modifyCourse(CourseDto course) {
-    return courseMapper.updateCourse(course);
+  public boolean modifyCourse(MultipartHttpServletRequest multipartRequest) throws Exception {
+  	SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+  	
+    String title = multipartRequest.getParameter("title");
+    String description = multipartRequest.getParameter("description");
+    Date startDate = dateTimeFormat.parse((String) multipartRequest.getParameter("startDate"));
+    Date endDate = dateTimeFormat.parse((String) multipartRequest.getParameter("endDate"));
+    String coursePlan = "";
+    int courseNo = Integer.parseInt(multipartRequest.getParameter("courseNo"));
+    int empNo = Integer.parseInt(multipartRequest.getParameter("empNo"));
+    int status;
+    
+    // 첨부 파일 처리하기
+    List<MultipartFile> files = multipartRequest.getFiles("coursePlan");
+    
+    // 첨부 파일이 없는 경우 : [MultipartFile[field="files", filename=, contentType=application/octet-stream, size=0]]
+    // 첨부 파일이 있는 경우 : [MultipartFile[field="files", filename=404.jpg, contentType=image/jpeg, size=63891]]
+    
+    for (MultipartFile multipartFile : files) {
+      if(multipartFile != null && !multipartFile.isEmpty()) {
+        StringBuilder sb = new StringBuilder();
+        String uploadPath = myFileUtils.getCoursePlanPath();
+        File dir = new File(uploadPath);
+        System.out.println("====="+dir.getAbsolutePath());
+        if(!dir.exists()) {
+          dir.mkdirs();
+        }
+        
+        String originalFilename = multipartFile.getOriginalFilename();
+        String filesystemName = myFileUtils.getFilesystemName(originalFilename);
+        File file = new File(dir, filesystemName);
+        String relativePath = uploadPath.substring(UP_DIR.length());
+        sb.append(multipartRequest.getContextPath()).append(relativePath).append("/") .append(filesystemName);
+        
+        try {
+          multipartFile.transferTo(file);  // 파일을 지정된 경로에 저장
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("파일 업로드 중 오류가 발생했습니다: " + e.getMessage());
+        }
+        coursePlan = sb.toString();
+      }  // if
+    }  // for
+    
+    
+    EmployeesDto emp = new EmployeesDto();
+    emp.setEmployeeNo(empNo);
+    
+    CourseDto course = CourseDto.builder()
+                          .title(title)
+                          .description(description)
+                          .startDate(new Timestamp(startDate.getTime()))
+                          .endDate(new Timestamp(endDate.getTime()))
+                          .courseNo(courseNo)
+                          .employee(emp)
+                        .build();
+    
+    if(!coursePlan.equals("")) {
+    	course.setCoursePlan(coursePlan);
+    }
+    
+    if(multipartRequest.getParameter("courseState") != null) {
+    	status = Integer.parseInt(multipartRequest.getParameter("courseState"));
+    	course.setCourseState(status);
+    }
+    
+    int insertCourseCount = courseMapper.updateCourse(course);
+    
+    return insertCourseCount == 1;
   }
   
   @Override
-  public int removeCourse(int courseNo) {
-    return courseMapper.deleteCourse(courseNo);
-    
+  public boolean removeCourse(int courseNo) {
+    return courseMapper.deleteCourse(courseNo) == 1;
   }
   
 }

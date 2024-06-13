@@ -19,8 +19,10 @@ public interface RequestsMapper {
   int getRequestsCount();
   LeaveRequestDto getRequestsbyNo(int requestNo);
   int requestApproval(RequestsDto requests);
-  int requestReject(RequestsDto requests);
+  int requestreject(RequestsDto requests);
   List<LeaveRequestDto>getListPage(Map<String, Object> map);
+  int getRequestsCountByEmployeeNo(int employeeNo);
+  List<LeaveRequestDto>getLeaveRequestListByEmployeeNo(Map<String, Object> map);
   int requestModify(LeaveRequestDto leaveRequest);
   int requestModify2(RequestsDto requests);
   int requestModify3(RequestAttachDto attach);

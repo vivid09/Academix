@@ -118,6 +118,8 @@
   
   <script>
    
+  console.log("${requestsList}");
+  
   const fnDisplay = () => {
 	  document.getElementById('display').value = '${display}';
 	  document.getElementById('display').addEventListener('change', (evt) => {

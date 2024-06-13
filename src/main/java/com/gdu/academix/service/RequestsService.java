@@ -19,8 +19,9 @@ public interface RequestsService {
   void prepareRequestsList(HttpServletRequest request, Model model);
   LeaveRequestDto getRequestsbyNo(int requestNo);
   int requestApproval(HttpServletRequest request);
-  int requestReject(HttpServletRequest request);
+  int requestreject(HttpServletRequest request);
   void getRequestsList(HttpServletRequest request,Model model);
+  ResponseEntity<Map<String, Object>> getLeaveRequestListByEmployeeNo(HttpServletRequest request);
   int modifyRequest(MultipartHttpServletRequest multipartRequest);
   int removeRequest(int requestNo);
   ResponseEntity<Map<String, Object>> pending();

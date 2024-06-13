@@ -15,7 +15,7 @@ import com.gdu.academix.dto.CourseDto;
 public interface CoursesService {
   boolean registerCourse(MultipartHttpServletRequest multipartRequest) throws Exception;
   ResponseEntity<Map<String, Object>> loadCourseList(HttpServletRequest request);
-  CourseDto getCourseByNo(int uploadNo);
-  int modifyCourse(CourseDto course);
-  int removeCourse(int uploadNo);
+  CourseDto getCourseByNo(int courseNo);
+  boolean modifyCourse(MultipartHttpServletRequest multipartRequest) throws Exception;
+  boolean removeCourse(int courseNo);
 }

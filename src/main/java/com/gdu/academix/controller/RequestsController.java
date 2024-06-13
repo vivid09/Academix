@@ -77,7 +77,7 @@ public class RequestsController {
   
   @PostMapping("/reject.do")
   public String rejectRequest(HttpServletRequest request, RedirectAttributes redirectAttributes) {
-	  int rejectCount = requestsService.requestReject(request);
+	  int rejectCount = requestsService.requestreject(request);
 	  redirectAttributes.addFlashAttribute("rejectCount", rejectCount == 1 ? "반려되었습니다." : "반려되지 않았습니다");
 	  return "redirect:/requests/requestsList.do";
   }

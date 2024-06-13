@@ -11,7 +11,7 @@
   <result property="requestDate"  column="REQUEST_DATE"/>
   <result property="reason"  column="REASON"/>
   <result property="requestStatus"  column="REQUEST_STATUS"/>
-  <result property="rejectReason"  column="REJECT_REASON"/>
+  <result property="rejectReason"  column="reject_REASON"/>
   <result property="picNo"  column="PIC_NO"/>
   <association property="employees" javaType="EmployeesDto">
    <id property="employeeNo" column="EMPLOYEE_NO"/>
@@ -41,7 +41,7 @@
         <result property="requestStatus" column="REQUEST_STATUS"/>
         <result property="picNo" column="PIC_NO"/>
         <result property="reason" column="REASON"/>
-        <result property="rejectReason" column="REJECT_REASON"/>
+        <result property="rejectReason" column="reject_REASON"/>
         <result property="requestDate" column="REQUEST_DATE"/>
 
         <association property="employees" javaType="EmployeesDto">
@@ -89,7 +89,7 @@
         REQUEST_DATE,
         REASON,
         REQUEST_STATUS,
-        REJECT_REASON,
+        reject_REASON,
         PIC_NO,
         EMPLOYEE_NO
     ) VALUES (
@@ -147,10 +147,10 @@
 <select id="getList"
         parameterType="Map"
         resultMap="RequestMap">
-   SELECT R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REJECT_REASON, R.PIC_NO, R.EMPLOYEE_NO, R.REQUEST_NO,NAME, D.DEPART_NAME, RA.RANK_TITLE, R.REQUEST_STATUS
+   SELECT R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.reject_REASON, R.PIC_NO, R.EMPLOYEE_NO, R.REQUEST_NO,NAME, D.DEPART_NAME, RA.RANK_TITLE, R.REQUEST_STATUS
 FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY R.REQUEST_NO DESC) AS RN, 
-           R.REQUEST_NO, R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REJECT_REASON, R.PIC_NO, R.EMPLOYEE_NO,R.REQUEST_STATUS,  E.NAME, E.DEPARTMENT_NO, E.RANK_NO
+           R.REQUEST_NO, R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.reject_REASON, R.PIC_NO, R.EMPLOYEE_NO,R.REQUEST_STATUS,  E.NAME, E.DEPARTMENT_NO, E.RANK_NO
     FROM REQUESTS_T R 
     INNER JOIN EMPLOYEES_T E ON R.EMPLOYEE_NO = E.EMPLOYEE_NO
 ) R
@@ -170,7 +170,7 @@ WHERE RN BETWEEN #{begin} AND #{end}
         resultMap="LeaveRequestMap">
    SELECT 
     L.REQUEST_NO, L.START_DATE, L.END_DATE, L.LEAVE_TYPE,
-    R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REQUEST_STATUS, R.REJECT_REASON, R.PIC_NO, R.EMPLOYEE_NO,
+    R.REQUEST_SORT, R.REQUEST_DATE, R.REASON, R.REQUEST_STATUS, R.reject_REASON, R.PIC_NO, R.EMPLOYEE_NO,
     L.NAME,L.RANK_TITLE, L.DEPART_NAME,A.ATTACH_NO,A.UPLOAD_PATH,A.FILESYSTEM_NAME,
     A.ORIGINAL_FILENAME
 FROM 
@@ -193,14 +193,16 @@ WHERE
 	
 </update>
 
-<update id="requestReject"
+<update id="requestreject"
         parameterType="RequestsDto">
 	UPDATE REQUESTS_T
 	   SET REQUEST_STATUS = #{requestStatus},
 	       PIC_NO = #{picNo},
-	       REJECT_REASON = #{rejectReason}
+	       reject_REASON = #{rejectReason}
 	 WHERE REQUEST_NO = #{requestNo}
 </update>
+
+
 
 <select id="getListPage"
         parameterType="Map"
@@ -210,6 +212,35 @@ WHERE
       FROM LEAVE_REQUEST_T L INNER JOIN REQUESTS_T R
             ON R.REQUEST_NO = L.REQUEST_NO)
        WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+<select id="getRequestsCountByEmployeeNo"
+        resultType="int">
+  SELECT COUNT(*)
+    FROM REQUESTS_T
+   WHERE EMPLOYEE_NO = #{employeeNo}
+</select>
+
+<select id="getLeaveRequestListByEmployeeNo"
+        parameterType="Map"
+        resultMap="LeaveRequestMap">
+SELECT REQUEST_NO, REQUEST_DATE, REQUEST_STATUS, reject_REASON, START_DATE, END_DATE, DURATION, LEAVE_TYPE
+FROM (
+    SELECT ROW_NUMBER() OVER (ORDER BY L.REQUEST_NO DESC) AS RN, 
+           L.REQUEST_NO, 
+           R.REQUEST_DATE, 
+           R.REQUEST_STATUS, 
+           R.reject_REASON,
+           L.START_DATE,
+           L.END_DATE,
+           L.DURATION,
+           L.LEAVE_TYPE
+    FROM LEAVE_REQUEST_T L 
+    INNER JOIN REQUESTS_T R ON R.REQUEST_NO = L.REQUEST_NO
+    INNER JOIN EMPLOYEES_T E ON R.EMPLOYEE_NO = E.EMPLOYEE_NO
+    WHERE E.EMPLOYEE_NO = #{employeeNo}
+) 
+WHERE RN BETWEEN #{begin} AND #{end}
 </select>
 
 <update id="requestModify" parameterType="LeaveRequestDto">

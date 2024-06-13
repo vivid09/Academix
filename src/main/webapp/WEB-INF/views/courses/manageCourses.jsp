@@ -132,7 +132,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
 <!-- Page specific script -->
-<script src="/resources/js/courseState.js?dt=${dt}"></script>
+<script src="/resources/js/state.js?dt=${dt}"></script>
 <script>
 	//전역 변수
 	var page = 1;
@@ -155,16 +155,16 @@
 	      // 기존 리스트 비우기
 	      $('#courseList').empty();
 	    
-	      
+	       
 	      $.each(resData.courseList, (i, course) => {
 	    	  var state;
 	    	  var href = "location.href='${contextPath}/courses/manageCourses/detail.do?courseNo=" + course.courseNo + '\'';
 		      if(course.courseState == 0){
-		    	  state = course_unprocessed;
+		    	  state = stateUnprocessed;
 		      } else if(course.courseState == 1) {
-		    	  state = course_accept;
+		    	  state = stateAccept;
 		      } else if(course.courseState == 2) {
-		    	  state = course_reject;
+		    	  state = stateReject;
 		      }
 	    	  
 	    	  
@@ -245,8 +245,30 @@
 	  });
 	});
 	
+	const fnInsertResult = () => {
+	  const InsertResult = '${insertResult}';
+	  if(InsertResult !== '') {
+	    if(InsertResult === 'true') {
+			  alert('강의 개설 되었습니다.');
+			} else {
+			  alert('강의 개설 되지않았습니다.');
+			}
+	  }
+	}
 	
-
+	const fnRemoveResult = () => {
+		  const RemoveResult = '${removeResult}';
+		  if(RemoveResult !== '') {
+		    if(RemoveResult === 'true') {
+				  alert('강의가 삭제 되었습니다.');
+				} else {
+				  alert('강의가 삭제 되지않았습니다.');
+				}
+		  }
+		}
+	
+	fnInsertResult();
+	fnRemoveResult();
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

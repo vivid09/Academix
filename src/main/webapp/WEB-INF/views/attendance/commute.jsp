@@ -370,14 +370,24 @@
             		inTitle = annual_leave_title;
             		color = annual_leave_color;
             		allDay = true;
+                records.push({
+                    title: inTitle,
+                    start: record.timeIn,
+                    end:  record.timeOut,
+                    color: color,
+                    allDay: allDay
+                 });
+                return;
             	}
               // timeIn 이벤트 추가
-              records.push({
-                title: inTitle,
-                start: record.timeIn,
-                color: color,
-                allDay: allDay
-              });
+              if(record.timeIn){
+	              records.push({
+	                title: inTitle,
+	                start: record.timeIn,
+	                color: color,
+	                allDay: allDay
+	              });
+              }
 
               // timeOut 이벤트 추가
               if(record.timeOut && !allDay){

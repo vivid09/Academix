@@ -3,7 +3,9 @@ package com.gdu.academix.service;
 import java.io.File;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,12 +22,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.gdu.academix.dto.AttendanceRecordDto;
 import com.gdu.academix.dto.DepartmentsDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.LeaveRequestDto;
 import com.gdu.academix.dto.RanksDto;
 import com.gdu.academix.dto.RequestAttachDto;
 import com.gdu.academix.dto.RequestsDto;
+import com.gdu.academix.mapper.AttendanceRecordMapper;
 import com.gdu.academix.mapper.RequestsMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
@@ -37,6 +41,8 @@ public class RequestsServiceImpl implements RequestsService {
 
   @Autowired
   private RequestsMapper requestsMapper;
+  @Autowired
+  private AttendanceRecordMapper attendancerecordMapper;
   @Autowired
   private MyPageUtils myPageUtils;
   @Autowired
@@ -207,11 +213,42 @@ public class RequestsServiceImpl implements RequestsService {
 			  						    .build();
 	  int moddifyCount = requestsMapper.requestApproval(requests);
 	  
+	  LeaveRequestDto LeaveRequest = requestsMapper.getRequestsbyNo(requestNo);
+	  
+	  AttendanceRecordDto attendanceRecord = AttendanceRecordDto.builder()
+  	  		.recordDate(new Timestamp(LeaveRequest.getStartDate().getTime()))
+  	  		.timeIn(new Timestamp(LeaveRequest.getStartDate().getTime()))
+  	  		.timeOut(new Timestamp(LeaveRequest.getEndDate().getTime()))
+  	  		.employeeNo(LeaveRequest.getRequests().getEmployees().getEmployeeNo())
+	  		.build();
+	  
+	  int status = 0;
+	  
+	  Timestamp originalTimestamp = new Timestamp(LeaveRequest.getStartDate().getTime());
+	  LocalDateTime dateTime;
+	  
+	  if(LeaveRequest.getLeaveType() == 0) {
+	  	status = 7;
+	  } else if(LeaveRequest.getLeaveType() == 1) {
+	  	dateTime = originalTimestamp.toLocalDateTime().withHour(9).withMinute(0).withSecond(0).withNano(0);
+	  	status = 5;
+	  	attendanceRecord.setTimeIn(Timestamp.valueOf(dateTime));
+	  	attendanceRecord.setTimeOut(null);
+	  } else if(LeaveRequest.getLeaveType() == 2) {
+	  	status = 6;
+	  	dateTime = originalTimestamp.toLocalDateTime().withHour(18).withMinute(0).withSecond(0).withNano(0);
+	  	attendanceRecord.setTimeIn(null);
+	  	attendanceRecord.setTimeOut(Timestamp.valueOf(dateTime));
+	  }
+	  
+	  attendanceRecord.setStatus(status);
+	  
+	  attendancerecordMapper.insertAttendanceRecord(attendanceRecord);
 		return moddifyCount;
 	}
   
   @Override
-	public int requestReject(HttpServletRequest request) {
+	public int requestreject(HttpServletRequest request) {
 	  int requestStatus = Integer.parseInt(request.getParameter("requestStatus"));
 	  int picNo = Integer.parseInt(request.getParameter("picNo")); 
 	  int requestNo = Integer.parseInt(request.getParameter("requestNo"));
@@ -222,7 +259,7 @@ public class RequestsServiceImpl implements RequestsService {
 			  						    .requestNo(requestNo)
 			  						    .rejectReason(rejectReason)
 			  						    .build();
-	  int rejectCount = requestsMapper.requestReject(requests);
+	  int rejectCount = requestsMapper.requestreject(requests);
 	  
 		return rejectCount;
 	}
@@ -261,6 +298,44 @@ public class RequestsServiceImpl implements RequestsService {
 	    model.addAttribute("page", page);
 	    model.addAttribute("status", status);
 	    
+	}
+  
+	@Override
+	public ResponseEntity<Map<String, Object>> getLeaveRequestListByEmployeeNo(HttpServletRequest request) {
+    
+    int employeeNo = Integer.parseInt(request.getParameter("employeeNo"));
+		
+    int total = requestsMapper.getRequestsCountByEmployeeNo(employeeNo);
+    
+    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+    int display = Integer.parseInt(optDisplay.orElse("10"));
+    
+    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+    int page = Integer.parseInt(optPage.orElse("1"));
+
+    myPageUtils.setPaging(total, display, page);
+    
+    Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+    String sort = optSort.orElse("DESC");
+    
+    Optional<String> optStatus = Optional.ofNullable(request.getParameter("status"));
+    String status = optStatus.orElse("all");
+    
+
+    
+    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
+                                   , "end", myPageUtils.getEnd()
+                                   , "sort", sort
+                                   , "status", status
+                                   , "employeeNo", employeeNo);	   
+    
+    // 목록 화면으로 반환할 값 (목록 + 전체 페이지 수)
+    return new ResponseEntity<>(Map .of("requestsList", requestsMapper.getLeaveRequestListByEmployeeNo(map)
+                                      , "totalPage", myPageUtils.getTotalPage()
+                                      , "paging", myPageUtils.getPaging(request.getContextPath() + "/attendance/annualLeave/LeaveRequestList.do"
+                                      , null
+                                      , display))
+                              , HttpStatus.OK);
 	}
   
   @Override
@@ -422,5 +497,8 @@ public class RequestsServiceImpl implements RequestsService {
 	    // 다운로드 진행
 	    return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
 	}
+
+
+
   
 }

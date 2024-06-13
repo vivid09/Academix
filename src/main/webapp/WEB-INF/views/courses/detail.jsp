@@ -96,6 +96,16 @@
   .hidden { 
     display: none; 
   }
+  
+  #frm-btn {
+    display: flex;
+    justify-content: right;
+  }
+  
+  #frm-btn .btn{
+    margin: 0 10px;
+  }
+  
  </style>
  
 
@@ -123,6 +133,15 @@
       </div>
 	    <div id="course-info" class="content-section">
 	      <h2>${course.title}</h2>
+        <c:if test="${not empty sessionScope.user}">  
+			    <c:if test="${sessionScope.user.employeeNo == course.employee.employeeNo}">
+			      <form id="frm-btn" method="POST">  
+				        <input type="hidden" name="courseNo" value="${course.courseNo}">
+				        <button type="button" id="btn-edit-course" class="btn btn-warning">편집</button>
+				        <button type="button" id="btn-remove-course" class="btn btn-danger">삭제</button>
+			      </form>
+			    </c:if>
+			  </c:if>
 	      <p><span class="field-label">강의번호</span><span class="field-value">${course.courseNo}</span></p>
 	      <p><span class="field-label">강의명</span><span class="field-value">${course.title}</span></p>
 	      <p><span class="field-label">기간</span><span class="field-value">${fn:substring(course.startDate, 0, 10)} ~ ${fn:substring(course.endDate, 0, 10)}</span></p>
@@ -158,7 +177,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
 <!-- Page specific script -->
-<script src="/resources/js/courseState.js?dt=${dt}"></script>
+<script src="/resources/js/state.js?dt=${dt}"></script>
 <script>
 
 	function showCourseInfo() {
@@ -183,11 +202,11 @@
 
   var stateHtml = '';
   if (courseState == 0) {
-    stateHtml = course_unprocessed;
+    stateHtml = stateUnprocessed;
   } else if (courseState == 1) {
-    stateHtml = course_accept;
+    stateHtml = stateAccept;
   } else if (courseState == 2) {
-    stateHtml = course_reject;
+    stateHtml = stateReject;
   }
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -199,34 +218,36 @@
 var frmBtn = $('#frm-btn');
 
 //블로그 편집 화면으로 이동
-const fnEditBlog = () => {
-  $('#btn-edit-blog').on('click', (evt) => {
-    frmBtn.attr('action', '${contextPath}/blog/editBlog.do');
+const fnEditCourse = () => {
+  $('#btn-edit-course').on('click', (evt) => {
+    frmBtn.attr('action', '/courses/manageCourses/edit.do');
     frmBtn.submit();
   })
 }
 
-// 블로그 수정 결과 메시지
 const fnModifyResult = () => {
   const modifyResult = '${modifyResult}';
   if(modifyResult !== '') {
-    alert(modifyResult);
+    if(modifyResult === 'true') {
+		  alert('수정 되었습니다.');
+		} else {
+		  alert('수정 되지않았습니다.');
+		}
   }
 }
 
-// 블로그 삭제
-const fnRemoveBlog = () => {
-  $('#btn-remove-blog').on('click', (evt) => {
-    fnCheckSignin();
-    if(confirm('블로그를 삭제하면 모든 댓글이 함께 삭제됩니다. 삭제할까요?')){
-      frmBtn.attr('action', '${contextPath}/blog/removeBlog.do');
+const fnRemoveCourse = () => {
+  $('#btn-remove-course').on('click', (evt) => {
+    if(confirm('정말 강의를 삭제하시겠습니까?')){
+      frmBtn.attr('action', '/courses/manageCourses/removeCourse.do');
       frmBtn.submit();
     }
   })
 }
 	
-	
-
+fnEditCourse();
+fnModifyResult();
+fnRemoveCourse();
 </script>
 
 <jsp:include page="${contextPath}/WEB-INF/views/layout/footer.jsp" />

@@ -68,12 +68,6 @@
   .buttons button {
     margin: 0 10px;
   }
-  .calendar-header {
-    display: flex;
-    text-align: center;
-    margin-bottom: 20px;
-    justify-content: end;
-  }
   
   table {
       width: 100%;
@@ -89,6 +83,11 @@
   }
   tr:nth-child(even) {
       background-color: #f9f9f9;
+  }
+  .state {
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
   }
   .pagination {
       display: flex;
@@ -129,79 +128,21 @@
       </ol>
     </section>
 
-  <!-- Modal -->
-  <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">연차 신청</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-	        <form id="eventForm">
-	          <div class="form-group">
-	            <label for="eventTitle">제목</label>
-	            <input type="text" class="form-control" id="eventTitle" placeholder="Event Title">
-	          </div>
-						<div class="form-row">
-	            <div class="form-group col-md-6">
-	              <label for="startDate">시작 일</label>
-	              <input type="date" class="form-control" id="startDate">
-	            </div>
-	            <div class="form-group col-md-6">
-	              <label for="endDate">종료 일</label>
-	              <input type="date" class="form-control" id="endDate">
-	            </div>
-	          </div>
-          <div class="form-row">
-            <div class="form-group col-md-12">
-              <label for="leaveType">종류</label>
-              <select class="form-control" id="leaveType">
-                <option value="5">오전반차</option>
-                <option value="6">오후반차</option>
-                <option value="7">연차</option>
-              </select>
-            </div>
-          </div>
- 	          <div class="form-row">
-		          <div class="form-group col-md-12">
-		            <label for="eventDescription">설명</label>
-		            <textarea class="form-control" id="eventDescription" rows="3"></textarea>
-		          </div>
-	          </div>
-		        <div class="modal-footer">
-		        	<input type="hidden" id="recordNo" name="recordNo">
-		          <button type="submit" class="btn btn-primary" id="saveEventBtn">Save</button>
-		        </div>
-	        </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Status Boxes -->
   <div class="status-box">
     <div class="status-item">
       <div>총 연차</div>
-      <div class="status-number h1" id="attendance_normal">0</div>
+      <div class="status-number h1" id="leaveTotal">0</div>
     </div>
     <div class="status-item">
       <div>사용 연차</div>
-      <div class="status-number h1" id="attendance_late_or_early_leave">0</div>
+      <div class="status-number h1" id="leaveUsed">0</div>
     </div>
     <div class="status-item">
       <div>잔여 연차</div>
-      <div class="status-number h1" id="attendance_absence">0</div>
+      <div class="status-number h1" id="leaveLeft">0</div>
     </div>
   </div>
-
-  <!-- Calendar Header -->
-  <div class="calendar-header">
-    <button type="button" class="btn btn-flex btn-primary btn-lg" id="applicationLeave">연차 신청</button>
-  </div>
-
 
     <!-- Main content -->
     <section class="content">
@@ -215,57 +156,10 @@
                <th>연차신청날짜</th>
            </tr>
        </thead>
-       <tbody>
-           <tr>
-               <td>00001</td>
-               <td>승인</td>
-               <td>3.0</td>
-               <td>2024/10/25 ~ 2024/10/28</td>
-               <td>2024/10/25</td>
-           </tr>
-           <tr>
-               <td>00001</td>
-               <td>처리중</td>
-               <td></td>
-               <td></td>
-               <td>2024/10/25</td>
-           </tr>
-           <tr>
-               <td>00001</td>
-               <td>처리중</td>
-               <td></td>
-               <td></td>
-               <td>2024/10/25</td>
-           </tr>
-           <tr>
-               <td>00001</td>
-               <td>처리중</td>
-               <td></td>
-               <td></td>
-               <td>2024/10/25</td>
-           </tr>
-           <tr>
-               <td>00001</td>
-               <td>처리중</td>
-               <td></td>
-               <td></td>
-               <td>2024/10/25</td>
-           </tr>
-       </tbody>
+		   <tbody id="requestList">
+		   </tbody>
 	    </table>
-	    <div class="pagination">
-	        <a href="#">&lt;</a>
-	        <a href="#">1</a>
-	        <a href="#">2</a>
-	        <a href="#">3</a>
-	        <a href="#">4</a>
-	        <a href="#">5</a>
-	        <a href="#">6</a>
-	        <a href="#">7</a>
-	        <a href="#">8</a>
-	        <a href="#">9</a>
-	        <a href="#">10</a>
-	        <a href="#">&gt;</a>
+	    <div class="pagination"id="pagination">
 	    </div>
     </section>
     <!-- /.content -->
@@ -293,95 +187,113 @@
 <script src='/plugins/fullcalendar/locale/ko.js'></script>
 <!-- Page specific script -->
 <script src="/resources/js/attendanceLabels.js?dt=${dt}"></script>
+<script src="/resources/js/state.js?dt=${dt}"></script>
 <script>
+//전역 변수
+var page = 1;
+var totalPage = 0;
+
+var leaveUsed = 0;
+var leaveTotal = 0;
+var leaveLeft = 0;
+
+const fnGetLeaveRequestList = (pageNum) => {
 	
-	$('#applicationLeave').click(function(event) {
-	  $('#eventForm')[0].reset();
+	page = pageNum || page;  // pageNum이 전달되지 않으면 현재 페이지를 유지
+	fetch('/attendance/annualLeave/LeaveRequestList.do?employeeNo=${sessionScope.user.employeeNo}', {
+	  method: 'GET',
+	})
+	.then(response => response.json())
+	.then(resData => {
+		totalPage = resData.totalPage;
+		console.log(resData);
 	  
-	  $('#eventNo').val();
-	  $('#eventTitle').val();
-	  $('#startDate').val();
-	  if(event.end === null){
-	  	$('#endDate').val();	
-	  } else {
-	  	$('#endDate').val();	
-	  }
-	  $('#startTime').val();
-	  if(event.end === null){
-	  	$('#endTime').val();
-	  } else {
-	  	$('#endTime').val();
-	  }
+	  // resData.recordList.forEach(record => {});
+		// 기존 리스트 비우기
+	      $('#courseList').empty();
+	    
+	       
+	      $.each(resData.requestsList, (i, request) => {
+	    	  var state;
+		      if(request.requests.requestStatus == 0){
+		    	  state = stateUnprocessed;
+		      } else if(request.requests.requestStatus == 1) {
+		    	  state = stateAccept;
+		      	leaveUsed += request.duration;
+		      } else if(request.requests.requestStatus == 2) {
+		    	  state = stateReject + ' 사유 : ' + request.requests.rejectReason;
+		      }
+	    	  
+	        let str = '<tr class="request">';
+	        str +=   '<td>' + request.requests.requestNo + '</td>';
+	        str +=   '<td>' + state + '</td>';
+	        str +=   '<td>' + request.duration + '</td>';
+	        str +=   '<td>' + request.startDate.substring(0, 10) + ' ~ ' + request.endDate.substring(0, 10) + '</td>';
+	        str +=   '<td>' + request.requests.requestDate + '</td>';
+	        str += '</tr>';
+	        $('#requestList').append(str);
+	      })
+	      
+	    	leaveLeft = leaveTotal - leaveUsed;
+	      
+	      $('#leaveTotal').html(leaveTotal);
+	      $('#leaveUsed').html(leaveUsed);
+	      $('#leaveLeft').html(leaveLeft);
+	      // 페이징 업데이트
+	      updatePagination(resData.paging);
 	
-	  $('#eventDescription').val();
-	
-	
-	  // 이벤트 수정 모달을 띄웁니다.
-	  $('#deleteEventBtn').show(); // 이벤트를 클릭했을 때만 Delete 버튼을 보이도록 설정
-	  $('#eventModal').modal('show');
-		
+	})
+	.catch(error => {
+	  console.error('Error fetching events:', error);
 	});
+}
+  
+// 페이징 업데이트 함수
+const updatePagination = (pagingHtml) => {
+  $('#pagination').empty();
+  $('#pagination').append($.parseHTML(pagingHtml));
 
-    $('#inBtn').click(function(event) {
-        event.preventDefault();
-        if($('#recordNo').val() !== ""){
-        	return;
-        }
-        
-        var recordData = {
-            timeIn: moment(new Date()).utcOffset(9).format('YYYY-MM-DDTHH:mm:ss.SSS'),
-            employeeNo: ${sessionScope.user.employeeNo}
-        };
-
-        fetch('/attendance/commute/registerAttendanceRecord.do', { 
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(recordData)
-          }) 
-          .then(response => response.json())
-          .then(resData => {
-        	  alert(resData.insertResult);
-            $('#calendar').fullCalendar('refetchEvents');
-          })
-          .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-          });
-      $('#eventModal').modal('hide');
-
-    });
-    
-    $('#eventModal').on('hidden.bs.modal', function () {
-        $('#deleteEventBtn').hide(); // 모달이 닫힐 때 Delete 버튼을 숨깁니다.
-    });
-    
-    $('#exitBtn').click(function() {
-      event.preventDefault();
-      
-      var recordData = {
-    		  recordNo: Number($('#recordNo').val()),
-          date: moment(new Date()).utcOffset(9).format('YYYY-MM-DDTHH:mm:ss.SSS'),
-          timeOut: moment(new Date()).utcOffset(9).format('YYYY-MM-DDTHH:mm:ss.SSS'),
-          employeeNo: ${sessionScope.user.employeeNo}
-      };
-
-      fetch('/attendance/commute/updateAttendanceRecord.do', { 
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(recordData)
-        }) 
-        .then(response => response.json())
-        .then(resData => {
-      	  alert(resData.insertResult);
-          $('#calendar').fullCalendar('refetchEvents');
-        })
-        .catch(error => {
-          console.error('There was a problem with the fetch operation:', error);
+  // 현재 페이지를 비활성화
+  $('#pagination a').each(function() {
+    let href = $(this).attr('href');
+    if (href) {
+      let params = new URLSearchParams(href.split('?')[1]);
+      let pageNum = params.get('page');
+      if (pageNum == page) {
+        $(this).addClass('disabled').css({
+          'pointer-events': 'none',
+          'color': 'grey',
+          'background-color': '#f2f2f2',
+          'border-color': '#ddd'
         });
-    });
+      }
+    }
+  });
+
+  // 페이지 링크 클릭 이벤트 추가
+  $('#pagination a').click((event) => {
+    event.preventDefault();
+    if (!$(event.target).hasClass('disabled')) {
+      let href = $(event.target).attr('href');
+      let params = new URLSearchParams(href.split('?')[1]);
+      let pageNum = params.get('page');
+      fnGetCourseList(pageNum);
+    }
+  });
+}
+
+$(document).ready(() => {
+	fnGetLeaveRequestList();
+	
+  // 초기 페이지 링크 클릭 이벤트 추가
+  $('#pagination').on('click', 'a', function(event) {
+    event.preventDefault();
+    let href = $(this).attr('href');
+    let params = new URLSearchParams(href.split('?')[1]);
+    let pageNum = params.get('page');
+    fnGetLeaveRequestList(pageNum);
+  });
+});
 
 </script>
 
