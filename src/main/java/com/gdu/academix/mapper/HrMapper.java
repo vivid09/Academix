@@ -16,6 +16,7 @@ public interface HrMapper {
 	int getEmployeeListCount();
     EmployeesDto getUserProfileByNo(int employeeNo);
     int employeeModify(EmployeesDto employees);
-    AnnualLeavesDto insertAnnualLeaves();
+    void insertAnnualLeaves(AnnualLeavesDto annualLeaves);
+    List<EmployeesDto> getAllEmployees();
 	
 }

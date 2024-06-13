@@ -115,4 +115,11 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
                              #{employeeNo})
 </insert> 
 
+<select id="getAllEmployees"
+        resultType="EmployeesDto">
+  SELECT EMPLOYEE_NO, NAME, DEPARTMENT_NO, EMAIL, PHONE, ADDRESS, RANK_NO, PASSWORD,
+         PROFILE_PICTURE_PATH,EMPLOYEE_STATUS,HIRE_DATE,EXIT_DATE
+  FROM EMPLOYEES_T 
+</select>
+
 </mapper>

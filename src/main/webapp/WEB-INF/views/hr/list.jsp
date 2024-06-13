@@ -172,19 +172,21 @@
 .not-profile-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
+  grid-gap: 40px;
+  padding: 40px;
 }
 
 .not-profile-grid div {
   padding: 5px 0;
   border-bottom: 1px solid #ddd;
+  margin-bottom: 10px; /* 위아래 간격 설정 */
 }
 
 .btn-empEdit {
   display: block;
   margin: 20px auto 0;
 }
-	
+
 		
 		
 	
@@ -383,31 +385,38 @@
             .then((response) => response.json())
             .then(resData => {
                 var employee = resData.employee;
-                console.log(employee.employeeNo);
+               
                 let str= '<div class="list-container"  id="list-emp">';
                 str += '<div class="profile-container">';
-                
-               //	 str +=  '<div>' + employee.profilePicturePath.replace('<img ', '<img style="width: 50px;" ') + '</div>';
+                if(employee.profilePicturePath != null){
+                str +=  '<span>' + employee.profilePicturePath+ '</span>';
+                } else {
+                	str += '<img src="/images/default_profile_image.png">';
+                }
                 
                 str += '</div>';
-                str += '<div class="not-profile-grid">';
+                str += '<div class="not-profile-grid" data-employee-no="resData.employee.employeeNo">';
                 str += '<div>이름: ' + employee.name + '</div>';
                 str += '<div>이메일: ' + employee.email + '</div>';
-                str += '<div>비밀번호: ' + employee.password + '</div>';
+                const empPassword = employee.password !== null ? '******' : '*';
+                str += '<div>비밀번호: ' + empPassword + '</div>';
                 str += '<div>전화번호: ' + employee.phone + '</div>';
                 str += '<div>주소: ' + employee.address + '</div>';
                 str += '<div>부서: ' + employee.depart.departName + '</div>';
                 str += '<div>직급: ' + employee.rank.rankTitle + '</div>';
-                str += '<div>상태: ' + employee.employeeStatus + '</div>';
+                const employeeStatusText = employee.employeeStatus === 1 ? '재직' : '퇴직';
+                str += '<div>상태: ' + employeeStatusText + '</div>';
                 str += '<div>입사일: ' + employee.hireDate + '</div>';
                 str += '<div>사원번호: ' + employee.employeeNo + '</div>';
-                str += '<div>퇴사일: ' + employee.exitDate + '</div>';
+                const empExitDate = employee.exitDate === null ? '재직중' : employee.exitDate;
+                str += '<div>퇴사일: ' + empExitDate + '</div>';
                 
                 str += '</div>'; // grid닫기
                 
                 str += '<div>';
                 str += '<button type="button" class="btn btn-default btn-empEdit" onclick="profileEdit(\'' + employee.employeeNo + '\')">수정</button>';
                 str += '</div>';
+                str += '<button id="btn-emp-remove">삭제</button>'
                 str += '</div>';
 
                 $('.empList').empty().append(str); // 기존 정보 삭제 후 새로운 정보 추가
@@ -427,7 +436,10 @@ function profileEdit(employeeNo) {
 }
 
 
-	   
+	   /* document.getElementById('btn-emp-remove').addEventListener('click', ()=>{
+		   let employeeNo = 
+		   location.href='${contextPath}/hr/empRemove.do?employeeNo=' + employeeNo;
+	   }) */
 	  
 	   
 	   
