@@ -87,6 +87,25 @@
     )
   </insert>
   
+  <insert id="insertFolder"
+          parameterType="FolderDto">
+    INSERT INTO FOLDER_T (
+        FOLDER_NO
+      , FOLDER_NAME
+      , FOLDER_CREATE_DT
+      , FOLDER_UPLOAD_PATH
+      , PARENT_FOLDER_NO
+      , OWNER_NO
+    ) VALUES (
+        FOLDER_SEQ.NEXTVAL
+      , #{folderName}
+      , CURRENT_TIMESTAMP
+      , #{folderUploadPath}
+      , #{parentFolderNo}
+      , #{ownerNo}
+    )
+  </insert>
+  
   <select id="getUploadList">
     
   </select>

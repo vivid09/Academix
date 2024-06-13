@@ -28,6 +28,11 @@ public class FolderController {
     this.folderService = folderService;
   }
   
+  @GetMapping("/main.page")
+  public String main() {
+    return "drive/main";
+  }
+  
   @GetMapping("/main.do")
   public String main(HttpServletRequest request, Model model) {
     model.addAttribute("request", request);
@@ -65,11 +70,5 @@ public class FolderController {
   }
 
   
-  
-  
-  
-  
-  
-  
-  
+
 }

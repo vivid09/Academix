@@ -120,12 +120,16 @@ public class FolderServiceImpl implements FolderService {
   
   @Override
   public int addFolder(Map<String, Object> params) {
-    String parentFolderUploadPath = (String) params.get("folderUploadPath");
+    int ownerNo = Integer.parseInt(String.valueOf(params.get("ownerNo")));
+    int parentFolderNo = Integer.parseInt(String.valueOf(params.get("parentFolderNo")));
+    String parentFolderUploadPath = (String) params.get("parentFolderUploadPath");
     String folderName = (String) params.get("folderName");
     String folderUploadPath = parentFolderUploadPath + "/" + folderName;
     
-    int ownerNo = Integer.parseInt(String.valueOf(params.get("ownerNo")));
-    int parentFolderNo = Integer.parseInt(String.valueOf(params.get("parentFolderNo")));
+    File dir = new File(folderUploadPath);
+    if(!dir.exists()) {
+      dir.mkdirs();
+    }
     
     FolderDto folder = FolderDto.builder()
                           .folderName(MySecurityUtils.getPreventXss(folderName))

@@ -218,11 +218,9 @@
                 <div class="modal-body">
                   <!-- 여기에 내용 넣으면 됨. -->
                   <form id="frm-addFolder"
-                        method="POST"
-                        action="${contextPath}/drive/addFolder.do">
+                        onsubmit="fnAddFolder()">
                     <h5>새 폴더 위치를 선택해주세요.</h5>
                     <div class="folder-list"></div>
-                    
                     <input type="hidden" name="folderUploadPath" id="folderUploadPath">
                     <input type="hidden" name="folderNo" id="folderNo"><!-- parentFolderNo -->
                     
@@ -346,6 +344,41 @@
   // 폴더 추가하는 버튼
   document.getElementById('addFolderBtn').addEventListener('click', () => {
     $('#addFolderModal').modal('show');
+  });
+  
+  const fnAddFolder = (evt) => {
+	  //evt.preventDefault();
+	  
+	  let parentFolderNo = document.getElementById('folderNo');
+	  let parentFolderUploadPath = document.getElementById('folderUploadPath');
+	  let folderName = document.getElementById('folderName');
+	  let ownerNo = document.querySelector('input[name="ownerNo"]');
+	  
+    fetch('${contextPath}/drive/addFolder.do', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'parentFolderNo': parentFolderNo.value,
+        'parentFolderUploadPath': parentFolderUploadPath.value,
+        'folderName': folderName.value,
+        'ownerNo': ownerNo.value,
+      })
+    })
+    .then(response => response.json())
+    .then(resData => {
+      if(resData.insertCount === 1) {
+        alert('폴더가 추가되었습니다.');
+        window.location.href = '${contextPath}/drive/main.page';
+        // window.location.href = '${contextPath}/drive/main.do';
+      } else {
+        alert('폴더 추가 실패했습니다.');
+      }
+    })
+    .catch(error => {
+      alert('폴더 생성 중 오류가 발생했습니다.');
+    });
   }
   
   // -------------------------------------------- 폴더 구조 --------------------------------------------
@@ -540,7 +573,6 @@
         var selectedNode = data.instance.get_node(data.selected[0]);
         if (selectedNode) {
           var selectedFolderNo = parseInt(selectedNode.id, 10);
-          console.log(selectedFolderNo);
           var selectedFolder = resData.folder.find(folder => folder.folderNo === selectedFolderNo);
           if (selectedFolder) {
         	  console.log(selectedFolder);
@@ -574,6 +606,8 @@
 	    }
 	  } 
   }
+
+  
   
   
   fnGetFileList();
