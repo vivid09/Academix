@@ -34,6 +34,7 @@
 			  
 			  const message = JSON.parse(notification.body);
 			  fnShowAlert(message);
+			  fnShowChatroomIcon(message);
 			  //showNotification(JSON.parse(notification.body));
 		  }, {id: 'alert-' + ${sessionScope.user.employeeNo}});
 	  }, function(error) {
@@ -314,6 +315,8 @@
 	        $('.alert-menu-sub').text('알람을 모두 확인했어요!');
 	        $('.messages-menu span').text(0);
 	        $('.messages-menu span').css('display', 'none');
+	        $('.contacts-list i.fa-circle').remove();
+	        
         } else {
         	return;
         }
@@ -367,12 +370,18 @@
     const fnShowChatroomIcon = (notification) => {
 	  
       // 채팅방 번호 가져오기
-   	  let chatroomNo = notification.chatroomNo;
+   	  let gChatroomNo = notification.chatroomNo;
    	  
-      // 채팅방 목록
-   	  
-    	
-    	
+      // 채팅방 목록을 돌면서 해당 채팅방 번호에 해당하는 요소의 i 제거
+      $('.contacts-list li').each(function(){
+    	  const $input = $(this).find('input[type="hidden"]');
+    	  if($input.data('chatroom-no') == gChatroomNo) {
+    		  const $span = $(this).find('span.contacts-list-name');
+ 	        if ($span.find('i.fa-circle').length === 0) {
+            $span.append('<i class="fas fa-circle" style="color: red;font-size: 10px;"></i>');
+          }
+    	  }
+      })
     }
     
     
@@ -398,5 +407,3 @@
 
 </body>
 </html>
-
-
