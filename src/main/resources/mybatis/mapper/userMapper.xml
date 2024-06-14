@@ -27,6 +27,7 @@
     </association>
 	</resultMap>
 
+
   <!-- (로그인)수정함 - 24/05/28 -->
   <select id="getUserByMap"
           parameterType="Map"
@@ -110,7 +111,7 @@
   </update>
   
   <!-- 오채원 - 추가(24/05/28) -->
-  <select id="getMemberList"
+  <select id="getUserList"
           resultMap="EmployeesMap">
 	SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
 	  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D ON D.DEPARTMENT_NO = E.DEPARTMENT_NO 
@@ -119,10 +120,30 @@
  </select>
   
   <select id="getDepartmentsList"
-		  resultType="departmentsDto">
+		  		resultType="departmentsDto">
 	SELECT DEPARTMENT_NO, DEPART_NAME, PARENT_DEPART_NO
 	  FROM DEPARTMENTS_T
   </select>  
+  
+  <select id="getUserProfileByNo"
+  				parameterType="int"
+  				resultMap="EmployeesMap">
+		SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
+		  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D ON D.DEPARTMENT_NO = E.DEPARTMENT_NO 
+		                     INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+		 WHERE E.EMPLOYEE_NO = #{employeeNo}
+	</select>
+	
+	<select id="getUserProfileList"
+			resultMap="EmployeesMap">
+		SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
+		  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D ON D.DEPARTMENT_NO = E.DEPARTMENT_NO 
+		                     INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+		 WHERE E.EMPLOYEE_NO IN 
+     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+         #{item}
+     </foreach>
+	</select>
   
   
   

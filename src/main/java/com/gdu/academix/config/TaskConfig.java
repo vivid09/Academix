@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.gdu.academix.scheduler.RemoveBlogImageScheduler;
+import com.gdu.academix.scheduler.RemoveEmptyChatroomsScheduler;
 import com.gdu.academix.scheduler.RemoveTempFilesScheduler;
 
 @EnableScheduling
@@ -17,5 +18,9 @@ public class TaskConfig {
 	@Bean
 	RemoveTempFilesScheduler removeTempFileTask() {
 		return new RemoveTempFilesScheduler();
+	}
+	@Bean
+	RemoveEmptyChatroomsScheduler removeEmptyChatrooms() {
+	  return new RemoveEmptyChatroomsScheduler();
 	}
 }

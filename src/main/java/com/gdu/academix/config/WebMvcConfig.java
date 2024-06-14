@@ -31,12 +31,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addResourceHandler(UP_DIR + "**")
        .addResourceLocations("file://" + UP_DIR);
 	}
-  
+
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(requiredSigninInterceptor)
-      .addPathPatterns
-   ("/bbs/write.page", "/blog/write.page", "/upload/write.page", "/blog/editBlog.do");
+      .addPathPatterns("/bbs/write.page", "/blog/write.page", "/upload/write.page", "/blog/editBlog.do", "/main.page", "/chatting/chat.page");
     registry.addInterceptor(requiredSignoutInterceptor)
       .addPathPatterns("/user/signin.page", "/user/signup.page");
   }

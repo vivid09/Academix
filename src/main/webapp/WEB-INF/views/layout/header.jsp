@@ -12,9 +12,7 @@
   <title>AdminLTE 2 | Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+ 
   
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
@@ -46,6 +44,7 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+  
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -70,15 +69,18 @@
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
+              <i class="fas fa-regular fa-envelope"></i>
+              <span class="label label-danger"></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 4 messages</li>
+               <li class="header alert-menu-sub">You have 4 messages</li>
               <li>
                 <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- start message -->
+                <ul class="menu alert-menu">
+                
+                
+<!--
+                  <li>
                     <a href="#">
                       <div class="pull-left">
                         <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
@@ -90,7 +92,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
-                  <!-- end message -->
+              
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -103,6 +105,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -115,6 +118,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -127,6 +131,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -139,12 +144,16 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+-->           
+
+                  
                 </ul>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+              <li class="footer"><a href="#" class="remove-allMessageNoti">모든 메시지 알림 지우기</a></li>
             </ul>
           </li>
-          <!-- Notifications: style can be found in dropdown.less -->
+          
+<!--    
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
@@ -153,7 +162,6 @@
             <ul class="dropdown-menu">
               <li class="header">You have 10 notifications</li>
               <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li>
                     <a href="#">
@@ -186,7 +194,6 @@
               <li class="footer"><a href="#">View all</a></li>
             </ul>
           </li>
-          <!-- Tasks: style can be found in dropdown.less -->
           
           
           <li class="dropdown tasks-menu">
@@ -197,9 +204,8 @@
             <ul class="dropdown-menu">
               <li class="header">You have 9 tasks</li>
               <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Design some buttons
@@ -212,8 +218,7 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Create a nice theme
@@ -226,8 +231,7 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Some task I need to do
@@ -240,8 +244,7 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Make beautiful transitions
@@ -254,7 +257,6 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
                 </ul>
               </li>
               <li class="footer">
@@ -263,7 +265,7 @@
             </ul>
           </li>
           
-          
+ -->      
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
