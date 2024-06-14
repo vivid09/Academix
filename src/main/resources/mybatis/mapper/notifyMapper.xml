@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.NotifyMapper">
+  
+   <!-- RanksDTO 매핑 -->
+   <resultMap id="RankResultMap" type="RanksDto">
+       <id property="rankNo" column="RANK_NO" />
+       <result property="rankTitle" column="RANK_TITLE" />
+   </resultMap>
+
+   <!-- EmployeesDTO 매핑 -->
+	<resultMap type="EmployeesDto" id="EmployeeResultMap">
+	  <id property="employeeNo" column="EMPLOYEE_NO"/>
+	  <result property="name" column="NAME"/>
+		<association property="rank" javaType="RanksDto" resultMap="RankResultMap"/>
+	</resultMap>
+  
+  <!-- NotificationsDto, EmployeesDto 매핑 -->
+	<resultMap type="NotificationsDto" id="NotificationMap">
+	  <id property="notificationNo" column="NOTIFICATION_NO"/>
+	  <result property="seenStatus" column="SEEN_STATUS"/>
+	  <result property="chatroomNo" column="CHATROOM_NO"/>
+	  <result property="notifierNo" column="NOTIFIER_NO"/>
+	  <result property="message" column="MESSAGE"/>
+	  <result property="notificationType" column="NOTIFICATION_TYPE"/>
+	  <result property="notificationDate" column="NOTIFICATION_DATE"/>
+<association property="notifier" javaType="EmployeesDto" resultMap="EmployeeResultMap"/>
+	</resultMap>  
+  
+  
+  <insert id="insertNotification"
+		  parameterType="NotificationsDto">
+     <selectKey order="BEFORE" keyProperty="notificationNo" resultType="int">
+      SELECT NOTIFICATION_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+  	INSERT INTO NOTIFICATIONS_T (
+        NOTIFICATION_NO, 
+        MESSAGE, 
+        NOTIFICATION_TYPE, 
+        NOTIFIER_NO, 
+        NOTIFICATION_DATE,
+        SEEN_STATUS,
+        EMPLOYEE_NO,
+        CHATROOM_NO
+		) VALUES (
+				#{notificationNo},
+        #{message},
+        #{notificationType},
+        #{notifierNo},
+        CURRENT_TIMESTAMP,
+        #{seenStatus},
+        #{employeeNo},
+        #{chatroomNo}
+		)
+	</insert>
+	
+	<select id="getNotificationList"
+			resultMap="NotificationMap">
+		SELECT N.NOTIFICATION_NO, N.MESSAGE, N.NOTIFICATION_TYPE, N.NOTIFIER_NO, N.NOTIFICATION_DATE, N.SEEN_STATUS, E.EMPLOYEE_NO, R.RANK_NO, R.RANK_TITLE, E.RANK_NO, E.NAME, N.CHATROOM_NO
+		  FROM NOTIFICATIONS_T N INNER JOIN EMPLOYEES_T E ON E.EMPLOYEE_NO = N.NOTIFIER_NO
+		                         INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+		 WHERE N.EMPLOYEE_NO = #{employeeNo} AND N.SEEN_STATUS = #{seenStatus}
+		 ORDER BY N.NOTIFICATION_DATE DESC
+	</select>
+	
+	<update id="updateSeenStatus"
+			parameterType="list">
+		UPDATE NOTIFICATIONS_T
+		   SET SEEN_STATUS = 1
+		 WHERE NOTIFICATION_NO IN
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+    	#{item}
+    </foreach>
+	</update>
+	
+	<update id="updateChatroomSeenStatus"
+			parameterType="Map">
+	  UPDATE NOTIFICATIONS_T
+	     SET SEEN_STATUS = 1
+	   WHERE EMPLOYEE_NO = #{employeeNo} AND CHATROOM_NO = #{chatroomNo}
+	</update>
+  
+  
+
+</mapper>

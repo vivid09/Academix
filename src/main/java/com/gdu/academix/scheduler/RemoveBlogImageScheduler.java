@@ -2,11 +2,8 @@ package com.gdu.academix.scheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 
-
-import lombok.RequiredArgsConstructor;
 
 public class RemoveBlogImageScheduler {
   

@@ -12,9 +12,7 @@
   <title>AdminLTE 2 | Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+ 
   
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
@@ -47,6 +45,7 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -71,15 +70,18 @@
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
+              <i class="fas fa-regular fa-envelope"></i>
+              <span class="label label-danger"></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 4 messages</li>
+               <li class="header alert-menu-sub">You have 4 messages</li>
               <li>
                 <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- start message -->
+                <ul class="menu alert-menu">
+                
+                
+<!--
+                  <li>
                     <a href="#">
                       <div class="pull-left">
                         <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
@@ -91,7 +93,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
-                  <!-- end message -->
+              
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -104,6 +106,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -116,6 +119,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -128,6 +132,7 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+                  
                   <li>
                     <a href="#">
                       <div class="pull-left">
@@ -140,12 +145,16 @@
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
+-->           
+
+                  
                 </ul>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+              <li class="footer"><a href="#" class="remove-allMessageNoti">모든 메시지 알림 지우기</a></li>
             </ul>
           </li>
-          <!-- Notifications: style can be found in dropdown.less -->
+          
+<!--    
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
@@ -154,7 +163,6 @@
             <ul class="dropdown-menu">
               <li class="header">You have 10 notifications</li>
               <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li>
                     <a href="#">
@@ -187,7 +195,6 @@
               <li class="footer"><a href="#">View all</a></li>
             </ul>
           </li>
-          <!-- Tasks: style can be found in dropdown.less -->
           
           
           <li class="dropdown tasks-menu">
@@ -198,9 +205,8 @@
             <ul class="dropdown-menu">
               <li class="header">You have 9 tasks</li>
               <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Design some buttons
@@ -213,8 +219,7 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Create a nice theme
@@ -227,8 +232,7 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Some task I need to do
@@ -241,8 +245,7 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
+                  <li>
                     <a href="#">
                       <h3>
                         Make beautiful transitions
@@ -255,7 +258,6 @@
                       </div>
                     </a>
                   </li>
-                  <!-- end task item -->
                 </ul>
               </li>
               <li class="footer">
@@ -264,7 +266,7 @@
             </ul>
           </li>
           
-          
+ -->      
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="profileDropdown">
@@ -274,8 +276,6 @@
 		        <c:if test="${sessionScope.user.profilePicturePath == null}">
 		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
 		        </c:if>
-              
-
               <span class="hidden-xs">${sessionScope.user.name}</span>
             </a>
             <ul class="dropdown-menu">
@@ -377,8 +377,8 @@
         </li>
         
         <!-- 메일 -->
-        <li>
-          <a href="pages/mailbox/mailbox.html">
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-envelope"></i> <span>메일</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-yellow">12</small>
@@ -386,6 +386,10 @@
               <small class="label pull-right bg-red">5</small>
             </span>
           </a>
+          <ul class="treeview-menu">
+            <li><a href="${contextPath}/mail/inbox.page"><i class="fa fa-envelope-o"></i> <span>받은 메일함</span></a></li>
+            <li><a href="${contextPath}/mail/sentMailbox.page"><i class="fa fa-paper-plane-o"></i> <span>보낸 메일함</span></a></li>
+          </ul>
         </li>    
         
         <!-- 일정 -->
@@ -444,10 +448,11 @@
           </ul>
         </li>                          
         
-        <li>
-          <a href="pages/chat.html">
+        <li class="drive">
+          <a href="${contextPath}/drive/main.page">
             <i class="fa fa-folder-open"></i> <span>드라이브</span>
           </a>
+          <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">
         </li>
            
         <li class="treeview">
@@ -503,9 +508,9 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">학생상담 내역</a></li>
-            <li><a href="pages/charts/chartjs.html">학생관리</a></li>
-            <li><a href="pages/charts/chartjs.html">학생주소록</a></li>
+            <li><a href="${contextPath}/studentMng/consultingList.page">학생 상담 관리</a></li>
+            <li><a href="pages/charts/chartjs.html">학생 관리</a></li>
+            <li><a href="pages/charts/chartjs.html">학생 주소록</a></li>
           </ul>
         </li>    
         

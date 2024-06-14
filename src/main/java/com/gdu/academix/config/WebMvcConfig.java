@@ -11,9 +11,12 @@ import com.gdu.academix.interceptor.RequiredSignoutInterceptor;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-	
+
+  
+  // application.properties 파일의 설정값 저장
   @Value("${service.file.uploadurl}")
   public String UP_DIR;
+  
 
 	private final RequiredSigninInterceptor requiredSigninInterceptor;
 	private final RequiredSignoutInterceptor requiredSignoutInterceptor;
@@ -22,27 +25,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	    this.requiredSigninInterceptor = requiredSigninInterceptor;
 	    this.requiredSignoutInterceptor = requiredSignoutInterceptor;
 	}
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	    registry.addResourceHandler("/resources/**")
-         .addResourceLocations("classpath:/static/");
-	    registry.addResourceHandler("/upload/**")
-         .addResourceLocations("file:///upload/");
-	    registry.addResourceHandler("/coursePlan/**")
-	    	 .addResourceLocations("file:" + UP_DIR + "/coursePlan/");
-	    registry.addResourceHandler("/blog/**")
-         .addResourceLocations("file:///blog/");
-	    registry.addResourceHandler(UP_DIR+"**")
-         .addResourceLocations("file://" + UP_DIR);
-	    registry.addResourceHandler("/profile/**")
-        .addResourceLocations("file:" + UP_DIR + "/profile/");
-	}
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-      registry.addInterceptor(requiredSigninInterceptor)
-        .addPathPatterns
-     ("/bbs/write.page", "/blog/write.page", "/upload/write.page", "/blog/editBlog.do", "/main.page");
-      registry.addInterceptor(requiredSignoutInterceptor)
-        .addPathPatterns("/user/signin.page", "/user/signup.page");
-    }
+
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    registry.addResourceHandler("/resources/**")
+       .addResourceLocations("classpath:/static/");
+    registry.addResourceHandler("/upload/**")
+       .addResourceLocations("file:///upload/");
+    registry.addResourceHandler("/coursePlan/**")
+    	 .addResourceLocations("file:" + UP_DIR + "/coursePlan/");
+    registry.addResourceHandler("/blog/**")
+       .addResourceLocations("file:///blog/");
+    registry.addResourceHandler(UP_DIR+"**")
+       .addResourceLocations("file://" + UP_DIR);
+    registry.addResourceHandler("/profile/**")
+      .addResourceLocations("file:" + UP_DIR + "/profile/");
+  }
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(requiredSigninInterceptor)
+      .addPathPatterns("/bbs/write.page", "/blog/write.page", "/upload/write.page", "/blog/editBlog.do", "/main.page", "/chatting/chat.page");
+    registry.addInterceptor(requiredSignoutInterceptor)
+      .addPathPatterns("/user/signin.page", "/user/signup.page");
+  }
+  
 }
