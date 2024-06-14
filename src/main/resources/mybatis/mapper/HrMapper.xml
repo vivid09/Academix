@@ -103,17 +103,27 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
          WHERE EMPLOYEE_NO= #{employeeNo}
 </update>
 
+<delete id="removeEmployee"
+        parameterType="int">
+ DELETE 
+   FROM EMPLOYEES_T
+  WHERE EMPLOYEE_NO = #{employeeNo}
+</delete>
 
-<insert id="insertAnnualLeaves"
-        >
-  INSERT INTO ANNUAL_LEAVES_T( LEAVE_NO,
-                             YEAR,
-                             TOTAL_LEAVES,
-                             EMPLOYEE_NO) VALUES(
-                             ANNUAL_LEAVES_SEQ.NEXTVAL,
-                             #{total_leaves},
-                             #{employeeNo})
-</insert> 
+
+<insert id="insertAnnualLeaves">
+  INSERT INTO ANNUAL_LEAVES_T (
+    LEAVE_NO,
+    YEAR,
+    TOTAL_LEAVES,
+    EMPLOYEE_NO
+  ) VALUES (
+    ANNUAL_LEAVES_SEQ.NEXTVAL,
+    #{year},
+    #{totalLeaves},
+    #{employeeNo}
+  )
+</insert>
 
 <select id="getAllEmployees"
         resultType="EmployeesDto">
@@ -121,5 +131,15 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
          PROFILE_PICTURE_PATH,EMPLOYEE_STATUS,HIRE_DATE,EXIT_DATE
   FROM EMPLOYEES_T 
 </select>
+
+<select id="getAnnualLeavesByEmployeeNo" resultType="AnnualLeavesDto">
+        SELECT * FROM annual_leaves_t WHERE employee_no = #{employeeNo}
+</select>
+    
+<update id="updateAnnualLeaves" parameterType="AnnualLeavesDto">
+        UPDATE annual_leaves_t
+        SET total_leaves = #{totalLeaves}
+        WHERE employee_no = #{employeeNo}
+    </update>    
 
 </mapper>

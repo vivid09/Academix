@@ -451,15 +451,20 @@
         </li>
            
         <li class="treeview">
-          <a href="${contextPath}/requests/main.page">
-            <i class="fa fa-pencil-square-o"></i> <span>전자결재</span>
+          <a href="#">
+            <i class="fa fa-pencil-square-o"></i> 
+            <span>전자결재</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
+              </span>
           </a>
-          <a href="${contextPath}/requests/write.page">기안하기</a>
+          <ul class="treeview-menu">
+          <li><a href="${contextPath}/requests/main.page"> 내 문서함</a></li>
+         <li> <a href="${contextPath}/requests/write.page">기안하기</a></li>
            <c:if test="${sessionScope.user.depart.departmentNo == 2}"> 
-          <a href="${contextPath}/requests/requestsList.do">결재함</a>
+          <li><a href="${contextPath}/requests/requestsList.do">결재함</a></li>
           </c:if>
+          </ul>
        
         </li>
          
@@ -679,6 +684,17 @@
     </section>
     <!-- /.sidebar -->
   </aside>  
+  
+<!-- jQuery 2.2.3 -->
+<script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="../../bootstrap/js/bootstrap.min.js"></script>
+<!-- Slimscroll -->
+<script src="../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="../../plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/app.min.js"></script>
   
  <script>
     // Check if the profile picture exists

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.gdu.academix.dto.AnnualLeavesDto;
 import com.gdu.academix.dto.EmployeesDto;
@@ -17,6 +18,10 @@ public interface HrMapper {
     EmployeesDto getUserProfileByNo(int employeeNo);
     int employeeModify(EmployeesDto employees);
     void insertAnnualLeaves(AnnualLeavesDto annualLeaves);
+    int removeEmployee(int employeeNo);
     List<EmployeesDto> getAllEmployees();
+    AnnualLeavesDto getAnnualLeavesByEmployeeNo(int employeeNo);
+    void updateAnnualLeaves(AnnualLeavesDto annualLeaves);
+    
 	
 }

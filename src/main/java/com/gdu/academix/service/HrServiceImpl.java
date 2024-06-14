@@ -27,6 +27,8 @@ import com.gdu.academix.utils.MySecurityUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.xml.ws.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class HrServiceImpl implements HrService {
@@ -197,27 +199,66 @@ public class HrServiceImpl implements HrService {
 	}
 	
 	@Override
-	//@Scheduled(cron = "1 * * * * *")
+	//@Scheduled(cron = "0 * * * * *")
 	public void grantAnnualLeave() {
-		List<EmployeesDto> employees =   hrMapper.getAllEmployees();
-		java.util.Date now= new java.util.Date();
-		for (EmployeesDto employee : employees) {
-			long diffInMillies = Math.abs(now.getTime() - employee.getHireDate().getTime());
-            long diffInYears = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) / 365;
+		List<EmployeesDto> employees = null;
+        try {
+            employees = hrMapper.getAllEmployees();
+        } catch (Exception e) {
+            
+            return;
+        }
+        java.util.Date now = new java.util.Date();
+        Calendar currentCal = Calendar.getInstance();
+        currentCal.setTime(now);
+        int currentYear = currentCal.get(Calendar.YEAR);
+        for (EmployeesDto employee : employees) {
+            try {
+            	Calendar hireCal = Calendar.getInstance();
+                hireCal.setTime(employee.getHireDate());
+                int hireYear = hireCal.get(Calendar.YEAR);
+                int yearsOfService = currentYear - hireYear;
 
-            int annualLeaveDays = (diffInYears >= 2) ? 15 : 12;
-            annualLeaves(employee.getEmployeeNo(), annualLeaveDays);
+                int annualLeaveDays = (yearsOfService >= 2) ? 15 : 12;
+                annualLeaves(employee.getEmployeeNo(), annualLeaveDays, yearsOfService);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 		
 	 }
-  }
+  
 	@Override
-	public void annualLeaves(int employeeNo, int annualLeaveDays) {
-		 AnnualLeavesDto annualLeave = new AnnualLeavesDto();
-		    annualLeave.setEmployeeNo(employeeNo);
-		    annualLeave.setTotalLeaves(annualLeaveDays);
-		    annualLeave.setYear(Calendar.getInstance().get(Calendar.YEAR)); // 현재 연도 설정
-
-		    hrMapper.insertAnnualLeaves(annualLeave);
+	@Transactional
+	public void annualLeaves(int employeeNo, int annualLeaveDays, int yearsOfService) {
+		try {
+	        // 직원의 연차 정보를 직원 번호로 조회합니다.
+	        AnnualLeavesDto existingLeave = hrMapper.getAnnualLeavesByEmployeeNo(employeeNo);
+	        
+	        if (existingLeave != null) {
+	            // 기존 연차 정보가 있는 경우, 기존 totalLeaves 값에 추가하여 업데이트합니다.
+	            int updatedLeaves = existingLeave.getTotalLeaves() + annualLeaveDays;
+	            existingLeave.setTotalLeaves(updatedLeaves);
+	            hrMapper.updateAnnualLeaves(existingLeave);
+	        } else {
+	            // 기존 연차 정보가 없는 경우, 새로운 연차 정보를 생성하여 추가합니다.
+	            AnnualLeavesDto newLeave = new AnnualLeavesDto();
+	            newLeave.setEmployeeNo(employeeNo);
+	            newLeave.setTotalLeaves(annualLeaveDays);
+	            // 연차 정보에 근속 연수 설정은 필요시에만 추가합니다.
+	            newLeave.setYear(yearsOfService);
+	            hrMapper.insertAnnualLeaves(newLeave);
+	        }
+	    } catch (Exception e) {
+	        // 예외가 발생한 경우 예외를 출력합니다.
+	        e.printStackTrace();
+	    }
+    }
+	
+	@Override
+	public int removeEmoloyee(int employeeNo) {
+		int deleteCount = hrMapper.removeEmployee(employeeNo);
+		return  deleteCount;
 	}
 	
 }

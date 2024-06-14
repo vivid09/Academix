@@ -389,13 +389,13 @@
                 let str= '<div class="list-container"  id="list-emp">';
                 str += '<div class="profile-container">';
                 if(employee.profilePicturePath != null){
-                str +=  '<span>' + employee.profilePicturePath+ '</span>';
+                    str +=  '<span>' + employee.profilePicturePath+ '</span>';
                 } else {
-                	str += '<img src="/images/default_profile_image.png">';
+                    str += '<img src="/images/default_profile_image.png">';
                 }
                 
                 str += '</div>';
-                str += '<div class="not-profile-grid" data-employee-no="resData.employee.employeeNo">';
+                str += '<div class="not-profile-grid">';
                 str += '<div>이름: ' + employee.name + '</div>';
                 str += '<div>이메일: ' + employee.email + '</div>';
                 const empPassword = employee.password !== null ? '******' : '*';
@@ -421,25 +421,47 @@
 
                 $('.empList').empty().append(str); // 기존 정보 삭제 후 새로운 정보 추가
                 $('.empList').show();
+                
+                // 삭제 버튼에 이벤트 리스너 추가
+                document.getElementById('btn-emp-remove').addEventListener('click', () => {
+                    // 삭제하기 전에 확인 메시지 표시
+                    if (confirm('정말로 이 직원을 삭제하시겠습니까?')) {
+                        let employeeNo = employee.employeeNo;
+
+                        // 삭제 요청 보내기
+                        fetch('${contextPath}/hr/removeEmployee.do?employeeNo=' + employeeNo, {
+                            method: 'GET',
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                alert('직원이 삭제되었습니다.');
+                            } else {
+                                console.error('삭제 실패:', response.status);
+                                alert('직원 삭제에 실패하였습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('삭제 요청 중 오류 발생:', error);
+                            alert('직원 삭제 중 문제가 발생하였습니다. 다시 시도해 주세요.');
+                        });
+                    } else {
+                        // 사용자가 취소를 선택한 경우 아무 작업도 하지 않음
+                        console.log('삭제가 취소되었습니다.');
+                    }
+                }); // 삭제 버튼 이벤트 리스너 끝
+                
             })
             .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
+                console.error('직원 정보 가져오기 중 오류 발생:', error);
             });
     });
 };
 
-function profileEdit(employeeNo) {
-    // 새로운 페이지 URL 생성 (예시 URL)
-    var editPageUrl = '${contextPath}/hr/profileEdit.do?employeeNo=' + employeeNo;	
-    // 페이지 이동
-    window.location.href = editPageUrl;
-}
 
 
-	   /* document.getElementById('btn-emp-remove').addEventListener('click', ()=>{
-		   let employeeNo = 
-		   location.href='${contextPath}/hr/empRemove.do?employeeNo=' + employeeNo;
-	   }) */
+
+
+	    
 	  
 	   
 	   
