@@ -12,8 +12,6 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +30,7 @@ import com.gdu.academix.mapper.UploadMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 import net.coobird.thumbnailator.Thumbnails;
 
 @Transactional
@@ -44,11 +42,11 @@ public class UploadServiceImpl implements UploadService {
   private final MyFileUtils myFileUtils;
   
   public UploadServiceImpl(UploadMapper uploadMapper, MyPageUtils myPageUtils, MyFileUtils myFileUtils) {
-	super();
-	this.uploadMapper = uploadMapper;
-	this.myPageUtils = myPageUtils;
-	this.myFileUtils = myFileUtils;
-}
+  	super();
+  	this.uploadMapper = uploadMapper;
+  	this.myPageUtils = myPageUtils;
+  	this.myFileUtils = myFileUtils;
+  }
 
   @Override
   public boolean registerUpload(MultipartHttpServletRequest multipartRequest) {
@@ -91,7 +89,7 @@ public class UploadServiceImpl implements UploadService {
         
         String uploadPath = myFileUtils.getUploadPath();
         File dir = new File(uploadPath);
-        System.out.println("====="+dir.getAbsolutePath());
+        System.out.println("=====" + dir.getAbsolutePath());
         if(!dir.exists()) {
           dir.mkdirs();
         }

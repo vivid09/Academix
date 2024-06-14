@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+
     
 <!-- sockjs-client 1.6.1 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js" integrity="sha512-1QvjE7BtotQjkq8PxLeF6P46gEpBRXuskzIVgjFpekzFVF4yjRgrQvTG1MTOJ3yQgvTteKAcO7DSZI92+u/yZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -402,6 +402,8 @@
   <footer class="main-footer">
     
   </footer>
+
+<script src="${contextPath}/js/checkDrive.js?dt=${dt}"></script>
 
 </body>
 </html>

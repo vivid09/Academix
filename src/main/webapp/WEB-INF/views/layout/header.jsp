@@ -15,7 +15,7 @@
  
   
   <!-- Bootstrap 3.3.6 -->
-  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   <!-- Ionicons -->
@@ -361,8 +361,8 @@
         </li>
         
         <!-- 메일 -->
-        <li>
-          <a href="pages/mailbox/mailbox.html">
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-envelope"></i> <span>메일</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-yellow">12</small>
@@ -370,6 +370,10 @@
               <small class="label pull-right bg-red">5</small>
             </span>
           </a>
+          <ul class="treeview-menu">
+            <li><a href="${contextPath}/mail/inbox.page"><i class="fa fa-envelope-o"></i> <span>받은 메일함</span></a></li>
+            <li><a href="${contextPath}/mail/sentMailbox.page"><i class="fa fa-paper-plane-o"></i> <span>보낸 메일함</span></a></li>
+          </ul>
         </li>    
         
         <!-- 일정 -->
@@ -428,10 +432,11 @@
           </ul>
         </li>                          
         
-        <li>
-          <a href="pages/chat.html">
+        <li class="drive">
+          <a href="${contextPath}/drive/main.page">
             <i class="fa fa-folder-open"></i> <span>드라이브</span>
           </a>
+          <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">
         </li>
            
         <li>
@@ -477,9 +482,9 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">학생상담 내역</a></li>
-            <li><a href="pages/charts/chartjs.html">학생관리</a></li>
-            <li><a href="pages/charts/chartjs.html">학생주소록</a></li>
+            <li><a href="${contextPath}/studentMng/consultingList.page">학생 상담 관리</a></li>
+            <li><a href="pages/charts/chartjs.html">학생 관리</a></li>
+            <li><a href="pages/charts/chartjs.html">학생 주소록</a></li>
           </ul>
         </li>    
         

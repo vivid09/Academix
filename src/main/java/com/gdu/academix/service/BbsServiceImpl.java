@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -17,7 +15,7 @@ import com.gdu.academix.mapper.BbsMapper;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Transactional
 @Service

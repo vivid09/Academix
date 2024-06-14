@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,15 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gdu.academix.dto.BlogDto;
-import com.gdu.academix.dto.CommentDto;
 import com.gdu.academix.dto.BlogImageDto;
+import com.gdu.academix.dto.CommentDto;
 import com.gdu.academix.dto.UserDto;
 import com.gdu.academix.mapper.BlogMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Transactional
 @Service
@@ -129,7 +127,7 @@ public class BlogServiceImpl implements BlogService {
                                    , "end", myPageUtils.getEnd());
     
     // 목록 화면으로 반환할 값 (목록 + 전체 페이지 수)
-    return new ResponseEntity<>(Map .of("blogList", blogMapper.getBlogList(map)
+    return new ResponseEntity<>(Map.of("blogList", blogMapper.getBlogList(map)
                                       , "totalPage", myPageUtils.getTotalPage())
                               , HttpStatus.OK);
     
