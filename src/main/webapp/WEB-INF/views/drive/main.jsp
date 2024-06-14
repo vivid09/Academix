@@ -127,26 +127,36 @@
               
               <div class="table-responsive mailbox-messages">
                 <table class="table table-hover table-striped">
+                  <thead>
+                    <tr>
+                      <td>
+                        <!-- Check all button -->
+                        <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
+                      </td>
+                      <td>종류</td>
+                      <td>이름</td>
+                      <td>업로드 일자</td>
+                    </tr>
+                  </thead>
                   <tbody>
-                  <tr>
-                    <td>
-                      <!-- Check all button -->
-                      <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
-                    </td>
-                    <td>종류</td>
-                    <td>이름</td>
-                    <td>업로드 일자</td>
-                    <td>파일 크기</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...
-                    </td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">5 mins ago</td>
-                  </tr>
-                  
+                    <c:forEach items="${driveList}" var="drive" varStatus="vs">
+                      <c:if test="${not empty drive.folder}">
+                        <tr>
+                          <td><input type="checkbox"></td>
+                          <td><a href="#"></a></td>
+                          <td>${drive.folder.folderName}</td>
+                          <td>${drive.folder.folderCreateDt}</td>
+                        </tr>
+                      </c:if>
+                      <c:if test="${empty drive.folder}">
+                        <tr>
+                          <td><input type="checkbox"></td>
+                          <td><a href="#"></a></td>
+                          <td>${drive.fileName}</td>
+                          <td>${drive.fileUploadDt}</td>
+                        </tr>
+                      </c:if>
+                    </c:forEach>
                   </tbody>
                 </table>
                 <!-- /.table -->

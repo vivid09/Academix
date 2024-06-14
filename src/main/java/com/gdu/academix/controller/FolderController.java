@@ -33,6 +33,7 @@ public class FolderController {
     return "drive/main";
   }
   
+  // 드라이브 - 최근 파일(메인 화면) / 모든 목록 불러오기 구현 후 -> 최근 목록 불러오기 구현
   @GetMapping("/main.do")
   public String main(HttpServletRequest request, Model model) {
     model.addAttribute("request", request);
@@ -59,8 +60,8 @@ public class FolderController {
   @PostMapping("/register.do")
   public String register(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("inserted", folderService.registerUpload(multipartRequest));
-    //return "redirect:/drive/main.page";
-    return "redirect:/drive/main.do";
+    return "redirect:/drive/main.page";
+    //return "redirect:/drive/main.do";
   }
   
   // 폴더 추가

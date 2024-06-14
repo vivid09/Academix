@@ -15,6 +15,7 @@
     <association property="folder" javaType="FolderDto">
       <id     property="folderNo"       column="FOLDER_NO" />
       <result property="folderName"     column="FOLDER_NAME" />
+      <result property="folderCreateDt" column="FOLDER_CREATE_DT" />
       <result property="parentFolderNo" column="PARENT_FOLDER_NO" />
     </association>
   </resultMap>
@@ -106,8 +107,25 @@
     )
   </insert>
   
-  <select id="getUploadList">
-    
+  <!-- Drive(Folder, File) 목록 조회 -->
+  <select id="getDriveListCount">
+    SELECT COUNT(*)
+      FROM FOLDER_T FO LEFT JOIN FILE_T FI
+        ON FO.FOLDER_NO = FI.FOLDER_NO
+  </select>
+  
+  <select id="getDriveList"
+          parameterType="Map"
+          resultMap="FileMap">
+	  SELECT FOLDER_NO, FOLDER_NAME, FOLDER_CREATE_DT, FOLDER_UPLOAD_PATH, PARENT_FOLDER_NO, FOLDER_OWNER_NO
+	       , FILE_NO, FILE_UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, FILE_UPLOAD_DT, FILE_OWNER_NO
+	    FROM (SELECT ROW_NUMBER() OVER (ORDER BY FOLDER_NO ${sort}) AS RN
+	                 , FO.FOLDER_NO, FO.FOLDER_NAME, FO.FOLDER_CREATE_DT, FO.FOLDER_UPLOAD_PATH
+	                 , FO.PARENT_FOLDER_NO, FO.OWNER_NO AS FOLDER_OWNER_NO
+	                 , FI.FILE_NO, FI.FILE_UPLOAD_PATH, FI.FILESYSTEM_NAME, FI.ORIGINAL_FILENAME, FI.FILE_UPLOAD_DT, FI.OWNER_NO AS FILE_OWNER_NO
+	              FROM FOLDER_T FO LEFT JOIN FILE_T FI
+	                ON FO.FOLDER_NO = FI.FOLDER_NO)
+	   WHERE RN BETWEEN #{begin} AND #{end}
   </select>
   
 

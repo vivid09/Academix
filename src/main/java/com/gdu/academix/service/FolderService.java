@@ -15,6 +15,7 @@ public interface FolderService {
   
   boolean registerUpload(MultipartHttpServletRequest multipartRequest);
   int addFolder(Map<String, Object> params);
+  
   void loadUploadList(Model model);
 
 }

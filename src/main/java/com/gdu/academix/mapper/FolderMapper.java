@@ -21,7 +21,8 @@ public interface FolderMapper {
   int insertFile(FileDto fileDto);
   int insertFolder(FolderDto folderDto);
   
-  List<UploadDto> getUploadList(Map<String, Object> map);
+  int getDriveListCount();
+  List<UploadDto> getDriveList(Map<String, Object> map);
   
   FolderDto getFolderByMap(Map<String, Object> map);
 	

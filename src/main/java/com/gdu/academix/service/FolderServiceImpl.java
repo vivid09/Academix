@@ -65,10 +65,6 @@ public class FolderServiceImpl implements FolderService {
   
   @Override
   public ResponseEntity<Map<String, Object>> getFileList() {
-    
-    System.out.println("file" + folderMapper.getFileList());
-    System.out.println("folder" + folderMapper.getFolderList());
-    
     Map<String, Object> map = Map.of("file", folderMapper.getFileList(), "folder", folderMapper.getFolderList());
     return ResponseEntity.ok(map);
   }
@@ -143,32 +139,32 @@ public class FolderServiceImpl implements FolderService {
   
   @Override
   public void loadUploadList(Model model) {
-//    Map<String, Object> modelMap = model.asMap();
-//    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
-//    
-//    int total = uploadMapper.getUploadCount();
-//    
-//    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
-//    int display = Integer.parseInt(optDisplay.orElse("20"));
-//    
-//    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
-//    int page = Integer.parseInt(optPage.orElse("1"));
-//
-//    myPageUtils.setPaging(total, display, page);
-//    
-//    Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
-//    String sort = optSort.orElse("DESC");
-//    
-//    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
-//                                   , "end", myPageUtils.getEnd()
-//                                   , "sort", sort);
-//    
-//    model.addAttribute("beginNo", total - (page - 1) * display);
-//    model.addAttribute("uploadList", uploadMapper.getUploadList(map));
-//    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/upload/list.do", sort, display));
-//    model.addAttribute("display", display);
-//    model.addAttribute("sort", sort);
-//    model.addAttribute("page", page);
+    Map<String, Object> modelMap = model.asMap();
+    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+    
+    int total = folderMapper.getDriveListCount();
+    
+    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+    int display = Integer.parseInt(optDisplay.orElse("20"));
+    
+    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+    int page = Integer.parseInt(optPage.orElse("1"));
+
+    myPageUtils.setPaging(total, display, page);
+    
+    Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+    String sort = optSort.orElse("DESC");
+    
+    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
+                                   , "end", myPageUtils.getEnd()
+                                   , "sort", sort);
+    
+    model.addAttribute("beginNo", total - (page - 1) * display);
+    model.addAttribute("driveList", folderMapper.getDriveList(map));
+    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/drive/main.do", sort, display));
+    model.addAttribute("display", display);
+    model.addAttribute("sort", sort);
+    model.addAttribute("page", page);
   }
   
   
