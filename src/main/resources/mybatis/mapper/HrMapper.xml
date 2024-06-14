@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.HrMapper">
+
+  <resultMap type="EmployeesDto" id="EmployeesMap">
+    <id property="employeeNo" column="EMPLOYEE_NO"/>
+    <result property="employeeStatus" column="EMPLOYEE_STATUS"/>
+    <result property="name" column="NAME"/>
+    <result property="email" column="EMAIL"/>
+    <result property="phone" column="PHONE"/>
+    <result property="address" column="ADDRESS"/>
+    <result property="password" column="PASSWORD"/>
+    <result property="profilePicturePath" column="PROFILE_PICTURE_PATH"/>
+    <result property="hireDate" column="HIRE_DATE"/>
+    <result property="exitDate" column="EXIT_DATE"/>
+    <association property="depart" javaType="DepartmentsDto">
+      <id property="departmentNo" column="DEPARTMENT_NO"/>
+   	  <result property="departName" column="DEPART_NAME"/>
+   	  <result property="parentDepartNo" column="PARENT_DEPART_NO"/>
+    </association>
+    <association property="rank" javaType="RANKSDTO">
+     <id property="rankNo" column="RANK_NO"/>
+     <result property="rankTitle" column="RANK_TITLE"/>
+  </association>
+  </resultMap>
+ 
+
+<insert id="registerEmployee" parameterType="EmployeesDto">
+
+    INSERT INTO EMPLOYEES_T(
+        EMPLOYEE_NO,
+        NAME,
+        EMAIL,
+        PHONE,
+        ADDRESS,
+        DEPARTMENT_NO,
+        RANK_NO,
+        PASSWORD,
+        PROFILE_PICTURE_PATH,
+        EMPLOYEE_STATUS,
+        HIRE_DATE,
+        EXIT_DATE
+    ) VALUES (
+        EMPLOYEES_SEQ.NEXTVAL,
+        #{name}, 
+        #{email},
+        #{phone},
+        #{address},
+        #{depart.departmentNo},
+        #{rank.rankNo},
+        #{password},
+        #{profilePicturePath},
+        #{employeeStatus},
+        #{hireDate},
+        #{exitDate, jdbcType=DATE}
+    )
+</insert>
+
+
+<select id="getEmployeesList"
+        parameterType="Map"
+        resultMap="EmployeesMap">
+SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
+	  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D ON D.DEPARTMENT_NO = E.DEPARTMENT_NO 
+	                     INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+	 ORDER BY E.EMPLOYEE_NO
+</select>
+
+<select id="getEmployeeListCount"
+        resultType="int">
+	SELECT COUNT(*)
+	FROM EMPLOYEES_T
+</select>
+
+<select id="getUserProfileByNo"
+        parameterType="int"
+        resultMap="EmployeesMap">
+    SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE_PICTURE_PATH, D.DEPARTMENT_NO, R.RANK_NO, E.EMPLOYEE_STATUS, E.HIRE_DATE, E.EXIT_DATE, D.PARENT_DEPART_NO, D.DEPART_NAME, R.RANK_TITLE
+	  FROM EMPLOYEES_T E INNER JOIN DEPARTMENTS_T D 
+        ON D.DEPARTMENT_NO = E.DEPARTMENT_NO
+            INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
+	 WHERE E.EMPLOYEE_NO = #{employeeNo}
+</select>
+
+
+<update id="employeeModify"
+        parameterType="EmployeesDto">
+  UPDATE EMPLOYEES_T
+     SET NAME        = #{name},
+         EMAIL       = #{email},
+         PHONE       = #{phone},
+         ADDRESS     = #{address},
+         DEPARTMENT_NO = #{depart.departmentNo},
+         RANK_NO       = #{rank.rankNo},
+         PASSWORD      =#{password},
+         PROFILE_PICTURE_PATH =#{profilePicturePath},
+         EMPLOYEE_STATUS       =#{employeeStatus},
+         HIRE_DATE           =#{hireDate},
+         EXIT_DATE           =#{exitDate, jdbcType=DATE}
+         WHERE EMPLOYEE_NO= #{employeeNo}
+</update>
+
+
+<insert id="insertAnnualLeaves"
+        >
+  INSERT INTO ANNUAL_LEAVES_T( LEAVE_NO,
+                             YEAR,
+                             TOTAL_LEAVES,
+                             EMPLOYEE_NO) VALUES(
+                             ANNUAL_LEAVES_SEQ.NEXTVAL,
+                             #{total_leaves},
+                             #{employeeNo})
+</insert> 
+
+<select id="getAllEmployees"
+        resultType="EmployeesDto">
+  SELECT EMPLOYEE_NO, NAME, DEPARTMENT_NO, EMAIL, PHONE, ADDRESS, RANK_NO, PASSWORD,
+         PROFILE_PICTURE_PATH,EMPLOYEE_STATUS,HIRE_DATE,EXIT_DATE
+  FROM EMPLOYEES_T 
+</select>
+
+</mapper>

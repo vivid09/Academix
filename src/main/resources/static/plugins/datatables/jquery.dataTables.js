@@ -4968,7 +4968,7 @@
 			return;
 		}
 	
-		/* Reject old data */
+		/* reject old data */
 		var duration = settings.iStateDuration;
 		if ( duration > 0 && state.time < +new Date() - (duration*1000) ) {
 			return;

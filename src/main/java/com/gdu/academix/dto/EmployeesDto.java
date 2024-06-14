@@ -12,10 +12,11 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class EmployeesDto {
-	int employeeNo, employeeStatus;
-	String name, email, phone, address, password, profilePicturPath;
-	Date hireDate, exitDate;
-	DepartmentsDto depart;
-	RanksDto rank;
-
+  private int employeeNo, employeeStatus;
+  private String name, email, phone, address, password, profilePicturePath;
+  private Date hireDate, exitDate;
+  private DepartmentsDto depart;
+  private RanksDto rank;
 }
+
+

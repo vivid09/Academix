@@ -44,7 +44,8 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-  
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -268,14 +269,24 @@
  -->      
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="profileDropdown">
+               <c:if test="${sessionScope.user.profilePicturePath != null}">
+		          ${sessionScope.user.profilePicturePath}
+		        </c:if>
+		        <c:if test="${sessionScope.user.profilePicturePath == null}">
+		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
+		        </c:if>
               <span class="hidden-xs">${sessionScope.user.name}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <c:if test="${sessionScope.user.profilePicturePath != null}">
+		          ${sessionScope.user.profilePicturePath}
+		        </c:if>
+		        <c:if test="${sessionScope.user.profilePicturePath == null}">
+		          <img src="${contextPath}/resources/images/default_profile_image.png" class="user-image">
+		        </c:if>
 
                 <p>
                   ${sessionScope.user.name}
@@ -324,7 +335,12 @@
       <!-- 프로필 -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+        <c:if test="${sessionScope.user.profilePicturePath != null}">
+          ${sessionScope.user.profilePicturePath}
+        </c:if>
+        <c:if test="${sessionScope.user.profilePicturePath == null}">
+          <img src="${contextPath}/resources/images/default_profile_image.png">
+        </c:if>
         </div>
         <div class="pull-left info">
           <p>${sessionScope.user.name}님</p>
@@ -378,7 +394,7 @@
         
         <!-- 일정 -->
         <li>
-          <a href="pages/calendar.html">
+          <a href="${contextPath}/calendar/calendar.page">
             <i class="fa fa-calendar"></i> <span>일정</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-red">3</small>
@@ -427,8 +443,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">출퇴근/근무관리</a></li>
-            <li><a href="pages/charts/morris.html">내 연차내역</a></li>
+            <li><a href="${contextPath}/attendance/commute.page">출퇴근/근무관리</a></li>
+            <li><a href="${contextPath}/attendance/annualLeave.page">내 연차내역</a></li>
           </ul>
         </li>                          
         
@@ -439,11 +455,19 @@
           <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}">
         </li>
            
-        <li>
-          <a href="pages/chat.html">
+        <li class="treeview">
+          <a href="${contextPath}/requests/main.page">
             <i class="fa fa-pencil-square-o"></i> <span>전자결재</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
           </a>
-        </li>         
+          <a href="${contextPath}/requests/write.page">기안하기</a>
+           <c:if test="${sessionScope.user.depart.departmentNo == 2}"> 
+          <a href="${contextPath}/requests/requestsList.do">결재함</a>
+          </c:if>
+       
+        </li>
+         
         
         <li class="treeview">
           <a href="#">
@@ -454,20 +478,22 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">강의 개설 신청</a></li>
-            <li><a href="pages/charts/morris.html">강의 관리</a></li>
+            <li><a href="${contextPath}/courses/createCourseRequest.page">강의 개설 신청</a></li>
+            <li><a href="${contextPath}/courses/manageCourses.page">강의 관리</a></li>
             <li><a href="pages/charts/morris.html">학생 주소록</a></li>
           </ul>
         </li> 
         
         <li class="treeview">
-          <a href="#">
+          <a href="${contextPath}/hr/list.page">
             <i class="fa fa-book"></i>
             <span>인사 관리</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
+           <a href="${contexPath}/hr/employeeRegister.page">직원 및 강사 등록</a> 
+           
           <ul class="treeview-menu">
             <li><a href="pages/charts/chartjs.html">강사 및 직원관리</a></li>
           </ul>
@@ -658,3 +684,18 @@
     </section>
     <!-- /.sidebar -->
   </aside>  
+  
+ <script>
+    // Check if the profile picture exists
+    var profileImg = document.querySelector('#profileDropdown img');
+    if (profileImg) {
+        // If the profile picture exists, add the class and style
+        profileImg.classList.add('user-image');
+    } else {
+        // If using default profile image, ensure it has the correct class
+        var defaultImg = document.getElementById('defaultProfileImage');
+        if (defaultImg) {
+            defaultImg.classList.add('user-image');
+        }
+    }
+</script>
