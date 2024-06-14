@@ -1,19 +1,10 @@
 package com.gdu.academix.service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +15,10 @@ import com.gdu.academix.dto.UserDto;
 import com.gdu.academix.mapper.UserMapper;
 import com.gdu.academix.utils.MyJavaMailUtils;
 import com.gdu.academix.utils.MySecurityUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Transactional
 @Service
@@ -228,6 +223,8 @@ public class UserServiceImpl implements UserService {
       // 입력한 비밀번호 + SHA-256 방식의 암호화
       String pw = MySecurityUtils.getSha256(request.getParameter("password"));
       
+      System.out.println("password" + pw);
+      
       // 접속 IP (접속 기록을 남길 때 필요한 정보)
       String ip = request.getRemoteAddr();
       
@@ -236,7 +233,7 @@ public class UserServiceImpl implements UserService {
 
       // DB로 보낼 정보 (email/pw: USER_T , email/ip/userAgent/sessionId: ACCESS_HISTORY_T) 
       Map<String, Object> params = Map.of("email", email
-                                        , "pw", pw
+                                        , "password", pw
                                         , "ip", ip
                                         , "userAgent", userAgent
                                         , "sessionId", request.getSession().getId());
@@ -301,9 +298,9 @@ public class UserServiceImpl implements UserService {
   
   // 오채원 - 추가(24/05/28)
   @Override
-  public ResponseEntity<Map<String, Object>> getMemberList() {
+  public ResponseEntity<Map<String, Object>> getUserList() {
     System.out.println("department" + userMapper.getDepartmentsList());
-    return ResponseEntity.ok(Map.of("employee", userMapper.getMemberList(), "departments", userMapper.getDepartmentsList()));
+    return ResponseEntity.ok(Map.of("employee", userMapper.getUserList(), "departments", userMapper.getDepartmentsList()));
   }
   
   @Override
@@ -311,6 +308,29 @@ public class UserServiceImpl implements UserService {
     return userMapper.getUserProfileByNo(employeeNo);
   }
   
+  @Override
+  public ResponseEntity<Map<String, Object>> getUserProfileListByNo(List<Integer> employeeNoList) {
 
+    // 리스트를 돌면서 반환한 객체를 저장할 리스트 생성
+    List<EmployeesDto> employeeList = new ArrayList<>();
+    
+    // employeeNoList를 반복문으로 돌면서 반환 객체를 employeeList에 저장
+    /*
+     * for(int i = 0; i < employeeNoList.size(); i++) {
+     * employeeList.add(userMapper.getUserProfileByNo(employeeList.get(i).
+     * getEmployeeNo())); }
+     * 
+     * return ResponseEntity.ok(Map.of("employeeList", employeeList));
+     */
 
+    // employeeNoList를 반복문으로 돌면서 반환 객체를 employeeList에 저장
+    for (Integer employeeNo : employeeNoList) {
+       employeeList.add(userMapper.getUserProfileByNo(employeeNo));
+    }
+  
+    return ResponseEntity.ok(Map.of("employeeList", employeeList));
+   
+ 
+ 
+  }
 }
