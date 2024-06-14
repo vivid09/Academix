@@ -125,7 +125,6 @@
                         <select name="departmentNo" id="departmentNo">
                             <option>부서 선택</option>
                             <option value="0">대표실</option>
-                            <option value="1">행정부</option>
                             <option value="2">인사팀</option>
                             <option value="3">운영팀</option>
                             <option value="4">강사</option>

@@ -18,6 +18,8 @@ public interface HrService {
 	ResponseEntity<Map<String, Object>> getEmployeeList(HttpServletRequest request);
 	EmployeesDto getUserProfileByNo(int employeeNo);
 	int emloyeeModify(MultipartHttpServletRequest multipartRequest);
-	void annualLeaves(int employeeNo, int annualLeaveDays);
+	int removeEmoloyee(int employeeNo);
+	void annualLeaves(int employeeNo, int annualLeaveDays, int yearsOfService);
 	void grantAnnualLeave();
+	
 }
