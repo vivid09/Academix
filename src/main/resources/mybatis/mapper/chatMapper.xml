@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.ChatMapper">
+
+
+  <!-- 1:1 채팅방 여부 확인 -->
+  <select id="isOneToOneChatroomExits"
+  				parameterType="Map"
+  				resultType="ChatroomDto">
+		SELECT C.CHATROOM_NO, C.CHATROOM_TITLE, C.CHATROOM_TYPE, C.CHATROOM_CREATED_DATE
+		  FROM CHATROOM_T C INNER JOIN CHATROOM_PARTICIPATE_T P 
+		    ON C.CHATROOM_NO = P.CHATROOM_NO
+		 WHERE C.CHATROOM_TYPE = 'OneToOne' AND P.PARTICIPANT_NO IN (#{loginUserNo}, #{chatUserNo})
+		 GROUP BY C.CHATROOM_NO, C.CHATROOM_TITLE, C.CHATROOM_TYPE, C.CHATROOM_CREATED_DATE
+		 HAVING COUNT(*) = 2 
+  </select>
+  
+  <!-- 1:1 채팅방 생성 - chatroom_t 삽입 -->
+  <insert id="insertNewChatroom"
+  				parameterType="ChatroomDto">
+    <selectKey order="BEFORE" keyProperty="chatroomNo" resultType="int">
+      SELECT CHATROOM_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>  	  				
+		INSERT INTO CHATROOM_T (
+				CHATROOM_NO, 
+				CHATROOM_TITLE, 
+				CHATROOM_TYPE, 
+				CHATROOM_CREATED_DATE, 
+				CREATOR_NO
+		) VALUES (
+				#{chatroomNo},
+				#{chatroomTitle},
+			  #{chatroomType},
+				CURRENT_TIMESTAMP,
+				#{creatorNo}
+		)
+  </insert>
+  
+  <!-- 1:1 채팅방 생성 - chatroom_participate_t 삽입 -->  
+  <insert id="insertNewParticipate"
+  				parameterType="ChatroomParticipateDto">
+    <selectKey order="BEFORE" keyProperty="chatroomParticipateNo" resultType="int">
+      SELECT CHATROOM_PARTICIPATE_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>  				
+		INSERT INTO CHATROOM_PARTICIPATE_T (
+		    CHATROOM_PARTICIPATE_NO,
+		    CHATROOM_NO,
+		    PARTICIPANT_NO,
+		    PARTICIPATE_STATUS
+		 ) VALUES (
+		    #{chatroomParticipateNo},
+		    #{chatroomNo},
+		    #{participantNo},
+		    0
+     )
+  </insert>
+  
+  <!-- 메시지 데이터 넣기 -->
+  <insert id="insertChatMessage"
+  				parameterType="MessageDto">
+    <selectKey order="BEFORE" keyProperty="messageNo" resultType="int">
+      SELECT MESSAGE_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>  	
+			INSERT INTO MESSAGE_T (
+					MESSAGE_NO,
+					MESSAGE_TYPE, 
+					MESSAGE_CONTENT, 
+					ISREAD, 
+					SEND_DT, 
+					CHATROOM_NO, 
+					SENDER_NO
+			) VALUES (
+					#{messageNo}, 
+					#{messageType}, 
+					#{messageContent}, 
+					#{isRead}, 
+					CURRENT_TIMESTAMP, 
+					#{chatroomNo}, 
+					#{senderNo}
+			)
+  </insert>  
+  
+  <!-- 채팅 내역 가져오기 -->
+  <select id="getChatMessageList"
+  				parameterType="Map"
+  				resultType="MessageDto">
+		SELECT MESSAGE_NO, MESSAGE_TYPE, MESSAGE_CONTENT, ISREAD, SEND_DT, CHATROOM_NO, SENDER_NO
+	    FROM (SELECT ROW_NUMBER() OVER(ORDER BY SEND_DT DESC) AS RN, MESSAGE_NO, MESSAGE_TYPE, MESSAGE_CONTENT, ISREAD, SEND_DT, CHATROOM_NO, SENDER_NO
+	          FROM MESSAGE_T
+	         WHERE CHATROOM_NO = #{chatroomNo})
+	 	 WHERE RN BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<!-- 채팅 게시글 개수 가져오기 -->
+	<select id="getChatMessageCount">
+	  SELECT COUNT(*)
+		  FROM MESSAGE_T
+		 WHERE CHATROOM_NO = #{chatroomNo}
+	</select>
+  
+  <!-- 채팅 목록 가져오기 -->
+  <select id="getChatList"
+  				resultType="ChatroomDto">
+		SELECT CHATROOM_NO, CHATROOM_TITLE, CHATROOM_TYPE, CHATROOM_CREATED_DATE
+		  FROM CHATROOM_T
+		 WHERE CHATROOM_NO IN (SELECT CHATROOM_NO
+		          FROM CHATROOM_PARTICIPATE_T
+		         WHERE PARTICIPANT_NO = #{employeeNo})
+	</select>
+	
+	<!-- 채팅방 참여자 수 -->
+	<select id="getChatroomParticipantCount"
+					resultType="int">
+		SELECT COUNT(*)
+		  FROM CHATROOM_PARTICIPATE_T
+		 WHERE CHATROOM_NO = #{chatroomNo}
+	</select>
+	
+	<!-- 채팅방 참여자 번호 리스트 -->
+	<select id="getChatroomParticipantList"
+					resultType="ChatroomParticipateDto">
+		SELECT CHATROOM_PARTICIPATE_NO, CHATROOM_NO, PARTICIPANT_NO, PARTICIPATE_STATUS
+		  FROM CHATROOM_PARTICIPATE_T
+		 WHERE CHATROOM_NO = #{chatroomNo}
+	</select>
+	
+	
+	<select id="getChatroomByChatroomNo"
+					resultType="ChatroomDto">
+		SELECT CHATROOM_NO, CHATROOM_TITLE, CHATROOM_TYPE, CHATROOM_CREATED_DATE, CREATOR_NO
+		  FROM CHATROOM_T
+		 WHERE CHATROOM_NO = #{chatroomNo}
+	</select>
+	
+	<!-- 채팅방 참여자 상태 업데이트 -->
+	<update id="updateParticipateStatus"
+					parameterType="Map">
+		UPDATE CHATROOM_PARTICIPATE_T
+		   SET PARTICIPATE_STATUS = #{participateStatus}
+		 WHERE CHATROOM_NO = #{chatroomNo}
+		   AND PARTICIPANT_NO = #{participantNo, jdbcType=INTEGER}
+	</update>
+	
+	<!-- 채팅방 참여자 삭제 -->
+	<delete id="deleteParticipant"
+					parameterType="Map">
+		DELETE 
+		  FROM CHATROOM_PARTICIPATE_T 
+		 WHERE CHATROOM_NO = #{chatroomNo} 
+		   AND PARTICIPANT_NO = #{participantNo}
+	</delete>
+	
+	
+	<!-- 채팅방 참여자가 0명인 채팅방 데이터 삭제 -->
+	<delete id="deleteNoParticipateChatroom">
+		DELETE
+  		FROM CHATROOM_T
+ 		 WHERE CHATROOM_NO IN (SELECT C.CHATROOM_NO
+		                         FROM CHATROOM_T C LEFT JOIN CHATROOM_PARTICIPATE_T P
+		                           ON C.CHATROOM_NO = P.CHATROOM_NO
+		                        GROUP BY C.CHATROOM_NO
+		                       HAVING COUNT(P.PARTICIPANT_NO) = 0)
+	</delete>
+	
+	<!-- 채팅방 참여자가 0명인 채팅방의 메시지 데이터 삭제 -->
+  <delete id="deleteNoParticipateMessage">
+	  DELETE
+	    FROM MESSAGE_T
+	   WHERE CHATROOM_NO IN (SELECT C.CHATROOM_NO
+	                           FROM CHATROOM_T C LEFT JOIN CHATROOM_PARTICIPATE_T P
+	                             ON C.CHATROOM_NO = P.CHATROOM_NO
+	                          GROUP BY C.CHATROOM_NO
+	                         HAVING COUNT(P.PARTICIPANT_NO) = 0)
+  </delete>
+  
+  <!-- 채팅방 이름 수정 -->
+  <update id="updateChatroomTitle"
+		  parameterType="Map">
+	  UPDATE CHATROOM_T
+	     SET CHATROOM_TITLE = #{chatroomTitle}
+	   WHERE CHATROOM_NO = #{chatroomNo}
+  </update>
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.gdu.academix.service;
 
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 
+import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.UserDto;
 
 public interface UserService {
@@ -23,7 +25,9 @@ public interface UserService {
   void signout(HttpServletRequest request, HttpServletResponse response);
   
   // 오채원 - 추가(24/05/28)
-  ResponseEntity<Map<String, Object>> getMemberList();
+  ResponseEntity<Map<String, Object>> getUserList();
+  EmployeesDto getUserProfileByNo(int employeeNo);
+  ResponseEntity<Map<String, Object>> getUserProfileListByNo(List<Integer> employeeNoList);
   
   // 네이버 로그인
   //String getNaverLoginURL(HttpServletRequest request);
