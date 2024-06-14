@@ -8,8 +8,8 @@
   <jsp:param value="최근 파일" name="title"/>
 </jsp:include>
 
-<!-- Font Awesome 5.15.4 (unchanged as it's already the latest stable version for this specific major version) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<!-- Font Awesome 5.15.4 (unchanged as it's already the latest stable version for this specific major version)
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" /> -->
 <!-- jsTree 3.3.12 (unchanged as it's the latest stable version) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
 
@@ -138,24 +138,26 @@
                       <td>업로드 일자</td>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="driveList">
                     <c:forEach items="${driveList}" var="drive" varStatus="vs">
-                      <c:if test="${not empty drive.folder}">
-                        <tr>
-                          <td><input type="checkbox"></td>
-                          <td><a href="#"></a></td>
-                          <td>${drive.folder.folderName}</td>
-                          <td>${drive.folder.folderCreateDt}</td>
-                        </tr>
-                      </c:if>
-                      <c:if test="${empty drive.folder}">
-                        <tr>
-                          <td><input type="checkbox"></td>
-                          <td><a href="#"></a></td>
-                          <td>${drive.fileName}</td>
-                          <td>${drive.fileUploadDt}</td>
-                        </tr>
-                      </c:if>
+                      <c:choose>
+                        <c:when test="${drive.folder != null}">
+                          <tr>
+                            <td><input type="checkbox"></td>
+                            <td></td>
+                            <td><a href="javascript:fnLoadFileInFolder(${drive.folder.folderNo})">${drive.folder.folderName}</a></td>
+                            <td>${drive.folder.folderCreateDt}</td>
+                          </tr>
+                        </c:when>
+                        <c:when test="${drive.folder == null}">
+                          <tr>
+                            <td><input type="checkbox"></td>
+                            <td></td>
+                            <td>${drive.file.originalFilename}</td>
+                            <td>${drive.file.fileUploadDt}</td>
+                          </tr>
+                        </c:when>
+                      </c:choose>
                     </c:forEach>
                   </tbody>
                 </table>
@@ -380,8 +382,8 @@
     .then(resData => {
       if(resData.insertCount === 1) {
         alert('폴더가 추가되었습니다.');
-        window.location.href = '${contextPath}/drive/main.page';
-        // window.location.href = '${contextPath}/drive/main.do';
+        //window.location.href = '${contextPath}/drive/main.page';
+        window.location.href = '${contextPath}/drive/main.do';
       } else {
         alert('폴더 추가 실패했습니다.');
       }
@@ -415,7 +417,7 @@
           id: drive.folderNo,
           parent: '#',
           text: drive.folderName,
-          icon: "fas fa-building"
+          icon: "fa fa-building"
         });
       }
       
@@ -439,7 +441,7 @@
             id: folder.folderNo.toString(),
             parent: folder.parentFolderNo.toString(),
             text: folder.folderName,
-            icon: "fas fa-layer-group"
+            icon: "fa fa-layer-group"
           });
         }
       });
@@ -473,7 +475,7 @@
           id: 'file_' + file.fileNo,
           parent: file.folder.folderNo.toString(),
           text: file.originalFilename,
-          icon: "fas fa-user"
+          icon: "fa fa-user"
         });
       });
       
@@ -533,7 +535,7 @@
           id: drive.folderNo,
           parent: '#',
           text: drive.folderName,
-          icon: "fas fa-building"
+          icon: "fa fa-building"
         });
       }
       
@@ -544,7 +546,7 @@
             id: folder.folderNo.toString(),
             parent: folder.parentFolderNo.toString(),
             text: folder.folderName,
-            icon: "fas fa-layer-group"
+            icon: "fa fa-layer-group"
           });
         }
       });
@@ -555,7 +557,7 @@
           id: 'file_' + file.fileNo,
           parent: file.folder.folderNo.toString(),
           text: file.originalFilename,
-          icon: "fas fa-user"
+          icon: "fa fa-user"
         });
       });
       
@@ -585,13 +587,14 @@
           var selectedFolderNo = parseInt(selectedNode.id, 10);
           var selectedFolder = resData.folder.find(folder => folder.folderNo === selectedFolderNo);
           if (selectedFolder) {
+        	  
         	  console.log(selectedFolder);
+        	  
             document.getElementById('folderUploadPath').value = selectedFolder.folderUploadPath;
             document.getElementById('folderNo').value = selectedFolder.folderNo;
           }
         }
       });
-      
       
       /*
       // 검색 기능 추가
@@ -617,7 +620,32 @@
 	  } 
   }
 
-  
+  // 폴더 클릭 시 포함된 목록으로 재조회
+  const fnLoadFileInFolder = (folderNo) => {
+	  fetch('${contextPath}/drive/main.do?parentFolderNo=' + folderNo)
+	  .then(response => {
+		  if(!response.ok) {
+			  throw new Error('Network response was not ok ' + response.statusText);
+		  }
+		  return response.text();
+	  })
+	  .then(resData => {
+		  
+		  let parser = new DOMParser();
+		  let doc = parser.parseFromString(resData, 'text/html');
+		  let newTbody = doc.querySelector('#driveList');
+		  
+		  if(newTbody) {
+			  let currentTbody = document.getElementById('driveList');
+			  if(currentTbody) {
+				  currentTbody.innerHTML = newTbody.innerHTML;
+			  }
+		  }
+	  })
+	  .catch(error => {
+		  console.error('There has been a problem with your fetch operation:', error);
+	  });
+  }
   
   
   fnGetFileList();

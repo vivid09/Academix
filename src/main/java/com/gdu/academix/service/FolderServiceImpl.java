@@ -142,22 +142,26 @@ public class FolderServiceImpl implements FolderService {
     Map<String, Object> modelMap = model.asMap();
     HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
     
-    int total = folderMapper.getDriveListCount();
-    
     Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
     int display = Integer.parseInt(optDisplay.orElse("20"));
     
     Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
     int page = Integer.parseInt(optPage.orElse("1"));
-
-    myPageUtils.setPaging(total, display, page);
     
     Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
     String sort = optSort.orElse("DESC");
     
+    Optional<String> optParentFolderNo = Optional.ofNullable(request.getParameter("parentFolderNo"));
+    int parentFolderNo = Integer.parseInt(optParentFolderNo.orElse("1"));
+    
+    int total = folderMapper.getDriveListCount(parentFolderNo);
+    
+    myPageUtils.setPaging(total, display, page);
+    
     Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
                                    , "end", myPageUtils.getEnd()
-                                   , "sort", sort);
+                                   , "sort", sort
+                                   , "parentFolderNo", parentFolderNo);
     
     model.addAttribute("beginNo", total - (page - 1) * display);
     model.addAttribute("driveList", folderMapper.getDriveList(map));
@@ -165,6 +169,7 @@ public class FolderServiceImpl implements FolderService {
     model.addAttribute("display", display);
     model.addAttribute("sort", sort);
     model.addAttribute("page", page);
+    model.addAttribute("parentFolderNo", parentFolderNo);
   }
   
   
