@@ -490,17 +490,16 @@
         </li> 
         
         <li class="treeview">
-          <a href="${contextPath}/hr/list.page">
+          <a href="#">
             <i class="fa fa-book"></i>
             <span>인사 관리</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
-          </a>
-           <a href="${contexPath}/hr/employeeRegister.page">직원 및 강사 등록</a> 
-           
+           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">강사 및 직원관리</a></li>
+          <li><a href="${contextPath}/hr/list.page">직원 및 강사 조회</a></li>
+            <li><a href="${contexPath}/hr/employeeRegister.page">직원 및 강사 등록</a></li>
           </ul>
         </li>    
 
@@ -690,16 +689,7 @@
     <!-- /.sidebar -->
   </aside>  
   
-<!-- jQuery 2.2.3 -->
-<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
-<!-- Bootstrap 3.3.6 -->
-<script src="/bootstrap/js/bootstrap.min.js"></script>
-<!-- Slimscroll -->
-<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="/plugins/fastclick/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="/dist/js/app.min.js"></script>   
+
   
  <script>
     // Check if the profile picture exists
