@@ -71,104 +71,118 @@
   
   
   <div class="content-wrapper">
-  <h2 class="title">결재함</h2>
-   <div class="document-papers">
-    <div class="pending">
-     대기문서:
-    </div>
-    <div class="approval-document-papers">
-      승인문서:
+  
+  
+	  <h2 class="title">결재함</h2>
+	   <div class="document-papers">
+	    <div class="pending">
+	     대기문서:
+	    </div>
+	    <div class="approval-document-papers">
+	      승인문서:
+	  </div>
+	    <div class="notapproval-document-papers">
+	      반려문서:
+	  </div>
+	   </div>
+	  
+	  <div>
+	  <div>
+	    <input type="radio" name="sort" value="DESC" id="descending" checked>
+	    <label for="descending">내림차순</label>
+	    <input type="radio" name="sort" value="ASC" id="ascending">
+	    <label for="ascending">오름차순</label>
+	  </div>
+	  <div>
+	    <select id="display" name="display">
+	      <option>5</option>
+	      <option>10</option>
+	      <option>20</option>
+	    </select>
+	  </div>
+	  <div>
+	   <span>문서종류</span>
+	  <select id="status" name="status">
+	      <option value="5">전체</option>
+	      <option value="0">미결재</option>
+	      <option value="1">승인</option>
+	      <option value="2">반려</option>
+	    </select> 
+	  </div>
+	  
+	  <table class="table align-middle">
+	    <thead>
+	      <tr>
+	        <td>기안서 번호</td>
+	        <td>기안서 종류</td>
+	        <td>기안자</td>
+	        <td>기안일</td>
+	        <td>결재 상태</td>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <c:forEach items="${requestsList}" var="leaveRequests" varStatus="vs">
+	        <tr class="sta" id="req-list" data-request-status="${leaveRequests.requestStatus}">
+	          <td>${leaveRequests.requestNo}</td>
+	          <td>
+	            <c:if test="${leaveRequests.requestSort == 1}">
+	            <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requestNo}">
+	            </c:if>
+	            <c:if test="${leaveRequests.requestSort == 0}">
+	              <a href="${contextPath}/requests/attendanceDetail.do?requestNo=${leaveRequests.requestNo}">
+	            </c:if>
+	             <c:choose>
+	                      <c:when test="${leaveRequests.requestSort eq '0'}">
+	                        근태조정서
+						 </c:when>
+	                      <c:when test="${leaveRequests.requestSort eq '1'}">
+	                        연차신청서
+						 </c:when>
+	                </c:choose></a>
+	          </td>
+	          <td>${leaveRequests.employees.name}</td>
+	          <td>${leaveRequests.requestDate}</td>
+	          <td> <c:choose>
+	                      <c:when test="${leaveRequests.requestStatus eq '0'}">
+	                        미결재
+						 </c:when>
+	                      <c:when test="${leaveRequests.requestStatus eq '1'}">
+	                        승인
+						 </c:when>
+	                      <c:when test="${leaveRequests.requestStatus eq '2'}">
+	                        반려
+						 </c:when>
+	                </c:choose></td>
+	        </tr>
+	      </c:forEach>
+	    </tbody>
+	    <tfoot>
+	      <tr>
+	        <td colspan="5">${paging}</td>
+	      </tr>
+	    </tfoot>
+	  </table>
+	</div>
+  
+  
+  
+  
+  
+  
+  
   </div>
-    <div class="notapproval-document-papers">
-      반려문서:
-  </div>
-   </div>
-  
-  <div>
-  <div>
-    <input type="radio" name="sort" value="DESC" id="descending" checked>
-    <label for="descending">내림차순</label>
-    <input type="radio" name="sort" value="ASC" id="ascending">
-    <label for="ascending">오름차순</label>
-  </div>
-  <div>
-    <select id="display" name="display">
-      <option>5</option>
-      <option>10</option>
-      <option>20</option>
-    </select>
-  </div>
-  <div>
-   <span>문서종류</span>
-  <select id="status" name="status">
-      <option value="5">전체</option>
-      <option value="0">미결재</option>
-      <option value="1">승인</option>
-      <option value="2">반려</option>
-    </select> 
-  </div>
-  
-  <table class="table align-middle">
-    <thead>
-      <tr>
-        <td>기안서 번호</td>
-        <td>기안서 종류</td>
-        <td>기안자</td>
-        <td>기안일</td>
-        <td>결재 상태</td>
-      </tr>
-    </thead>
-    <tbody>
-      <c:forEach items="${requestsList}" var="leaveRequests" varStatus="vs">
-        <tr class="sta" id="req-list" data-request-status="${leaveRequests.requestStatus}">
-          <td>${leaveRequests.requestNo}</td>
-          <td>
-            <c:if test="${leaveRequests.requestSort == 1}">
-            <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requestNo}">
-            </c:if>
-            <c:if test="${leaveRequests.requestSort == 0}">
-              <a href="${contextPath}/requests/attendanceDetail.do?requestNo=${leaveRequests.requestNo}">
-            </c:if>
-             <c:choose>
-                      <c:when test="${leaveRequests.requestSort eq '0'}">
-                        근태조정서
-					 </c:when>
-                      <c:when test="${leaveRequests.requestSort eq '1'}">
-                        연차신청서
-					 </c:when>
-                </c:choose></a>
-          </td>
-          <td>${leaveRequests.employees.name}</td>
-          <td>${leaveRequests.requestDate}</td>
-          <td> <c:choose>
-                      <c:when test="${leaveRequests.requestStatus eq '0'}">
-                        미결재
-					 </c:when>
-                      <c:when test="${leaveRequests.requestStatus eq '1'}">
-                        승인
-					 </c:when>
-                      <c:when test="${leaveRequests.requestStatus eq '2'}">
-                        반려
-					 </c:when>
-                </c:choose></td>
-        </tr>
-      </c:forEach>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="5">${paging}</td>
-      </tr>
-    </tfoot>
-  </table>
-</div>
   
   
-  
-  
-  
-  
-  
-  </div>
+<!-- jQuery 2.2.3 -->
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<!-- Slimscroll -->
+<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/app.min.js"></script>
   
   <script>
    

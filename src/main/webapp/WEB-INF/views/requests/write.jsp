@@ -192,156 +192,180 @@ button:hover {
 </style>
 
   <div class="content-wrapper">
-  
-   <div class="top-ele">
-   <span>문서종류</span>
-  <select id="optionSelect">
-      <option value="1">연차신청서</option>
-      <option value="2">근태조정신청서</option>
-    </select>
-  
-  </div>
-  
-  
-  <div id="option1">
-  <form action="${contextPath}/requests/write.do" method="POST"
-        enctype="multipart/form-data">
-        <div class="requests-wrapper">
-            <div class="header-wrapper">
-                <div class="form-container">
-			        <div class="form-title">연차 신청서</div>
-			        <div class="form-approval">
-		              <div>결재:인사과</div>
-		              <div class="form-stamp"></div>
-                     </div>
-               </div>
-            </div>
-            <div class="form-row">
-             <div class="form-group">
-                <label for="departName">부서명</label>
-                <input type="text" name="departName" id="departName" value="${sessionScope.user.depart.departmentNo}" readonly>
-            </div> 
-            <div class="form-group">
-                <label for="name">성명</label>
-                <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
-             </div>
-            </div>
-            <div class="form-row"> 
-              <div class="form-group">
-                <label for="rankTitle">직책</label>
-                <input type="text" name="rankTitle" id="rankTitle" value="${sessionScope.user.rank.rankNo}" readonly>
-              </div>  
-              <div class="form-group">
-                <label for="leaveType">연차종류</label>
-                <select name="leaveType" id="leaveType">
-                        <option value="0">연차</option>
-                        <option value="1">오전 반차</option>
-                        <option value="2">오후 반차</option>
-                    </select>
-             </div>
-           </div>
-           <div class="form-row">
-             <div class="form-group period">
-                <label for="startDate">시작일</label>
-		        <input type="date" name="startDate" id="startDate">
-		     </div> 
-		     <div class="form-group">
-		        <label for="endDate">종료일</label>
-		        <input type="date" name="endDate" id="endDate">
-		      </div>
-		     </div>
-		     <div class="form-row">
-		      <div class="form-group">
-		        <label for="duration">기간</label>
-		        <input type="text" name="duration" id="duration">
-		       </div> 
-	         
-	        <div class="form-group">
-			    <label for="files">첨부</label>
-			    <input type="file" name="files" id="files" multiple>
-			 </div>
-		  	</div>
-		  	<div class="form-row">
-	        <div class="form-group reason">
-                <label for="reason">사유</label>
-                <input type="text" name="reason" id="reason">
-            </div>  
-           </div>   
-            <button type="submit">기안하기</button>
-            
-			
-        </div>
-        <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}"> 
-        <input type="hidden" name="picNo" value="0">
-        <input type="hidden" name="requestStatus" value="0">
-        <input type="hidden" name="requestSort" value="1">
-    </form>
-</div>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        기안하기
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/main.page"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">기안하기</li>
+      </ol>
+    </section>
+    
+     <!-- Main content -->
+     <section class="content">
+	   <div class="top-ele">
+	   <span>문서종류</span>
+	  <select id="optionSelect">
+	      <option value="1">연차신청서</option>
+	      <option value="2">근태조정신청서</option>
+	    </select>
+	  
+	  </div>
+	  
+	  
+	  <div id="option1">
+	  <form action="${contextPath}/requests/write.do" method="POST"
+	        enctype="multipart/form-data">
+	        <div class="requests-wrapper">
+	            <div class="header-wrapper">
+	                <div class="form-container">
+				        <div class="form-title">연차 신청서</div>
+				        <div class="form-approval">
+			              <div>결재:인사과</div>
+			              <div class="form-stamp"></div>
+	                     </div>
+	               </div>
+	            </div>
+	            <div class="form-row">
+	             <div class="form-group">
+	                <label for="departName">부서명</label>
+	                <input type="text" name="departName" id="departName" value="${sessionScope.user.depart.departmentNo}" readonly>
+	            </div> 
+	            <div class="form-group">
+	                <label for="name">성명</label>
+	                <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
+	             </div>
+	            </div>
+	            <div class="form-row"> 
+	              <div class="form-group">
+	                <label for="rankTitle">직책</label>
+	                <input type="text" name="rankTitle" id="rankTitle" value="${sessionScope.user.rank.rankNo}" readonly>
+	              </div>  
+	              <div class="form-group">
+	                <label for="leaveType">연차종류</label>
+	                <select name="leaveType" id="leaveType">
+	                        <option value="0">연차</option>
+	                        <option value="1">오전 반차</option>
+	                        <option value="2">오후 반차</option>
+	                    </select>
+	             </div>
+	           </div>
+	           <div class="form-row">
+	             <div class="form-group period">
+	                <label for="startDate">시작일</label>
+			        <input type="date" name="startDate" id="startDate">
+			     </div> 
+			     <div class="form-group">
+			        <label for="endDate">종료일</label>
+			        <input type="date" name="endDate" id="endDate">
+			      </div>
+			     </div>
+			     <div class="form-row">
+			      <div class="form-group">
+			        <label for="duration">기간</label>
+			        <input type="text" name="duration" id="duration">
+			       </div> 
+		         
+		        <div class="form-group">
+				    <label for="files">첨부</label>
+				    <input type="file" name="files" id="files" multiple>
+				 </div>
+			  	</div>
+			  	<div class="form-row">
+		        <div class="form-group reason">
+	                <label for="reason">사유</label>
+	                <input type="text" name="reason" id="reason">
+	            </div>  
+	           </div>   
+	            <button type="submit">기안하기</button>
+	            
+				
+	        </div>
+	        <input type="hidden" name="employeeNo" value="${sessionScope.user.employeeNo}"> 
+	        <input type="hidden" name="picNo" value="0">
+	        <input type="hidden" name="requestStatus" value="0">
+	        <input type="hidden" name="requestSort" value="1">
+	    </form>
+	</div>
 
-<div id="option2">
- <form action="${contextPath}/requests/writeAttendance.do"
-       method="POST"
-       enctype="multipart/form-data">
-   <div class="content-main">
-     <div class="header-wrapper">
-                <div class="form-container">
-			        <div class="form-title">근무조정 신청서</div>
-			        <div class="form-approval">
-		              <div>결재:인사과</div>
-		              <div class="form-stamp"></div>
-                     </div>
-               </div>
-            </div>
-   <div class="form-row">
-    <div class="form-group">
-      <label for="departName">부서명</label>
-      <input type="text" name="departName" id="departName2" value="${sessionScope.user.depart.departmentNo}" readonly>
-      </div>
-      <div class="form-group">
-        <label for="name">성명</label>
-        <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
-      </div>
-    </div>  
-    <div class="form-row">
-      <div class="form-group">
-         <label for="rankTitle">직책</label>
-         <input type="text" name="rankTitle" id="rankTitle2" value="${sessionScope.user.rank.rankNo}" readonly>
-      </div>   
-	  <div class="form-group">
-	    <label for="recordDate">변경신청날짜</label>
-	    <input type="date" name="adjustmentDate" id="adjustmentDate">
+	<div id="option2">
+	 <form action="${contextPath}/requests/writeAttendance.do"
+	       method="POST"
+	       enctype="multipart/form-data">
+	   <div class="content-main">
+	     <div class="header-wrapper">
+	                <div class="form-container">
+				        <div class="form-title">근무조정 신청서</div>
+				        <div class="form-approval">
+			              <div>결재:인사과</div>
+			              <div class="form-stamp"></div>
+	                     </div>
+	               </div>
+	            </div>
+	   <div class="form-row">
+	    <div class="form-group">
+	      <label for="departName">부서명</label>
+	      <input type="text" name="departName" id="departName2" value="${sessionScope.user.depart.departmentNo}" readonly>
+	      </div>
+	      <div class="form-group">
+	        <label for="name">성명</label>
+	        <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
+	      </div>
+	    </div>  
+	    <div class="form-row">
+	      <div class="form-group">
+	         <label for="rankTitle">직책</label>
+	         <input type="text" name="rankTitle" id="rankTitle2" value="${sessionScope.user.rank.rankNo}" readonly>
+	      </div>   
+		  <div class="form-group">
+		    <label for="recordDate">변경신청날짜</label>
+		    <input type="date" name="adjustmentDate" id="adjustmentDate">
+		  </div>
+	    </div> 
+	    <div class="form-row">
+		  <div class="form-group">
+		    <label for="timeIn">변경요청출근시간</label>
+		    <input type="time" name="timeIn" id="timeIn">
+		  </div>
+		  <div class="form-group">
+		    <label for="timeIn">변경요청퇴근시간</label>
+		    <input type="time" name="timeOut" id="timeOut">
+		  </div>
+	   </div>  
+	   <div class="form-row">
+		  <div class="form-group">
+		    <label for="reason">사유</label>
+		    <input type="text" name="reason" id="reason">
+		  </div> 
+		  <div class="form-group">
+			<label for="files">첨부</label>
+			<input type="file" name="files" id="files" multiple>
+		</div>	
+			<input type="hidden" name="employeeNo" id="employeeNo" value="${sessionScope.user.employeeNo}">
+			<input type="hidden" name="requestStatus" id="requestStatus" value="0">
+			<input type="hidden" name="picNo" value="0">
+			<input type="hidden" name="requestSort" value="0">
 	  </div>
-    </div> 
-    <div class="form-row">
-	  <div class="form-group">
-	    <label for="timeIn">변경요청출근시간</label>
-	    <input type="time" name="timeIn" id="timeIn">
-	  </div>
-	  <div class="form-group">
-	    <label for="timeIn">변경요청퇴근시간</label>
-	    <input type="time" name="timeOut" id="timeOut">
-	  </div>
-   </div>  
-   <div class="form-row">
-	  <div class="form-group">
-	    <label for="reason">사유</label>
-	    <input type="text" name="reason" id="reason">
-	  </div> 
-	  <div class="form-group">
-		<label for="files">첨부</label>
-		<input type="file" name="files" id="files" multiple>
-	</div>	
-		<input type="hidden" name="employeeNo" id="employeeNo" value="${sessionScope.user.employeeNo}">
-		<input type="hidden" name="requestStatus" id="requestStatus" value="0">
-		<input type="hidden" name="picNo" value="0">
-		<input type="hidden" name="requestSort" value="0">
-  </div>
-  <button type="submit">기안하기</button>
- </div> 
- </form> 
+	  <button type="submit">기안하기</button>
+	 </div> 
+	 </form> 
+	</div>
+ </section>
 </div>
-
-</div>
+ 
+<!-- jQuery 2.2.3 -->
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<!-- Slimscroll -->
+<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/app.min.js"></script> 
  
 <script>
 
