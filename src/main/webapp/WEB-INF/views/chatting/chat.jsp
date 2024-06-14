@@ -1489,29 +1489,40 @@ window.addEventListener('beforeunload', function(event) {
 				  .then((response) => response.json())
 				  .then(resData => {
 					if(resData.updateStatusCount !== 0){
-					  
+					  console.log('updateStatusCount: ', resData.updateStatusCount);
+						
 				    // 업데이트 성공 시, 채팅방 목록에서 해당 채팅방의 아이콘을 지운다.
 				    $('ul.contacts-list li').each(function() {
 				        const $input = $(this).find('input[type="hidden"]'); // <li> 요소의 후손인 <input> 요소를 찾아
 				        if ($input.data('chatroom-no') == chatroomDto.chatroomNo) {
 			        	  $(this).find('i').remove(); // 값이 chatroomNo와 같으면 아이콘 삭제
 				          
+			        	  
 				          // 삭제후 상단 알림 아이콘 관련 업데이트
-			 			  let redIcon = $('.messages-menu span');
-			 			  let redIconCount = parseInt(redIcon.text(), 10);
-			 			  let readAlert = $('.alert-menu-sub');
-			 			  let updateStatusCount = resData.updateStatusCount;
-			 			  
-		 	   			  if(redIconCount - updateStatusCount > 0) {
-		 	   				redIcon.text(redIconCount - updateStatusCount);
-		 	   				readAlert.text('총 ' + (redIconCount - updateStatusCount) + '개의 읽지않은 알람');
-		 	   			  } else {
-		 	   				redIcon.text(0);   				
-		 	   				redIcon.css('display', 'none'); 			
-		 	   				readAlert.text('알람을 모두 확인했어요!');
-		 	   			  }
-				          
-				          
+					 			  let redIcon = $('.messages-menu span');
+					 			  let redIconCount = parseInt(redIcon.text(), 10);
+					 			  let readAlert = $('.alert-menu-sub');
+					 			  let updateStatusCount = resData.updateStatusCount;
+					 			  
+			 	   			  if(redIconCount - updateStatusCount > 0) {
+			 	   					redIcon.text(redIconCount - updateStatusCount);
+			 	   					readAlert.text('총 ' + (redIconCount - updateStatusCount) + '개의 읽지않은 알람');
+			 	   			  } else {
+			 	   					redIcon.text(0);   				
+			 	   					redIcon.css('display', 'none'); 			
+			 	   					readAlert.text('알람을 모두 확인했어요!');
+			 	   			  }
+			 	   			  
+			 	   			  // 알림 리스트 삭제
+ 	   			        const itemsToRemove = [];
+ 	   			        $('.menu.alert-menu .notification-item').each(function() {
+			 	   	        if ($(this).data('chatroom-no') == chatroomDto.chatroomNo) {
+			 	   	          itemsToRemove.push(this);
+			 	   	        }
+			 	   	      });
+	 	   			      itemsToRemove.forEach(function(item, index) {
+	 	   			        $(item).remove();
+	 	   			      });
 				          
 				        }
 				      });
@@ -1822,6 +1833,9 @@ window.addEventListener('beforeunload', function(event) {
 							    
 							    // 채팅방 연결 종료
 							    fnDisconnect(chatroomType, chatroomNo);
+							    
+							    // 해당 사용자가 나간 채팅방 알림 상태 읽음으로 업데이트
+							    fnUpdateChatroomSeenStatus(chatroomNo);
 							    
 							    // 채팅방 리스트 갱신
 							    fnGetChatList(${sessionScope.user.employeeNo});
