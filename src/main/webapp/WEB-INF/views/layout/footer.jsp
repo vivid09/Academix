@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+    
     
 <!-- sockjs-client 1.6.1 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js" integrity="sha512-1QvjE7BtotQjkq8PxLeF6P46gEpBRXuskzIVgjFpekzFVF4yjRgrQvTG1MTOJ3yQgvTteKAcO7DSZI92+u/yZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -41,25 +41,6 @@
 		  console.log('WebSocket connection error: ' + error);
 	  });
   };
-  
-/*    const showNotification = (message) => {
-	    console.log('알림 표시 시도: ' + message);
- 	    if (Notification.permission === 'granted') {
-	        new Notification('New message', {
-	            body: message,
-	        });
-	        console.log('알림 표시 완료');
-	    } else if (Notification.permission !== 'denied') {
-	        Notification.requestPermission().then(permission => {
-	            if (permission === 'granted') {
-	                new Notification('New message', {
-	                    body: message,
-	                });
-	                console.log('알림 권한 획득 후 알림 표시 완료');
-	            }
-	        });
-	    } 
-	}; */
 	
 	
 	// 알림 메시지 추가
@@ -214,17 +195,6 @@
 		    });
   }
  	
- 	
-	  // 알림 메시지 삭제하기 (X 버튼)
-/*     const fnRemoveMessageAlert = () => {
-    	$(document).on('click', function(evt) {
-    	    if ($(evt.target).closest('.btn-removeMessageAlert').length) {
-    	        evt.preventDefault();
-    	        $(evt.target).closest('.notification-item').remove();
-    	    }
-    	});
-   	} */
-   	
    	// x 버튼 눌러서 메시지 알림 삭제
    	const fnRemoveMessageAlert = () => {
    		$(document).on('click', '.btn-removeMessageAlert', (evt) => {
@@ -378,7 +348,7 @@
     	  if($input.data('chatroom-no') == gChatroomNo) {
     		  const $span = $(this).find('span.contacts-list-name');
  	        if ($span.find('i.fa-circle').length === 0) {
-            $span.append('<i class="fas fa-circle" style="color: red;font-size: 10px;"></i>');
+            $span.append('<i class="fa fa-circle" style="color: darkorange;font-size: 8px;vertical-align: top;"></i>');
           }
     	  }
       })
@@ -391,21 +361,11 @@
 	fnRemoveMessageAlert();
 	fnRemoveAllMessageNotify();
 	fnDirectChatroom();
-
-
-
   
-  
-  
-
-
 </script>
   <footer class="main-footer">
     
   </footer>
 
-<script src="${contextPath}/js/checkDrive.js?dt=${dt}"></script>
-
 </body>
-
 </html>

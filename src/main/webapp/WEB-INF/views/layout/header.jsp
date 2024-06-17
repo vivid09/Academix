@@ -70,7 +70,7 @@
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fas fa-regular fa-envelope"></i>
+              <i class="fa fa-regular fa-envelope"></i>
               <span class="label label-danger"></span>
             </a>
             <ul class="dropdown-menu">
