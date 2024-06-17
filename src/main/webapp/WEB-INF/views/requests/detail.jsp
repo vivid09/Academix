@@ -81,17 +81,37 @@
 </style>
 
  <div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+          <c:choose>
+            <c:when test="${leaveRequests.requests.requestSort eq '0'}">
+                   근무조정서
+		    </c:when>
+            <c:when test="${leaveRequests.requests.requestSort eq '1'}">
+                   연차신청서
+		    </c:when>
+          </c:choose>
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">내 문서함</li>
+      </ol>
+    </section>
+ 
+   <!-- Main content -->
+   <section class="content">
    <div class="start" data-set-employee-no="${leaveRequests.requests.employees.employeeNo}"
     data-set-request-status="${leaveRequests.requests.requestStatus}">
     
-  ${leaveRequests.requests.requestNo}
-     <h2>연차 신청서</h2>
      <div>
    
       <c:if test="${leaveRequests.requests.requestStatus == 0 }">
       <c:if test="${sessionScope.user.employeeNo == leaveRequests.requests.employees.employeeNo}">
       <form id="frm-btn" method="POST">  
         <input type="hidden" name="requestNo" value="${leaveRequests.requests.requestNo}">
+        <input type="hidden" name="employeeNo" value="${leaveRequests.requests.employees.employeeNo}">
         <button type="button" id="btn-edit" class="btn btn-warning btn-sm">편집</button>
         <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
         </c:if>
@@ -120,10 +140,10 @@
                         미결재
 					 </c:when>
                       <c:when test="${leaveRequests.requests.requestStatus eq '1'}">
-                        <img src="/images/approved.png" style="width:45px;">
+                        <img src="/images/approved.png" style="width:100px;">
 					 </c:when>
                       <c:when test="${leaveRequests.requests.requestStatus eq '2'}">
-                        <img src="/images/rejected.png" style="width:45px;">
+                        <img src="/images/rejected.png" style="width:100px;">
 					 </c:when>
                 </c:choose>
                     </div> 
@@ -183,9 +203,10 @@
          <input type="hidden" name="picNo" id="picNo" value="${leaveRequests.requests.picNo}">   
          <input type="hidden" name="requestNo" id="requestNo" value="${leaveRequests.requests.requestNo}">
          <input type="hidden" name="attachNo" id="attachNo" value="${leaveRequests.attach.attachNo}">
+         <input type="hidden" name="employeeNo" id="employeeNo" value="${leaveRequests.requests.employees.employeeNo}">
         </div>
     </form>
-  </div>
+  
   
    <div id="myModal" class="modal">
    <form action="${contextPath}/requests/reject.do"
@@ -208,7 +229,8 @@
 </div>
   
  </div>
-  
+ </section>
+</div> 
 <!-- jQuery 2.2.3 -->
 <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <!-- Bootstrap 3.3.6 -->
@@ -298,7 +320,7 @@
      
      const fnRemoveRequest = () => {
     		document.getElementById('btn-remove').addEventListener('click', (evt) => {
-    			if(confirm('해당 게시글을 삭제할까요?')){
+    			if(confirm('해당 기안서를 삭제할까요?')){
     	      frmBtn.action = '${contextPath}/requests/removeRequest.do';
     	      frmBtn.submit();
     			}

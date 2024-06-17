@@ -15,6 +15,7 @@ import jakarta.xml.ws.Response;
 public interface HrService {
 
 	int registerEmployee(MultipartHttpServletRequest multipartRequest);
+	ResponseEntity<Map<String, Object>> checkEmail(Map<String, Object> params);
 	ResponseEntity<Map<String, Object>> getEmployeeList(HttpServletRequest request);
 	EmployeesDto getUserProfileByNo(int employeeNo);
 	int emloyeeModify(MultipartHttpServletRequest multipartRequest);

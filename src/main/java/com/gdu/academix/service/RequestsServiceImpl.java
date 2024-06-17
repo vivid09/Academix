@@ -262,6 +262,7 @@ public class RequestsServiceImpl implements RequestsService {
 	    
 	    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
 	    int display = Integer.parseInt(optDisplay.orElse("10"));
+	    int employeeNo = Integer.parseInt(request.getParameter("employeeNo"));
 	    
 	    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
 	    int page = Integer.parseInt(optPage.orElse("1"));
@@ -277,7 +278,8 @@ public class RequestsServiceImpl implements RequestsService {
 	    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
 	                                   , "end", myPageUtils.getEnd()
 	                                   , "sort", sort
-	                                   , "status", status);    
+	                                   , "status", status
+	                                   , "employeeNo", employeeNo);    
 	    
 	    model.addAttribute("beginNo", total - (page - 1) * display);
 	    model.addAttribute("requestsList", requestsMapper.getList(map));
@@ -304,6 +306,7 @@ public class RequestsServiceImpl implements RequestsService {
   @Override
 	public int requestApproval(HttpServletRequest request) {
     System.out.println(request.getParameter("requestStatus"));
+      int requestSort = Integer.parseInt(request.getParameter("requestSort"));
 	  int requestStatus = Integer.parseInt(request.getParameter("requestStatus"));
 	  int picNo = Integer.parseInt(request.getParameter("picNo")); 
 	  int requestNo = Integer.parseInt(request.getParameter("requestNo")); 
@@ -314,37 +317,42 @@ public class RequestsServiceImpl implements RequestsService {
 			  						    .build();
 	  int moddifyCount = requestsMapper.requestApproval(requests);
 	  
-	  LeaveRequestDto LeaveRequest = requestsMapper.getRequestsbyNo(requestNo);
-	  
-	  AttendanceRecordDto attendanceRecord = AttendanceRecordDto.builder()
-  	  		.recordDate(new Timestamp(LeaveRequest.getStartDate().getTime()))
-  	  		.timeIn(new Timestamp(LeaveRequest.getStartDate().getTime()))
-  	  		.timeOut(new Timestamp(LeaveRequest.getEndDate().getTime()))
-  	  		.employeeNo(LeaveRequest.getRequests().getEmployees().getEmployeeNo())
-	  		.build();
-	  
-	  int status = 0;
-	  
-	  Timestamp originalTimestamp = new Timestamp(LeaveRequest.getStartDate().getTime());
-	  LocalDateTime dateTime;
-	  
-	  if(LeaveRequest.getLeaveType() == 0) {
-	  	status = 7;
-	  } else if(LeaveRequest.getLeaveType() == 1) {
-	  	dateTime = originalTimestamp.toLocalDateTime().withHour(9).withMinute(0).withSecond(0).withNano(0);
-	  	status = 5;
-	  	attendanceRecord.setTimeIn(Timestamp.valueOf(dateTime));
-	  	attendanceRecord.setTimeOut(null);
-	  } else if(LeaveRequest.getLeaveType() == 2) {
-	  	status = 6;
-	  	dateTime = originalTimestamp.toLocalDateTime().withHour(18).withMinute(0).withSecond(0).withNano(0);
-	  	attendanceRecord.setTimeIn(null);
-	  	attendanceRecord.setTimeOut(Timestamp.valueOf(dateTime));
+	  if(requestSort == 1) {
+		  
+		  LeaveRequestDto LeaveRequest = requestsMapper.getRequestsbyNo(requestNo);
+		  
+		  AttendanceRecordDto attendanceRecord = AttendanceRecordDto.builder()
+				  .recordDate(new Timestamp(LeaveRequest.getStartDate().getTime()))
+				  .timeIn(new Timestamp(LeaveRequest.getStartDate().getTime()))
+				  .timeOut(new Timestamp(LeaveRequest.getEndDate().getTime()))
+				  .employeeNo(LeaveRequest.getRequests().getEmployees().getEmployeeNo())
+				  .build();
+		  
+		  int status = 0;
+		  
+		  Timestamp originalTimestamp = new Timestamp(LeaveRequest.getStartDate().getTime());
+		  LocalDateTime dateTime;
+		  
+		  if(LeaveRequest.getLeaveType() == 0) {
+			  status = 7;
+		  } else if(LeaveRequest.getLeaveType() == 1) {
+			  dateTime = originalTimestamp.toLocalDateTime().withHour(9).withMinute(0).withSecond(0).withNano(0);
+			  status = 5;
+			  attendanceRecord.setTimeIn(Timestamp.valueOf(dateTime));
+			  attendanceRecord.setTimeOut(null);
+		  } else if(LeaveRequest.getLeaveType() == 2) {
+			  status = 6;
+			  dateTime = originalTimestamp.toLocalDateTime().withHour(18).withMinute(0).withSecond(0).withNano(0);
+			  attendanceRecord.setTimeIn(null);
+			  attendanceRecord.setTimeOut(Timestamp.valueOf(dateTime));
+		  }
+		  
+		  attendanceRecord.setStatus(status);
+		  
+		  attendancerecordMapper.insertAttendanceRecord(attendanceRecord);
+	  } else if(requestSort == 0) {
+		  
 	  }
-	  
-	  attendanceRecord.setStatus(status);
-	  
-	  attendancerecordMapper.insertAttendanceRecord(attendanceRecord);
 		return moddifyCount;
 	}
   
@@ -392,7 +400,7 @@ public class RequestsServiceImpl implements RequestsService {
 	                                   , "status", status);	    
 	    
 	    model.addAttribute("beginNo", total - (page - 1) * display);
-	    model.addAttribute("requestsList", requestsMapper.getList(map));
+	    model.addAttribute("requestsList", requestsMapper.getListPage(map));
 	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/requests/requestsList.do", sort, display));
 	    model.addAttribute("display", display);
 	    model.addAttribute("sort", sort);
@@ -622,7 +630,7 @@ public class RequestsServiceImpl implements RequestsService {
 	}
   
   @Override
-	public int removeRequest(int requestNo) {
+	public int removeRequest(int requestNo, int employeeNo) {
 	  int deleteCount = requestsMapper.removeRequest2(requestNo);
 	  deleteCount += requestsMapper.removeRequest3(requestNo);
 	   deleteCount += requestsMapper.removeRequest(requestNo);
@@ -687,6 +695,14 @@ public class RequestsServiceImpl implements RequestsService {
 	}
 
 
+  @Transactional
+  @Override
+	public int removeAttendance(int requestNo) {
+		int deleteCount =  requestsMapper.removeRequest3(requestNo);
+		deleteCount += requestsMapper.removeAttendance(requestNo);
+		 deleteCount += requestsMapper.removeRequest(requestNo);
+		return deleteCount;
+	}
 
   
 }

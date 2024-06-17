@@ -27,7 +27,8 @@ public interface RequestsService {
   ResponseEntity<Map<String, Object>> getLeaveRequestListByEmployeeNo(HttpServletRequest request);
   int modifyRequest(MultipartHttpServletRequest multipartRequest);
   int attendanceModify(MultipartHttpServletRequest multipartRequest);
-  int removeRequest(int requestNo);
+  int removeRequest(int requestNo,int employeeNo);
   ResponseEntity<Map<String, Object>> pending();
   ResponseEntity<Resource> download(HttpServletRequest request);
+  int removeAttendance(int requestNo);
 }
