@@ -194,7 +194,18 @@
   
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+  
+   <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        직원 및 강사 조회
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">직원 및 강사 조회</li>
+      </ol>
+    </section>
 
 
     <!-- Main content -->
@@ -242,7 +253,7 @@
          
       </section>
           
-         
+  </div>       
         
      
   
@@ -420,7 +431,7 @@
                 str += '</div>';
 
                 $('.empList').empty().append(str); // 기존 정보 삭제 후 새로운 정보 추가
-                $('.empList').show();
+                $('.empList').toggle();
                 
                 // 삭제 버튼에 이벤트 리스너 추가
                 document.getElementById('btn-emp-remove').addEventListener('click', () => {
@@ -459,8 +470,10 @@
 
 
 
-
-
+function profileEdit(employeeNo) {
+    var url = '${contextPath}/hr/profileEdit.do?employeeNo=' + employeeNo;
+    window.location.href = url;
+}
 	    
 	  
 	   

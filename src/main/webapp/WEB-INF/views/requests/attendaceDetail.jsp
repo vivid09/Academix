@@ -206,119 +206,135 @@ button:hover {
 </style>
 
  <div class="content-wrapper">
+   <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        근태조정서
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">근태조정서</li>
+      </ol>
+    </section>
   
-  
-   <div id="option2">
-   
-	 <form id="requestForm"
-	       method="POST"
-	       enctype="multipart/form-data">
-	  <h2>근태조정/수정</h2>
-	  <button type="submit" id="btn-approval" onclick="submitForm('approval')">승인</button>
-      <button type="button" id="btn-reject" onclick="openModal()">반려</button>
-	  <div class="content-main">
-	   <div class="header-wrapper">
-                <div class="form-container">
-			        <div class="form-title">근무조정 신청서</div>
-			        <div class="form-approval">
-		              <div>결재:인사과</div>
-		              <div class="form-stamp">
-		                <c:choose>
-                       <c:when test="${attendance.requests.requestStatus eq '0'}">
-                        미결재
-					  </c:when>
-                       <c:when test="${attendance.requests.requestStatus eq '1'}">
-                        <img src="/images/approved.png" style="width:45px;">
-					  </c:when>
-                       <c:when test="${attendance.requests.requestStatus eq '2'}">
-                        <img src="/images/rejected.png" style="width:45px;">
-					   </c:when>
-                      </c:choose>
-		              </div>
-                     </div>
-               </div>
-            </div>
-	   <div class="form-row">
-	    <div class="form-group">
-	      <label for="departName">부서명</label>
-	      <input type="text" name="departName" id="departName2" value="${sessionScope.user.depart.departmentNo}" readonly>
-	      </div>
-	      <div class="form-group">
-	        <label for="name">성명</label>
-	        <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
-	      </div>
-	    </div>  
-	    <div class="form-row">
-	      <div class="form-group">
-	         <label for="rankTitle">직책</label>
-	         <input type="text" name="rankTitle" id="rankTitle2" value="${sessionScope.user.rank.rankNo}" readonly>
-	      </div>   
-		  <div class="form-group">
-		    <label for="adjustmentDate">변경신청날짜</label>
-		    <input type="date" name="adjustmentDate" id="adjustmentDate" >
+  <!-- Main content -->
+  <section class="content"> 
+	   <div id="option2">
+	   
+		 <form id="requestForm"
+		       method="POST"
+		       enctype="multipart/form-data">
+		  <button type="submit" id="btn-approval" onclick="submitForm('approval')">승인</button>
+	      <button type="button" id="btn-reject" onclick="openModal()">반려</button>
+		  <div class="content-main">
+		   <div class="header-wrapper">
+	                <div class="form-container">
+				        <div class="form-title">근무조정 신청서</div>
+				        <div class="form-approval">
+			              <div>결재:인사과</div>
+			              <div class="form-stamp">
+			                <c:choose>
+	                       <c:when test="${attendance.requests.requestStatus eq '0'}">
+	                        미결재
+						  </c:when>
+	                       <c:when test="${attendance.requests.requestStatus eq '1'}">
+	                        <img src="/images/approved.png" style="width:45px;">
+						  </c:when>
+	                       <c:when test="${attendance.requests.requestStatus eq '2'}">
+	                        <img src="/images/rejected.png" style="width:45px;">
+						   </c:when>
+	                      </c:choose>
+			              </div>
+	                     </div>
+	               </div>
+	            </div>
+		   <div class="form-row">
+		    <div class="form-group">
+		      <label for="departName">부서명</label>
+		      <input type="text" name="departName" id="departName" readonly>
+		      </div>
+		      <div class="form-group">
+		        <label for="name">성명</label>
+		        <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
+		      </div>
+		    </div>  
+		    <div class="form-row">
+		      <div class="form-group">
+		         <label for="rankTitle">직책</label>
+		         <input type="text" name="rankTitle" id="rankTitle" readonly>
+		      </div>   
+			  <div class="form-group">
+			    <label for="adjustmentDate">변경신청날짜</label>
+			    <input type="date" name="adjustmentDate" id="adjustmentDate" >
+			  </div>
+		    </div> 
+		    <div class="form-row">
+			  <div class="form-group">
+			    <label for="timeIn">변경요청출근시간</label>
+			    <input type="time" name="timeIn" id="timeIn" >
+			  </div>
+			  <div class="form-group">
+			    <label for="timeIn">변경요청퇴근시간</label>
+			    <input type="time" name="timeOut" id="timeOut">
+			  </div>
+		   </div>  
+		   <div class="form-row">
+			  <div class="form-group">
+			    <label for="reason">사유</label>
+			    <input type="text" name="reason" id="reason" value="${attendance.requests.reason}">
+			  </div> 
+			  <div class="form-group">
+				<label for="files">첨부</label>
+				<input type="file" name="files" id="files" multiple>
+			</div>	
+				<input type="hidden" name="employeeNo" id="employeeNo"  value="${attendance.requests.employees.employeeNo}">
+				<input type="hidden" name="requestStatus" id="requestStatus" value="0">
+				<input type="hidden" name="picNo" value="0">
+				<input type="hidden" name="requestSort" value="0">
+				<input type="hidden" name="requestNo" id="requestNo" value="${attendance.requests.requestNo}">
 		  </div>
-	    </div> 
-	    <div class="form-row">
-		  <div class="form-group">
-		    <label for="timeIn">변경요청출근시간</label>
-		    <input type="time" name="timeIn" id="timeIn" >
+		  <div class="form-row">
+		   <div class="form-group">
+		    <label for="attach-file">첨부된파일</label>
+		    <div data-attach-no="${attendance.attach.attachNo}" id="attach-file">${attendance.attach.uploadPath}</div>
+		   </div>
+		   <div class="form-group">
+		     <label for="rejectReason">반려사유</label>
+		     <textarea id="rejectReason">${attendance.requests.rejectReason}</textarea>
+		   </div>
 		  </div>
-		  <div class="form-group">
-		    <label for="timeIn">변경요청퇴근시간</label>
-		    <input type="time" name="timeOut" id="timeOut">
-		  </div>
-	   </div>  
-	   <div class="form-row">
-		  <div class="form-group">
-		    <label for="reason">사유</label>
-		    <input type="text" name="reason" id="reason" value="${attendance.requests.reason}">
-		  </div> 
-		  <div class="form-group">
-			<label for="files">첨부</label>
-			<input type="file" name="files" id="files" multiple>
-		</div>	
-			<input type="hidden" name="employeeNo" id="employeeNo" >
-			<input type="hidden" name="requestStatus" id="requestStatus" value="0">
-			<input type="hidden" name="picNo" value="0">
-			<input type="hidden" name="requestSort" value="0">
-			<input type="hidden" name="requestNo" id="requestNo" value="${attendance.requests.requestNo}">
-	  </div>
-	  <div class="form-row">
-	   <div class="form-group">
-	    <label for="attach-file">첨부된파일</label>
-	    <div id="attach-file">${attendance.attach.uploadPath}</div>
-	   </div>
-	   <div class="form-group">
-	     <label for="rejectReason">반려사유</label>
-	     <textarea id="rejectReason">${attendance.requests.rejectReason}</textarea>
-	   </div>
-	  </div>
-	   <button type="button" id="btn-submit" onclick="submitForm('modify')">수정하기</button>
-	 </div> 
-	 </form> 
-	</div> 
+		   <button type="button" id="btn-submit" onclick="submitForm('modify')">수정하기</button>
+		   <c:if test="${sessionScope.user.employeeNo == attendance.requests.employees.employeeNo}">
+		   <button type="button" id="btn-remove" >삭제</button>
+		   </c:if>
+		 </div> 
+		 </form> 
+		</div> 
+	 
+	 
+	 <div id="myModal" class="modal">
+	   <form action="${contextPath}/requests/reject.do"
+	   		 method="POST" id="frm-reject">
+	     <div class="modal-content">
+	        <!-- 닫기 버튼 -->
+	        <span class="close" onclick="closeModal()">&times;</span>
+	        <!-- 사유 입력란 -->
+	        <label for="rejectReason">사유:</label>
+	        <textarea id="rejectReason" name="rejectReason" rows="4" cols="50"></textarea>
+	        <input type="hidden" name="requestNo" id="requestNo" value="${attendance.requests.requestNo}">
+	        <input type="hidden" name="employeeNo" id="employeeNo" value="${sessionScope.user.employeeNo}">
+	        <input type="hidden" name="requestStatus" id="requestStatus" value="2">   
+	         <input type="hidden" name="picNo" id="picNo" value="1">
+	        <br>
+	        <!-- 반려 버튼 -->
+	        <button onclick="submit">반려하기</button>
+	        <button onclick="closeModal()">취소</button>
+	    </div>
+	   </form>
+	</div>
  
- 
- <div id="myModal" class="modal">
-   <form action="${contextPath}/requests/reject.do"
-   		 method="POST" id="frm-reject">
-     <div class="modal-content">
-        <!-- 닫기 버튼 -->
-        <span class="close" onclick="closeModal()">&times;</span>
-        <!-- 사유 입력란 -->
-        <label for="rejectReason">사유:</label>
-        <textarea id="rejectReason" name="rejectReason" rows="4" cols="50"></textarea>
-        <input type="hidden" name="requestNo" id="requestNo" value="${attendance.requests.requestNo}">
-        <input type="hidden" name="requestStatus" id="requestStatus" value="2">   
-         <input type="hidden" name="picNo" id="picNo" value="1">
-        <br>
-        <!-- 반려 버튼 -->
-        <button onclick="submit">반려하기</button>
-        <button onclick="closeModal()">취소</button>
-    </div>
-   </form>
-</div>
- 
+ </section>
  </div>
   
   
@@ -334,6 +350,30 @@ button:hover {
 <script src="/dist/js/app.min.js"></script>
   
   <script>
+  
+
+  const departmentMap = {
+		    0: '대표실',
+		    1: '행정부',
+		    2: '인사팀',
+		    3: '운영팀',
+		    4: '강사'
+		};
+
+		// 직급명과 번호 매핑
+		const rankMap = {
+		    0: '대표이사',
+		    1: '수석',
+		    2: '책임',
+		    3: '주임',
+		    4: '사원',
+		    5: '강사'
+		};
+
+		function formFill() {
+			document.getElementById('departName').value = departmentMap[${sessionScope.user.depart.departmentNo}];
+		   	document.getElementById('rankTitle').value = rankMap[${sessionScope.user.rank.rankNo}];
+		}
 // Moment.js를 사용하여 adjustmentDate 값을 포맷팅하여 반환하는 함수
 function formatDateWithout(dateTimeString) {
     if (!dateTimeString) return ''; // dateTimeString이 없을 경우 빈 문자열 반환
@@ -398,6 +438,34 @@ document.getElementById("timeOut").value = formatDateWithoutTime(adjustmentTimeO
      var modal = document.getElementById('myModal');
      modal.style.display = 'none';
  }
+ 
+ const fnDownload = () => {
+	 var attachNo = document.getElementById('attach-file').dataset.attachNo;
+	  $('#attach-file').on('click', (evt) => {
+	    if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
+	      location.href = '${contextPath}/requests/download.do?attachNo=' +attachNo;
+	    }
+	  })
+	} 
+
+ const fnRemoveAttendance = () => {
+	 document.getElementById('btn-remove').addEventListener('click', (evt)=>{
+		 let requestNo = document.getElementById('requestNo').value;
+		 let employeeNo = document.getElementById('employeeNo').value
+		 location.href = '${contextPath}/requests/removeAttendance.do?requestNo=' + requestNo + '&employeeNo=' + employeeNo;
+	 })
+ }
+ 
+ /* const departNameRankTitle = ()=>{
+	let departName=  document.getElementById('departName2');
+	departName.value 
+ } */
+ 
+
+ 
+ fnDownload();
+ fnRemoveAttendance();
+ formFill();
  
 
 </script>

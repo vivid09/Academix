@@ -77,7 +77,7 @@
 	    </thead>
 	    <tbody>
 	      <c:forEach items="${requestsList}" var="leaveRequests" varStatus="vs">
-	    <c:if test="${sessionScope.user.name == leaveRequests.employees.name}">
+	    
 	        <tr class="sta" data-request-status="${leaveRequests.requestStatus}">
 	          <td>${leaveRequests.requestNo}</td>
 	          <td>
@@ -110,7 +110,7 @@
 						 </c:when>
 	                </c:choose></td>
 	        </tr>
-	        </c:if>
+	        
 	      </c:forEach>
 	    </tbody>
 	    <tfoot>

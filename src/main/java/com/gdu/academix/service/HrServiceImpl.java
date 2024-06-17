@@ -21,6 +21,7 @@ import com.gdu.academix.dto.DepartmentsDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.RanksDto;
 import com.gdu.academix.mapper.HrMapper;
+import com.gdu.academix.mapper.UserMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
@@ -39,6 +40,8 @@ public class HrServiceImpl implements HrService {
 	private MyFileUtils myFileUtils;
 	@Autowired
 	private MyPageUtils myPageUtils;
+	@Autowired
+	private UserMapper userMapper;
 	
 	@Transactional
 	@Override
@@ -103,6 +106,13 @@ public class HrServiceImpl implements HrService {
 		int insertCount = hrMapper.registerEmployee(employees);
 		return insertCount;
 	}
+	
+	@Override
+	public ResponseEntity<Map<String, Object>> checkEmail(Map<String, Object> params) {
+		boolean enableEmail = userMapper.getUserByMap(params) == null;
+		    return new ResponseEntity<>(Map.of("enableEmail", enableEmail)
+		        , HttpStatus.OK);
+	}
 
 	@Override
 	public ResponseEntity<Map<String, Object>> getEmployeeList(HttpServletRequest request) {
@@ -132,10 +142,10 @@ public class HrServiceImpl implements HrService {
 	@Override
 	public int emloyeeModify(MultipartHttpServletRequest multipartRequest) {
 		
-		String profilePicturePath = myFileUtils.updateProfilePicture(multipartRequest, "profile");
+		String profilePicturePath;
 		String name = multipartRequest.getParameter("name");
 		String email = multipartRequest.getParameter("email");
-		String pw =  MySecurityUtils.getSha256(multipartRequest.getParameter("pw"));
+		String pw;
 		String phone = multipartRequest.getParameter("phone");
 		String address = multipartRequest.getParameter("address");
 		String departName = multipartRequest.getParameter("departName");
@@ -159,13 +169,13 @@ public class HrServiceImpl implements HrService {
 	        exitDate = LocalDate.parse(endDateString);
 	    }
 
+	    
 	    // LocalDate를 SQL Date로 변환
 	    Date sqlHireDate = (hireDate != null) ? Date.valueOf(hireDate) : null;
 	    Date sqlExitDate = (exitDate != null) ? Date.valueOf(exitDate) : null;
 
-		int parentDepartNo = Integer.parseInt(multipartRequest.getParameter("parentDepartNo"));
-		
-		
+	    
+
 		
 		RanksDto ranks = RanksDto.builder()
 							  	 .rankNo(rankNo)
@@ -174,15 +184,12 @@ public class HrServiceImpl implements HrService {
 		DepartmentsDto depart = DepartmentsDto.builder()
 				                             .departmentNo(departmentNo)
 				                             .departName(departName)
-				                             .parentDepartNo(parentDepartNo)
 				                             .build();
 		
 		EmployeesDto employees = EmployeesDto.builder()
-				                             .profilePicturePath(profilePicturePath)
 				                             .employeeNo(employeeNo)
 				                             .name(name)
 				                             .email(email)
-				                             .password(pw)
 				                             .phone(phone)
 				                             .address(address)
 				                             .depart(depart)
@@ -192,6 +199,16 @@ public class HrServiceImpl implements HrService {
 				                             .exitDate(sqlExitDate)
 				                             .build();
 	   
+	    if(multipartRequest.getFile("profile") != null) {
+	    	profilePicturePath = myFileUtils.updateProfilePicture(multipartRequest, "profile");
+	    	employees.setProfilePicturePath(profilePicturePath);
+	    }
+		if(multipartRequest.getParameter("pw") != null && !multipartRequest.getParameter("pw").equals("")) {
+			pw = MySecurityUtils.getSha256(multipartRequest.getParameter("pw"));
+			employees.setPassword(pw);
+		}
+		
+		
 		int modifyCount = hrMapper.employeeModify(employees);
 		System.out.println(employees);
 		return modifyCount;
@@ -256,8 +273,10 @@ public class HrServiceImpl implements HrService {
     }
 	
 	@Override
+	@Transactional
 	public int removeEmoloyee(int employeeNo) {
-		int deleteCount = hrMapper.removeEmployee(employeeNo);
+		int deleteCount = hrMapper.removeAnnualEmployeeNo(employeeNo);
+		deleteCount += hrMapper.removeEmployee(employeeNo);
 		return  deleteCount;
 	}
 	

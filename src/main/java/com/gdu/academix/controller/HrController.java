@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -43,6 +44,11 @@ public class HrController {
 	 return"hr/register";
  }
  
+  @PostMapping(value="/checkEmail.do", produces="application/json")
+ public ResponseEntity<Map<String, Object>> checkEmail(@RequestBody Map<String, Object> params) {
+    return hrService.checkEmail(params);
+ }
+ 
  @PostMapping("/employeeRegister.do")
   public String employeeRegister(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
 	 int insertCount = hrService.registerEmployee(multipartRequest);
@@ -58,9 +64,10 @@ public class HrController {
  
  @PostMapping("/employeeModify.do")
   public String employeeModify(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+	 
 	 redirectAttributes
      .addFlashAttribute("modifyResult", hrService.emloyeeModify(multipartRequest) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
-	 System.out.println(hrService.emloyeeModify(multipartRequest));
+
       return "hr/list";
  }
 		 

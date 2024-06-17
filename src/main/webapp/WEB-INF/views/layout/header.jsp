@@ -464,7 +464,7 @@
               </span>
           </a>
           <ul class="treeview-menu">
-          <li><a href="${contextPath}/requests/main.page"> 내 문서함</a></li>
+          <li><a href="${contextPath}/requests/main.page?employeeNo=${sessionScope.user.employeeNo}"> 내 문서함</a></li>
          <li> <a href="${contextPath}/requests/write.page">기안하기</a></li>
            <c:if test="${sessionScope.user.depart.departmentNo == 2}"> 
           <li><a href="${contextPath}/requests/requestsList.do">결재함</a></li>
@@ -488,7 +488,7 @@
             <li><a href="pages/charts/morris.html">학생 주소록</a></li>
           </ul>
         </li> 
-        
+        <c:if test="${sessionScope.user.depart.departmentNo == 2}">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-book"></i>
@@ -501,7 +501,8 @@
           <li><a href="${contextPath}/hr/list.page">직원 및 강사 조회</a></li>
             <li><a href="${contexPath}/hr/employeeRegister.page">직원 및 강사 등록</a></li>
           </ul>
-        </li>    
+        </li>   
+        </c:if> 
 
         <li class="treeview">
           <a href="#">
