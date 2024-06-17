@@ -210,7 +210,7 @@ button:hover {
 	   <span>문서종류</span>
 	  <select id="optionSelect">
 	      <option value="1">연차신청서</option>
-	      <option value="2">근태조정신청서</option>
+	      <option value="2">근무조정신청서</option>
 	    </select>
 	  
 	  </div>

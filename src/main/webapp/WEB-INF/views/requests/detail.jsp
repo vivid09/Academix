@@ -140,10 +140,10 @@
                         미결재
 					 </c:when>
                       <c:when test="${leaveRequests.requests.requestStatus eq '1'}">
-                        <img src="/images/approved.png" style="width:45px;">
+                        <img src="/images/approved.png" style="width:100px;">
 					 </c:when>
                       <c:when test="${leaveRequests.requests.requestStatus eq '2'}">
-                        <img src="/images/rejected.png" style="width:45px;">
+                        <img src="/images/rejected.png" style="width:100px;">
 					 </c:when>
                 </c:choose>
                     </div> 

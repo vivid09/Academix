@@ -32,11 +32,37 @@
                 <div class="col-md-4">
                     <div class="panel panel-default rounded-panel">
                         <div class="panel-body text-center">
-                            <img src="/images/default_profile_image.png" class="img-circle mb-3" alt="User Avatar" style="width: 100px;">
-                            <h5 class="panel-title">Moni Roy 님 만나서 반갑습니다.</h5>
-                            <p class="panel-text">학생관리팀</p>
-                            <p class="panel-text">kuhlman.jeremy@yahoo.com</p>
-                            <p class="panel-text">010-0000-0000</p>
+                            <div class="img-pro"><c:if test="${sessionScope.user.profilePicturePath != null}">
+							          ${sessionScope.user.profilePicturePath}
+							        </c:if>
+							        <c:if test="${sessionScope.user.profilePicturePath == null}">
+							          <img src="${contextPath}/resources/images/default_profile_image.png" style="width:50px;">
+							        </c:if></div>
+			                            <h5 class="panel-title">${sessionScope.user.name} 님 만나서 반갑습니다.</h5>
+			                            <p class="panel-text">
+			                              <c:choose>
+									        <c:when test="${sessionScope.user.depart.departmentNo == '0'}">
+									            Academix
+									        </c:when>
+									        <c:when test="${sessionScope.user.depart.departmentNo == '1'}">
+									            행정부
+									        </c:when>
+									        <c:when test="${sessionScope.user.depart.departmentNo == '2'}">
+									            인사팀
+									        </c:when>
+									        <c:when test="${sessionScope.user.depart.departmentNo == '3'}">
+									            운영팀
+									        </c:when>
+									        <c:when test="${sessionScope.user.depart.departmentNo == '4'}">
+									            강사
+									        </c:when>
+									        <c:otherwise>
+									            Unknown Department
+									        </c:otherwise>
+									    </c:choose>
+			                           </p>
+			                            <p class="panel-text">${sessionScope.user.email}</p>
+			                            <p class="panel-text">${sessionScope.user.phone}</p>
                         </div>
                     </div>
                 </div>

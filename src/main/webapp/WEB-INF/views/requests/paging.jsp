@@ -32,6 +32,8 @@
   align-items: center;
   text-align: center;
   background-color: white;
+  font-size: 20px;
+  justify-content: center;
 }
 .approval-document-papers {
    width:250px;
@@ -44,6 +46,8 @@
   align-items: center;
   text-align: center;
   background-color: white;
+  font-size: 20px;
+  justify-content: center;
 }
 .notapproval-document-papers {
    width:250px;
@@ -56,6 +60,8 @@
   align-items: center;
   text-align: center;
   background-color: white;
+  font-size: 20px;
+  justify-content: center;
 }
 .table{
  background-color: white;

@@ -202,6 +202,19 @@ button:hover {
     right: 10px;
     cursor: pointer;
 }    
+
+#attach-file {
+ width: 381px;
+ height: 45px;
+ border: 1px, solid gray;
+ background-color: white;
+ border-radius: 5px;
+}
+
+#rejectReason2{
+ width: 381px;
+ height: 45px;
+}
  
 </style>
 
@@ -239,10 +252,10 @@ button:hover {
 	                        미결재
 						  </c:when>
 	                       <c:when test="${attendance.requests.requestStatus eq '1'}">
-	                        <img src="/images/approved.png" style="width:45px;">
+	                        <img src="/images/approved.png" style="width:100px;">
 						  </c:when>
 	                       <c:when test="${attendance.requests.requestStatus eq '2'}">
-	                        <img src="/images/rejected.png" style="width:45px;">
+	                        <img src="/images/rejected.png" style="width:100px;">
 						   </c:when>
 	                      </c:choose>
 			              </div>
@@ -256,7 +269,7 @@ button:hover {
 		      </div>
 		      <div class="form-group">
 		        <label for="name">성명</label>
-		        <input type="text" name="name" id="name" value="${sessionScope.user.name}" readonly>
+		        <input type="text" name="name" id="name" value="${attendance.requests.employees.name}" readonly>
 		      </div>
 		    </div>  
 		    <div class="form-row">
@@ -297,11 +310,11 @@ button:hover {
 		  <div class="form-row">
 		   <div class="form-group">
 		    <label for="attach-file">첨부된파일</label>
-		    <div data-attach-no="${attendance.attach.attachNo}" id="attach-file">${attendance.attach.uploadPath}</div>
+		    <div data-attach-no="${attendance.attach.attachNo}" id="attach-file">${attendance.attach.originalFileName}</div>
 		   </div>
 		   <div class="form-group">
-		     <label for="rejectReason">반려사유</label>
-		     <textarea id="rejectReason">${attendance.requests.rejectReason}</textarea>
+		     <label for="rejectReason2">반려사유</label>
+		     <textarea id="rejectReason2">${attendance.requests.rejectReason}</textarea>
 		   </div>
 		  </div>
 		   <button type="button" id="btn-submit" onclick="submitForm('modify')">수정하기</button>
@@ -371,9 +384,10 @@ button:hover {
 		};
 
 		function formFill() {
-			document.getElementById('departName').value = departmentMap[${sessionScope.user.depart.departmentNo}];
-		   	document.getElementById('rankTitle').value = rankMap[${sessionScope.user.rank.rankNo}];
+			document.getElementById('departName').value = departmentMap[${attendance.requests.employees.depart.departmentNo}];
+		   	document.getElementById('rankTitle').value = rankMap[${attendance.requests.employees.rank.rankNo}];
 		}
+		formFill();
 // Moment.js를 사용하여 adjustmentDate 값을 포맷팅하여 반환하는 함수
 function formatDateWithout(dateTimeString) {
     if (!dateTimeString) return ''; // dateTimeString이 없을 경우 빈 문자열 반환
@@ -465,7 +479,7 @@ document.getElementById("timeOut").value = formatDateWithoutTime(adjustmentTimeO
  
  fnDownload();
  fnRemoveAttendance();
- formFill();
+ 
  
 
 </script>
