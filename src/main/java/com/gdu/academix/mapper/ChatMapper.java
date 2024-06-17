@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.gdu.academix.dto.ChatroomDto;
 import com.gdu.academix.dto.ChatroomParticipateDto;
 import com.gdu.academix.dto.MessageDto;
+import com.gdu.academix.dto.MessageReadStatusDto;
 
 @Mapper
 public interface ChatMapper {
@@ -21,6 +22,8 @@ public interface ChatMapper {
   
   // 메시지 데이터 넣기
   int insertChatMessage(MessageDto message);
+  // 메시지 사용자별 읽음 여부 넣기
+  int insertMessageReadStatus(Map<String, Object> map);
   
   // 채팅 내역 가져오기
   List<MessageDto> getChatMessageList(Map<String, Object> map);
@@ -35,6 +38,23 @@ public interface ChatMapper {
   
   // 채팅방 번호 - 채팅방 데이터 가져오기
   ChatroomDto getChatroomByChatroomNo(int chatroomNo);
+  // 채팅방 별 메시지 읽은 개수 가져오기
+  List<MessageReadStatusDto> getMessageReadCountByChatroomNo(Map<String, Object> map);
+  
+  // 채팅방 접속 시 안읽은 메시지 가져오기
+  List<MessageReadStatusDto> getUnreadMessageNos(Map<String, Object> map);
+  
+  // 메시지별 읽음 카운트 가져오기
+  List<MessageReadStatusDto> getNewCountList(Map<String, Object> map);
+  
+  // 채팅방 별 안읽은 메시지 읽음 처리
+  int updateMessageReadStatus(Map<String, Object> map);
+  
+  // 모든 참여자가 읽은 메시지 ALL_READ 업데이트
+  int updateAllRead();
+  
+  // 모든 참여자가 읽은 메시지 삭제
+  int deleteAlreadyRead();
   
   // 채팅방 참여자 상태 업데이트
   int updateParticipateStatus(Map<String, Object> map);

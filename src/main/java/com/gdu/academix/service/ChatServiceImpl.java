@@ -15,6 +15,7 @@ import com.gdu.academix.dto.ChatroomParticipateDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.MessageDto;
 import com.gdu.academix.dto.MessageDto.MessageType;
+import com.gdu.academix.dto.MessageReadStatusDto;
 import com.gdu.academix.mapper.ChatMapper;
 import com.gdu.academix.mapper.UserMapper;
 import com.gdu.academix.utils.MyPageUtils;
@@ -43,7 +44,6 @@ public class ChatServiceImpl implements ChatService {
     MessageDto chatMessage = MessageDto.builder()
                                   .messageType(message.getMessageType())
                                   .messageContent(replaceMessageContent)
-                                  .isRead(message.getIsRead())
                                   .chatroomNo(message.getChatroomNo())
                                   .senderNo(message.getSenderNo())
                                 .build();
@@ -56,11 +56,84 @@ public class ChatServiceImpl implements ChatService {
     Timestamp currentTimestamp = new Timestamp(currentTimeMillis); 
     chatMessage.setSendDt(currentTimestamp);
     
-    // map 생성
-    Map<String, Object> map = Map.of("insertMessageCount", insertMessageCount,
-                                     "chatMessage", chatMessage);
-    return map;
+
+    
+    if(message.getRecipientNoList() != null && !message.getRecipientNoList().isEmpty()) {
+      // 메시지에 채팅방 사용자의 읽음 여부 넣기
+      Map<String, Object> statusMap = Map.of("messageNo", chatMessage.getMessageNo(),
+                                       "chatroomNo", chatMessage.getChatroomNo(),
+                                       "offlineNoList", message.getRecipientNoList());
+      
+      int insertMessageReadStatus = chatMapper.insertMessageReadStatus(statusMap);
+      
+      // 최종 반환 map 생성
+      Map<String, Object> map = Map.of("insertMessageCount", insertMessageCount,
+                                       "insertMessageReadStatus", insertMessageReadStatus,
+                                       "chatMessage", chatMessage);
+      return map;
+      
+    } else {
+      // 최종 반환 map 생성
+      Map<String, Object> map = Map.of("insertMessageCount", insertMessageCount,
+                                       "chatMessage", chatMessage);
+      return map;
+    }
+
   }
+  
+  // 사용자 접속 시 해당 채팅방의 안읽은 메시지 읽음 처리
+  @Override
+  public Map<String, Object> updateMessageReadStatus(Map<String, Object> params) {
+
+    try {
+      
+      // 1. 채팅방 별 안읽은 메시지 가져오기
+      List<MessageReadStatusDto> unreadMessageList = chatMapper.getUnreadMessageNos(params);
+      
+      // messageNo만 추출하여 새로운 리스트 생성
+      List<Integer> messageNos = unreadMessageList.stream()
+                                                .map(MessageReadStatusDto::getMessageNo)
+                                                .collect(Collectors.toList());
+      
+      if(messageNos.size() > 0) {
+        // 2. 안읽은 메시지 모두 읽음 처리
+        int employeeNo = Integer.parseInt(String.valueOf(params.get("employeeNo")));
+        int chatroomNo = Integer.parseInt(String.valueOf(params.get("chatroomNo")));
+        
+        Map<String, Object> params2 = Map.of("employeeNo", employeeNo,
+                                             "messageNos", messageNos);
+        
+        int updateReadStatusCount = chatMapper.updateMessageReadStatus(params2);
+        
+        Map<String, Object> map3 = Map.of("chatroomNo", chatroomNo,
+                                          "messageNos", messageNos);
+        
+        // 다 읽은 메시지가 있으면 all_read 업데이트
+        chatMapper.updateAllRead();
+        
+        // 업데이트한 번호 및 읽음 카운트 가져오기
+        List<MessageReadStatusDto> newCountList = chatMapper.getNewCountList(map3);
+        
+        // 3. 업데이트 성공 시 updateReadStatusCount 전달.
+        if(updateReadStatusCount == unreadMessageList.size() && newCountList != null) {
+          
+          return Map.of("updateReadStatusCount", updateReadStatusCount,
+                        "newCountList", newCountList);
+        } 
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    return Map.of("error", "error");
+  }
+  
+  @Override
+  public int deleteAlreadyRead() {
+    return chatMapper.deleteAlreadyRead();
+  }
+  
+  
   
   // 1:1 채팅방 여부 확인
   @Override
@@ -206,7 +279,6 @@ public class ChatServiceImpl implements ChatService {
       MessageDto message = MessageDto.builder()
                                   .messageType(MessageType.JOIN)
                                   .messageContent(JoinMessage)
-                                  .isRead(0)
                                   .chatroomNo(newChatroomDto.getChatroomNo())
                                   .senderNo(loginUserNo)
                                .build();
@@ -222,45 +294,44 @@ public class ChatServiceImpl implements ChatService {
     }  
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  // 채팅 내역 가져오기
   @Override
   public ResponseEntity<Map<String, Object>> getChatMessageList(int chatroomNo, int page) {
 
-    // 채팅방 메시지 전체 개수
-    int total = chatMapper.getChatMessageCount(chatroomNo);
+    try {
+      
+     // 채팅방 메시지 전체 개수
+      int total = chatMapper.getChatMessageCount(chatroomNo);
+      
+      // 한번에 가지고올 메시지 개수
+      int display = 20;
+      
+      // 페이징 처리
+      myPageUtils.setPaging(total, display, page);
+      
+      // DB에 필요한 map 생성
+      Map<String, Object> map = Map.of("chatroomNo", chatroomNo,
+                                       "begin", myPageUtils.getBegin(),
+                                       "end", myPageUtils.getEnd());
+      
+      // 채팅 내역 리스트 가져오기
+      List<MessageDto> chatMessageList = chatMapper.getChatMessageList(map);
+      
+      // 채팅 읽음 숫자 가져오기
+      List<MessageReadStatusDto> MessageReadStatusList = chatMapper.getMessageReadCountByChatroomNo(map);
+      
+      return ResponseEntity.ok(Map.of("chatMessageList", chatMessageList,
+                                      "MessageReadStatusList", MessageReadStatusList,
+                                      "chatMessageTotalPage", myPageUtils.getTotalPage()));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     
-    // 한번에 가지고올 메시지 개수
-    int display = 20;
+    return null;
     
-    // 페이징 처리
-    myPageUtils.setPaging(total, display, page);
-    
-    // DB에 필요한 map 생성
-    Map<String, Object> map = Map.of("chatroomNo", chatroomNo,
-                                     "begin", myPageUtils.getBegin(),
-                                     "end", myPageUtils.getEnd());
-    
-    // 채팅 내역 리스트 가져오기
-    List<MessageDto> chatMessageList = chatMapper.getChatMessageList(map);
-    
-    return ResponseEntity.ok(Map.of("chatMessageList", chatMessageList,
-                                    "chatMessageTotalPage", myPageUtils.getTotalPage()));
   }
+  
+  
   
   @Override
   public ResponseEntity<Map<String, Object>> getChatList(int employeeNo) {
@@ -279,20 +350,6 @@ public class ChatServiceImpl implements ChatService {
   public ResponseEntity<Map<String, Object>> getChatroomByChatroomNo(int chatroomNo) {
     return ResponseEntity.ok(Map.of("chatroom", chatMapper.getChatroomByChatroomNo(chatroomNo)));
   }
-  
-  /*
-   * @Override public ResponseEntity<Map<String, Object>>
-   * getChatTotalPageCount(int chatroomNo, int page) {
-   * 
-   * // 채팅방 메시지 전체 개수 int total = chatMapper.getChatMessageCount(chatroomNo);
-   * 
-   * // 한번에 가지고올 메시지 개수 int display = 20;
-   * 
-   * // 페이징 처리 myPageUtils.setPaging(total, display, page);
-   * 
-   * return ResponseEntity.ok(Map.of("chatMessageTotalPage",
-   * myPageUtils.getTotalPage())); }
-   */
   
   @Override
   public ResponseEntity<Map<String, Object>> getChatroomParticipantList(int chatroomNo) {
@@ -346,24 +403,24 @@ public class ChatServiceImpl implements ChatService {
   
   @Override
   public int updateChatroomTitle(Map<String, Object> params) {
-	  
-	try {
-	    int chatroomNo =  Integer.parseInt(String.valueOf(params.get("chatroomNo"))); 
-	    String chatroomTitle = (String) params.get("chatroomTitle");
-	    
-	    // 파라미터를 map으로 만듬
-	    Map<String, Object> map = Map.of("chatroomNo", chatroomNo
-	                                   , "chatroomTitle", chatroomTitle);
-	    
-	    int updateTitleCount = chatMapper.updateChatroomTitle(map);
+    
+  try {
+      int chatroomNo =  Integer.parseInt(String.valueOf(params.get("chatroomNo"))); 
+      String chatroomTitle = (String) params.get("chatroomTitle");
+      
+      // 파라미터를 map으로 만듬
+      Map<String, Object> map = Map.of("chatroomNo", chatroomNo
+                                     , "chatroomTitle", chatroomTitle);
+      
+      int updateTitleCount = chatMapper.updateChatroomTitle(map);
 
-	    return updateTitleCount;
-	    
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-	
-	return 0;
+      return updateTitleCount;
+      
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+  
+  return 0;
     
 
   }

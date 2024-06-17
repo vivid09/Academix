@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.gdu.academix.scheduler.RemoveAllReadMessagesScheduler;
 import com.gdu.academix.scheduler.RemoveBlogImageScheduler;
 import com.gdu.academix.scheduler.RemoveEmptyChatroomsScheduler;
 import com.gdu.academix.scheduler.RemoveTempFilesScheduler;
@@ -22,5 +23,9 @@ public class TaskConfig {
 	@Bean
 	RemoveEmptyChatroomsScheduler removeEmptyChatrooms() {
 	  return new RemoveEmptyChatroomsScheduler();
+	}
+	@Bean
+	RemoveAllReadMessagesScheduler removeAllReadMessages() {
+	  return new RemoveAllReadMessagesScheduler();
 	}
 }

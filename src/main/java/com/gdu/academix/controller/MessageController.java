@@ -1,8 +1,10 @@
 package com.gdu.academix.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,6 +16,7 @@ import com.gdu.academix.dto.CustomPrincipal;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.MessageDto;
 import com.gdu.academix.dto.MessageDto.MessageType;
+import com.gdu.academix.dto.MessageReadStatusDto;
 import com.gdu.academix.dto.NotificationsDto;
 import com.gdu.academix.service.ChatService;
 import com.gdu.academix.service.NotifyService;
@@ -59,7 +62,7 @@ public class MessageController {
         
         return message;
 
-      } else {
+      } else if(message.getMessageType().equals(MessageType.UPDATE)) {
         // 메시지를 받으면 chatroom_participate_t의 participate_status 변경해주어야 함.
         // DB로 보낼 map 생성
         Map<String, Object> params = Map.of("chatroomNo", message.getChatroomNo(), "participantNo", message.getSenderNo(), "participateStatus", Integer.parseInt(message.getMessageContent()));
@@ -73,12 +76,26 @@ public class MessageController {
         }
         
         
+      } else {
+        
+        // 메시지를 받으면 채팅방에서 읽지않은 메시지 가져와서 모두 읽음 처리해줌.
+        // DB로 보낼 map 생성
+        Map<String, Object> params = Map.of("chatroomNo", message.getChatroomNo(), "employeeNo", message.getSenderNo()); 
+        
+        // db update 해주기
+        Map<String, Object> map = chatService.updateMessageReadStatus(params);
+        
+        // newChatList 빼주기
+        
+        
+        // map에서 업데이트한 messageNo, unreadCount 객체에 실어서 반환. - messageDto 객체에
+        MessageDto message2 = MessageDto.builder()
+                                    .messageType(MessageType.UPDATE_READ_STATUS)
+                                    .newCountList((List<MessageReadStatusDto>) map.get("newCountList"))
+                                  .build();
+        
+        return message2;
       }
-      
-
-       
-      
-      // 해당 메시지 반환 -> /topic/chatroomNo를 구독하는 유저에게 보내짐.
       
       
     } catch (Exception e) {
@@ -121,7 +138,7 @@ public class MessageController {
         
         return message;
       
-      } else {
+      } else if(message.getMessageType().equals(MessageType.UPDATE)){
         
         // 메시지를 받으면 chatroom_participate_t의 participate_status 변경해주어야 함.
         // DB로 보낼 map 생성
@@ -131,41 +148,35 @@ public class MessageController {
         int updateCount = chatService.updateParticipateStatus(params);
         if(updateCount == 1) {
           return message;
-        } else { // 이부분이 의미가 없네....
+        } else { 
           return message;
         }
+      } else {
+        
+        // 메시지를 받으면 채팅방에서 읽지않은 메시지 가져와서 모두 읽음 처리해줌.
+        // DB로 보낼 map 생성
+        Map<String, Object> params = Map.of("chatroomNo", message.getChatroomNo(), "employeeNo", message.getSenderNo()); 
+        
+        // db update 해주기
+        Map<String, Object> map = chatService.updateMessageReadStatus(params);
+        
+        // newChatList 빼주기
+        
+        
+        // map에서 업데이트한 messageNo, unreadCount 객체에 실어서 반환. - messageDto 객체에
+        MessageDto message2 = MessageDto.builder()
+                                    .messageType(MessageType.UPDATE_READ_STATUS)
+                                    .newCountList((List<MessageReadStatusDto>) map.get("newCountList"))
+                                  .build();
+        
+        return message2;
       }
-
-      
-      /*
-       * for(Integer recipientNo : chatMessage.getRecipientNoList()) {
-       * if(!recipientNo.equals(message.getSenderNo())) {
-       * messagingTemplate.convertAndSendToUser(String.valueOf(recipientNo),
-       * "/queue/notifications", chatMessage); } }
-       */
-      
-      // 해당 메시지 반환 -> /queue/chatroomNo를 구독하는 유저에게 보내짐.
-      
       
     } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException("Error handling one-to-one chat message");
     }
   }
-  
-  
-/*
-  if (chatMessage.getRecipientNoList() == null) {
-    chatMessage.setRecipientNoList(new ArrayList<>()); 
-  }
-  
-  for(Integer recipientNo : chatMessage.getRecipientNoList()) { // 본인 제외
-    if(!recipientNo.equals(message.getSenderNo())) {
-      messagingTemplate.convertAndSendToUser(String.valueOf(recipientNo), "/queue/notifications", chatMessage); 
-    } 
-  }
-*/  
-  
 
   @MessageMapping("/notify")
   public void notifyUser(MessageDto message, CustomPrincipal customPrincipal) {
@@ -176,13 +187,16 @@ public class MessageController {
         message.setRecipientNoList(new ArrayList<>());
       }
       
+      // 중복 제거
+      Set<Integer> recipientNoSet = new HashSet<>(message.getRecipientNoList());
+      
       // 메시지 송신자의 이름 가져옴.
       int notifierNo = message.getSenderNo();
       EmployeesDto employee = userService.getUserProfileByNo(notifierNo);
       
       String notifierName = employee.getName() + " " + employee.getRank().getRankTitle();
       
-      for(Integer recipientNo : message.getRecipientNoList()) {
+      for(Integer recipientNo : recipientNoSet) {
         if(!recipientNo.equals(message.getSenderNo())) {
           System.out.println("전송된 알림 메시지: " + message + "to user: " + recipientNo);
           
@@ -213,14 +227,7 @@ public class MessageController {
             
             // NotificationsDto DB에 저장
             int insertNotificationCount = notifyService.insertNotification(notification);
-            
-            
-            // 알림 조회 시 제일 최근 것만 보냄.
-            /*
-             * Instant now = Instant.now(); Timestamp timestamp = Timestamp.from(now);
-             * 
-             * notification.setNotificationDate(timestamp);
-             */
+
             List<NotificationsDto> notificationList = notifyService.getNotificationList(recipientNo);
             
             
@@ -232,30 +239,7 @@ public class MessageController {
             
             e.printStackTrace();
           }
-          
 
-          
-          // 메시지 수신자의 세션 ID를 가져오기
-          //Set<SimpUser> users = simpUserRegistry.getUsers();
-          /*
-           * for(SimpUser user : users) {
-           * if(user.getName().equals(recipientNo.toString())) { for(SimpSession session :
-           * user.getSessions()) { try { System.out.println("session.getId(): " +
-           * session.getId()); // 특정 사용자에게 메시지 전송
-           * messagingTemplate.convertAndSendToUser(user.getName(),
-           * "/queue/notifications", message.getMessageContent());
-           * 
-           * } catch (Exception e) { e.printStackTrace(); } } } }
-           */
-          /*
-           * try { //messagingTemplate.convertAndSendToUser(recipientNo.toString(),
-           * "/queue/notifications", message.getMessageContent());
-           * System.out.println("customPrincipal.getName(): " +
-           * customPrincipal.getName());
-           * messagingTemplate.convertAndSendToUser(recipientNo.toString(),
-           * "/queue/notifications", message.getMessageContent()); } catch (Exception e) {
-           * e.printStackTrace(); }
-           */
         }
       }
   }
