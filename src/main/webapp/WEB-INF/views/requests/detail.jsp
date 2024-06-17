@@ -203,7 +203,7 @@
          <input type="hidden" name="picNo" id="picNo" value="${leaveRequests.requests.picNo}">   
          <input type="hidden" name="requestNo" id="requestNo" value="${leaveRequests.requests.requestNo}">
          <input type="hidden" name="attachNo" id="attachNo" value="${leaveRequests.attach.attachNo}">
-         <input type="text" name="employeeNo" id="employeeNo" value="${leaveRequests.requests.employees.employeeNo}">
+         <input type="hidden" name="employeeNo" id="employeeNo" value="${leaveRequests.requests.employees.employeeNo}">
         </div>
     </form>
   
