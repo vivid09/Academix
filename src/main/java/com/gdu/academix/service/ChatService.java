@@ -12,6 +12,10 @@ public interface ChatService {
   
   // 메시지 데이터 넣기
   Map<String, Object> insertChatMessage(MessageDto message);
+  // 메시지 읽음 여부 업데이트
+  Map<String, Object> updateMessageReadStatus(Map<String, Object> params);
+  // 모두 읽은 메시지 삭제
+  int deleteAlreadyRead();
   
   // 1:1 채팅방 여부 확인
   ChatroomDto isOneToOneChatroomExits(int loginUserNo, int chatUserNo);

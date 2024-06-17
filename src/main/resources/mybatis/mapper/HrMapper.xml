@@ -95,8 +95,8 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
          ADDRESS     = #{address},
          DEPARTMENT_NO = #{depart.departmentNo},
          RANK_NO       = #{rank.rankNo},
-         PASSWORD      =#{password},
-         PROFILE_PICTURE_PATH =#{profilePicturePath},
+      <if test="password !=null">PASSWORD      =#{password},</if>
+      <if test="profilePicturePath !=null">PROFILE_PICTURE_PATH = #{profilePicturePath},</if>
          EMPLOYEE_STATUS       =#{employeeStatus},
          HIRE_DATE           =#{hireDate},
          EXIT_DATE           =#{exitDate, jdbcType=DATE}
@@ -107,6 +107,13 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
         parameterType="int">
  DELETE 
    FROM EMPLOYEES_T
+  WHERE EMPLOYEE_NO = #{employeeNo}
+</delete>
+
+<delete id="removeAnnualEmployeeNo"
+        parameterType="int">
+ DELETE 
+   FROM ANNUAL_LEAVES_T
   WHERE EMPLOYEE_NO = #{employeeNo}
 </delete>
 
@@ -141,5 +148,7 @@ SELECT E.EMPLOYEE_NO, E.NAME, E.EMAIL, E.PASSWORD, E.PHONE, E.ADDRESS, E.PROFILE
         SET total_leaves = #{totalLeaves}
         WHERE employee_no = #{employeeNo}
     </update>    
+
+
 
 </mapper>

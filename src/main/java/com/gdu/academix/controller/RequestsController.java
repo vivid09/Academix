@@ -20,6 +20,7 @@ import com.gdu.academix.dto.RequestsDto;
 import com.gdu.academix.service.RequestsService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RequestMapping("/requests")
 @Controller
@@ -43,15 +44,15 @@ public class RequestsController {
   public String createLeaveRequest(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
 	  //boolean insertCount = ;
 	  redirectAttributes.addFlashAttribute("insertCount", requestsService.createLeaveRequest(multipartRequest));
-	   
-	    return "redirect:/requests/main.page"; // 리디렉션
+	    int employeeNo = Integer.parseInt(multipartRequest.getParameter("employeeNo"));
+	    return "redirect:/requests/main.page?employeeNo=" + employeeNo; // 리디렉션
 	}
   
   @PostMapping("/writeAttendance.do")
    public String createAttendanceRequest(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+	  int employeeNo = Integer.parseInt(multipartRequest.getParameter("employeeNo"));
 	  redirectAttributes.addFlashAttribute("insertCount", requestsService.createAttendanceRequest(multipartRequest));
-	  
-	  return "redirect:/requests/main.page";
+	  return "redirect:/requests/main.page?employeeNo=" + employeeNo;
   }
   
   @GetMapping(value="/main.page")
@@ -127,10 +128,10 @@ public class RequestsController {
   
   @PostMapping("/removeRequest.do")
   public  String removeRequest(@RequestParam(value="requestNo", required=false, defaultValue="0") int requestNo
-          , RedirectAttributes redirectAttributes) {
-			int removeCount = requestsService.removeRequest(requestNo);
+          , RedirectAttributes redirectAttributes, @RequestParam int employeeNo) {
+			int removeCount = requestsService.removeRequest(requestNo, employeeNo);
 			redirectAttributes.addFlashAttribute("removeResult", removeCount == 1 ? "기안서가 삭제되었습니다." : "기안서가 삭제되지 않았습니다.");
-			return "redirect:/requests/main.page";
+			return "redirect:/requests/main.page?employeeNo=" + employeeNo;
 	}
   
 	
@@ -143,6 +144,15 @@ public class RequestsController {
    @GetMapping("/download.do")
    public ResponseEntity<Resource> download(HttpServletRequest request){
 	   return requestsService.download(request);
+   }
+   
+   @GetMapping("/removeAttendance.do")
+    public String removeAttendance(@RequestParam int requestNo, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+	   int removeCount = requestsService.removeAttendance(requestNo);
+	   redirectAttributes.addFlashAttribute("removeCount", removeCount);
+	   int employeeNo = Integer.parseInt(request.getParameter("employeeNo"));
+	   return "redirect:/requests/main.page?employeeNo=" + employeeNo;
+	   //return "redirect:/requests/requestsList.do";
    }
    
    

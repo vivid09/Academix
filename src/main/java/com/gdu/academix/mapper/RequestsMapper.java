@@ -38,4 +38,5 @@ public interface RequestsMapper {
   int pending(int requestStatus);
   int updateDownloadCount(int attachNo);
   RequestAttachDto getAttachByNo(int attachNo);
+  int removeAttendance(int requestNo);
 }

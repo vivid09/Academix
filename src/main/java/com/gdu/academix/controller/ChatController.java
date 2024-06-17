@@ -82,7 +82,7 @@ public class ChatController {
     return chatService.getChatroomParticipantList(chatroomNo);
   }
   
-  // 채팅방 나가기
+  // 채팅방 나가기 
   @DeleteMapping(value="/deleteParticipant.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> deleteParticipant(@RequestParam int chatroomNo, @RequestParam int participantNo) {
     return chatService.deleteParticipant(chatroomNo, participantNo);
@@ -94,11 +94,4 @@ public class ChatController {
     return ResponseEntity.ok(Map.of("updateChatroomTitleCount", chatService.updateChatroomTitle(params)));  
   }
   
-  // 게시글 총 totalPage 알아내기
-  /*
-   * @GetMapping(value="/getChatTotalPageCount.do", produces="application/json")
-   * public ResponseEntity<Map<String, Object>>
-   * getChatTotalPageCount(@RequestParam int chatroomNo, int page) { return
-   * chatService.getChatTotalPageCount(chatroomNo, page); }
-   */
 }
