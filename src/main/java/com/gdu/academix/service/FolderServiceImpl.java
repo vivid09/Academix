@@ -1,10 +1,21 @@
 package com.gdu.academix.service;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -172,7 +183,111 @@ public class FolderServiceImpl implements FolderService {
     model.addAttribute("parentFolderNo", parentFolderNo);
   }
   
+  @Override
+  public ResponseEntity<Resource> download(HttpServletRequest request) {
+    
+    String[] fileNoStrings = request.getParameterValues("fileNo");
+    List<Integer> fileNos = Arrays.stream(fileNoStrings).map(Integer::parseInt).collect(Collectors.toList());
+    
+    List<FileDto> fileList = new ArrayList<>();
+    for (Integer fileNo : fileNos) {
+      fileList.addAll(folderMapper.getfileList(fileNo));
+    }
+    
+    // 첨부 파일이 없으면 종료
+    if(fileList.isEmpty()) {
+      return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+    }
+    
+    // 임시 zip 파일 저장할 경로
+    File tempDir = new File(myFileUtils.getTempPath());
+    if(!tempDir.exists()) {
+      tempDir.mkdirs();
+    }
+    
+    // 임시 zip 파일 이름
+    String tempFilename = myFileUtils.getTempFilename() + ".zip";
+    
+    // 임시 zip 파일 File 객체
+    File tempFile = new File(tempDir, tempFilename);
+    
+    // 첨부 파일들을 하나씩 zip 파일로 모으기
+    try {
+      
+      // ZipOutputStream 객체 생성
+      ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(tempFile));
+      
+      for (FileDto file : fileList) {
+        
+        // zip 파일에 포함할 ZipEntry 객체 생성
+        ZipEntry zipEntry = new ZipEntry(file.getOriginalFilename());
+    
+        // zip 파일에 ZipEntry 객체 명단 추가 (파일의 이름만 등록한 상황)
+        zout.putNextEntry(zipEntry);
+        
+        // 실제 첨부 파일을 zip 파일에 등록 (첨부 파일을 읽어서 zip 파일로 보냄)
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(new File(file.getFileUploadPath(), file.getFilesystemName())));
+        zout.write(in.readAllBytes());
+        
+        // 사용한 자원 정리
+        in.close();
+        zout.closeEntry();
+      }  // for
+      
+      // zout 자원 반납
+      zout.close();
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    // 다운로드 할 zip File 객체 -> Resource 객체
+    Resource resource = new FileSystemResource(tempFile);
+    
+    // 다운로드용 응답 헤더 설정 (HTTP 참조)
+    HttpHeaders responseHeader = new HttpHeaders();
+    responseHeader.add("Content-Disposition", "attachment; filename=" + tempFilename);
+    responseHeader.add("Content-Length", tempFile.length() + "");
+    
+    // 다운로드 진행
+    return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+  }
   
+  @Override
+  public void removeTempFiles() {
+    File tempDir = new File(myFileUtils.getTempPath());
+    File[] tempFiles = tempDir.listFiles();
+    if(tempFiles != null) {
+      for(File tempFile : tempFiles) {
+        tempFile.delete();
+      }
+    }
+  }
+  
+  @Override
+  public ResponseEntity<Map<String, Object>> removeFile(HttpServletRequest request) {
+    String[] fileNoStrings = request.getParameterValues("fileNo");
+    List<Integer> fileNos = Arrays.stream(fileNoStrings).map(Integer::parseInt).collect(Collectors.toList());
+    
+    int totalDeleteCount = 0;
+    
+    for (int fileNo : fileNos) {
+      List<FileDto> fileDtos = folderMapper.getfileList(fileNo);
+      
+      for (FileDto fileDto : fileDtos) {
+        if (fileDto != null) {
+          File file = new File(fileDto.getFileUploadPath(), fileDto.getFilesystemName());
+          if(file.exists()) {
+            file.delete();
+          }
+        }
+      }
+      int deleteCount = folderMapper.deleteFile(fileNo);
+      totalDeleteCount += deleteCount;
+    }
+    
+    return ResponseEntity.ok(Map.of("deleteCount", totalDeleteCount));
+  }
   
   
 }

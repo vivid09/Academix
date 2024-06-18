@@ -25,4 +25,7 @@ public interface FolderMapper {
   
   FolderDto getFolderByMap(Map<String, Object> map);
 	
+  List<FileDto> getfileList(int fileNo);
+  int deleteFile(int fileNo);
+  
 }

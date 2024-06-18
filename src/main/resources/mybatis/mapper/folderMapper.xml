@@ -143,5 +143,17 @@
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
   
+  <select id="getfileList"
+          resultType="FileDto">
+    SELECT FILE_NO, FILE_UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, FILE_UPLOAD_DT, FOLDER_NO, OWNER_NO
+      FROM FILE_T
+     WHERE FILE_NO = #{fileNo}
+  </select>
+  
+  <delete id="deleteFile">
+    DELETE
+      FROM FILE_T
+     WHERE FILE_NO = #{fileNo}
+  </delete>
 
 </mapper>
