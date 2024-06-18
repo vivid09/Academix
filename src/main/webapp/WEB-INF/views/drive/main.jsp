@@ -48,6 +48,19 @@
     bottom: 0;
     margin: 0 auto;
   }
+  .paging {
+    display: flex;
+  }
+  .paging > div {
+    width: 30px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+  }
+  .paging a {
+    color: black;
+    text-decoration: none;
+  }
 </style>
 
   <!-- Content Wrapper. Contains page content -->
@@ -77,7 +90,7 @@
                   <a href="${contextPath}/drive/main.do"><i class="fa fa-history"></i> 최근 파일</a>
                 </li>
                 <li>
-                  <a href="${contextPath}/drive/allList.page" class="chat-member"><i class="fa fa-envelope-o"></i> 모든 파일</a>
+                  <a href="${contextPath}/drive/allList.page" class="chat-member"><i class="fa fa-archive"></i> 모든 파일</a>
                 </li>
               </ul>
             </div>
@@ -141,20 +154,20 @@
                   <tbody id="driveList">
                     <c:forEach items="${driveList}" var="drive" varStatus="vs">
                       <c:choose>
-                        <c:when test="${drive.folder != null}">
+                        <c:when test="${drive.folder.folderNo != 0}">
                           <tr>
                             <td><input type="checkbox"></td>
                             <td></td>
                             <td><a href="javascript:fnLoadFileInFolder(${drive.folder.folderNo})">${drive.folder.folderName}</a></td>
-                            <td>${drive.folder.folderCreateDt}</td>
+                            <td><fmt:formatDate value="${drive.folder.folderCreateDt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
                           </tr>
                         </c:when>
-                        <c:when test="${drive.folder == null}">
+                        <c:when test="${drive.folder.folderNo == 0}">
                           <tr>
                             <td><input type="checkbox"></td>
                             <td></td>
-                            <td>${drive.file.originalFilename}</td>
-                            <td>${drive.file.fileUploadDt}</td>
+                            <td>${drive.originalFilename}</td>
+                            <td><fmt:formatDate value="${drive.fileUploadDt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
                           </tr>
                         </c:when>
                       </c:choose>
@@ -167,7 +180,7 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer no-padding">
-              <div>${paging}</div>
+              <div class="paging">${paging}</div>
             </div>
           </div>
           <!-- /. box -->
@@ -417,7 +430,7 @@
           id: drive.folderNo,
           parent: '#',
           text: drive.folderName,
-          icon: "fa fa-building"
+          icon: "fa fa-cloud"
         });
       }
       
@@ -441,7 +454,7 @@
             id: folder.folderNo.toString(),
             parent: folder.parentFolderNo.toString(),
             text: folder.folderName,
-            icon: "fa fa-layer-group"
+            icon: "fa fa-folder"
           });
         }
       });
@@ -475,7 +488,7 @@
           id: 'file_' + file.fileNo,
           parent: file.folder.folderNo.toString(),
           text: file.originalFilename,
-          icon: "fa fa-user"
+          icon: "fa fa-file-image-o"
         });
       });
       
@@ -535,7 +548,7 @@
           id: drive.folderNo,
           parent: '#',
           text: drive.folderName,
-          icon: "fa fa-building"
+          icon: "fa fa-cloud"
         });
       }
       
@@ -546,7 +559,7 @@
             id: folder.folderNo.toString(),
             parent: folder.parentFolderNo.toString(),
             text: folder.folderName,
-            icon: "fa fa-layer-group"
+            icon: "fa fa-folder"
           });
         }
       });
@@ -557,7 +570,7 @@
           id: 'file_' + file.fileNo,
           parent: file.folder.folderNo.toString(),
           text: file.originalFilename,
-          icon: "fa fa-user"
+          icon: "fa fa-file-image-o"
         });
       });
       

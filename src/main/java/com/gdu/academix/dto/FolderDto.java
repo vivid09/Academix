@@ -28,5 +28,4 @@ public class FolderDto {
   private int folderNo, parentFolderNo, ownerNo;
   private String folderName, folderUploadPath;
   private Timestamp folderCreateDt;
-	
 }
