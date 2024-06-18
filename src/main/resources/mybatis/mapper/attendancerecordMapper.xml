@@ -40,6 +40,13 @@
      WHERE EMPLOYEE_NO = #{employeeNo}
   </select>
   
+  <select id="getAttendanceRecordByEmpNoAndDate" 
+  resultType="AttendanceRecordDto">
+   SELECT RECORD_NO, RECORD_DATE, TIME_IN, TIME_OUT, STATUS, EMPLOYEE_NO
+     FROM ATTENDANCE_RECORDS_T
+    WHERE EMPLOYEE_NO = #{employeeNo}
+      AND to_char(RECORD_DATE,'yyyy-mm-dd') = #{recordDate}
+  </select>
   
   <update id="updateAttendanceRecord" 
           parameterType="AttendanceRecordDto">

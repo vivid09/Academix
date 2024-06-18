@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,8 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import com.gdu.academix.dto.AttendanceRecordDto;
+
 import com.gdu.academix.dto.AttendanceAdjustmentRequestDto;
+import com.gdu.academix.dto.AttendanceRecordDto;
 import com.gdu.academix.dto.DepartmentsDto;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.LeaveRequestDto;
@@ -353,6 +356,32 @@ public class RequestsServiceImpl implements RequestsService {
 		  attendancerecordMapper.insertAttendanceRecord(attendanceRecord);
 	  } else if(requestSort == 0) {
 		  
+	  	AttendanceAdjustmentRequestDto attendanceAdjustment = requestsMapper.getAttendanceRequestNo(requestNo);
+	  	Date adjustmentDate = new Date(attendanceAdjustment.getAdjustmentDate().getTime());
+	  	
+		  AttendanceRecordDto attendanceRecord = attendancerecordMapper.getAttendanceRecordByEmpNoAndDate(
+		  																									(int) attendanceAdjustment.getRequests().getEmployees().getEmployeeNo(), 
+		  																									adjustmentDate.toString());
+		  if(attendanceRecord == null) {
+		  	return 0;
+		  }
+		  
+	    LocalTime timeIn = attendanceAdjustment.getTimeIn().toLocalDateTime().toLocalTime();
+	    
+	    LocalTime timeOut = attendanceAdjustment.getTimeOut().toLocalDateTime().toLocalTime();
+	    
+	    LocalDate Date = attendanceAdjustment.getAdjustmentDate().toInstant()
+	                               .atZone(ZoneId.systemDefault()).toLocalDate();
+	    
+	    LocalDateTime newTimeIn = LocalDateTime.of(Date, timeIn);
+	    attendanceRecord.setTimeIn(Timestamp.valueOf(newTimeIn));
+	    
+	    LocalDateTime newTimeOut = LocalDateTime.of(Date, timeOut);
+	    attendanceRecord.setTimeOut(Timestamp.valueOf(newTimeOut));
+	    
+		  attendanceRecord.setStatus(1);
+		  
+	  	attendancerecordMapper.updateAttendanceRecord(attendanceRecord);
 	  }
 		return moddifyCount;
 	}

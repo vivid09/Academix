@@ -271,6 +271,8 @@
 		
 		.chatMessage-profile > img {
     	margin-right: 0.8%;
+    	border-radius: 50%;
+    	object-fit: cover;
 		}
 		
 		.chatMessage-senderName {
@@ -328,6 +330,8 @@
 		
 		.chatMessage-me .chatMessage-contents {
 		  margin-left: auto;
+	      display: flex;
+	      align-items: flex-end;
 		}
 		
 		.date-divider {
@@ -473,10 +477,15 @@
 		}
 		
 		.chatMessage-you .chatMessage-count {
-	    font-size: 12px;
+	    font-size: 10px;
 	    vertical-align: bottom;
-	    margin-right: 0px;
 	    color: #188EC9;
+		}
+		
+		.chatMessage-youMessage {
+	      display: flex;
+	      align-items: flex-end;
+	      margin-right: auto;
 		}
 		
 				

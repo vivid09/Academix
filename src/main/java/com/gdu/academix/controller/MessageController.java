@@ -16,7 +16,6 @@ import com.gdu.academix.dto.CustomPrincipal;
 import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.MessageDto;
 import com.gdu.academix.dto.MessageDto.MessageType;
-import com.gdu.academix.dto.MessageReadStatusDto;
 import com.gdu.academix.dto.NotificationsDto;
 import com.gdu.academix.service.ChatService;
 import com.gdu.academix.service.NotifyService;
@@ -62,7 +61,7 @@ public class MessageController {
         
         return message;
 
-      } else if(message.getMessageType().equals(MessageType.UPDATE)) {
+      } else {
         // 메시지를 받으면 chatroom_participate_t의 participate_status 변경해주어야 함.
         // DB로 보낼 map 생성
         Map<String, Object> params = Map.of("chatroomNo", message.getChatroomNo(), "participantNo", message.getSenderNo(), "participateStatus", Integer.parseInt(message.getMessageContent()));
@@ -74,30 +73,7 @@ public class MessageController {
         } else {
           return message;
         }
-        
-        
-      } else {
-        
-        // 메시지를 받으면 채팅방에서 읽지않은 메시지 가져와서 모두 읽음 처리해줌.
-        // DB로 보낼 map 생성
-        Map<String, Object> params = Map.of("chatroomNo", message.getChatroomNo(), "employeeNo", message.getSenderNo()); 
-        
-        // db update 해주기
-        Map<String, Object> map = chatService.updateMessageReadStatus(params);
-        
-        // newChatList 빼주기
-        
-        
-        // map에서 업데이트한 messageNo, unreadCount 객체에 실어서 반환. - messageDto 객체에
-        MessageDto message2 = MessageDto.builder()
-                                    .messageType(MessageType.UPDATE_READ_STATUS)
-                                    .newCountList((List<MessageReadStatusDto>) map.get("newCountList"))
-                                  .build();
-        
-        return message2;
-      }
-      
-      
+      } 
     } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException("Error handling one-to-one chat message");
@@ -138,7 +114,7 @@ public class MessageController {
         
         return message;
       
-      } else if(message.getMessageType().equals(MessageType.UPDATE)){
+      } else {
         
         // 메시지를 받으면 chatroom_participate_t의 participate_status 변경해주어야 함.
         // DB로 보낼 map 생성
@@ -151,26 +127,7 @@ public class MessageController {
         } else { 
           return message;
         }
-      } else {
-        
-        // 메시지를 받으면 채팅방에서 읽지않은 메시지 가져와서 모두 읽음 처리해줌.
-        // DB로 보낼 map 생성
-        Map<String, Object> params = Map.of("chatroomNo", message.getChatroomNo(), "employeeNo", message.getSenderNo()); 
-        
-        // db update 해주기
-        Map<String, Object> map = chatService.updateMessageReadStatus(params);
-        
-        // newChatList 빼주기
-        
-        
-        // map에서 업데이트한 messageNo, unreadCount 객체에 실어서 반환. - messageDto 객체에
-        MessageDto message2 = MessageDto.builder()
-                                    .messageType(MessageType.UPDATE_READ_STATUS)
-                                    .newCountList((List<MessageReadStatusDto>) map.get("newCountList"))
-                                  .build();
-        
-        return message2;
-      }
+      } 
       
     } catch (Exception e) {
       e.printStackTrace();

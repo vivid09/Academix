@@ -11,7 +11,9 @@ import com.gdu.academix.dto.CourseDto;
 public interface CourseMapper {
   int insertCourse(CourseDto Course);
   int getCourseCount();
+  int getCourseCountBySearch(Map<String, Object> map);
   List<CourseDto> getCourseList(Map<String, Object> map);
+  List<CourseDto> getCourseListBySearch(Map<String, Object> map);
   CourseDto getCourseByNo(int courseNo);
   int updateCourse(CourseDto Course);
   int deleteCourse(int courseNo);

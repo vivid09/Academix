@@ -91,10 +91,11 @@
     <!-- Main content -->
     <section class="content">
 	  	<div class="search-bar">
-	      <select>
+	      <select id="searchType">
 	          <option value="강사명">강사명</option>
+	          <option value="강의명">강의명</option>
 	      </select>
-	      <input type="text" placeholder="강의명 검색">
+	      <input type="text" id="searchKeyword" placeholder="강의 검색">
 		  </div>
 			<table>
 			    <thead>
@@ -129,16 +130,16 @@
 <script src="/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/app.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="/dist/js/demo.js"></script>
 <!-- Page specific script -->
 <script src="/resources/js/state.js?dt=${dt}"></script>
 <script>
 	//전역 변수
 	var page = 1;
 	var totalPage = 0;
-	
-	const fnGetCourseList = (pageNum) => {
+  var searchType = '';
+  var searchKeyword = '';
+  
+	const fnGetCourseList = (pageNum, searchType, searchKeyword) => {
 		page = pageNum || page;  // pageNum이 전달되지 않으면 현재 페이지를 유지
 		
 	  // page 에 해당하는 목록 요청
@@ -146,7 +147,11 @@
 	    // 요청
 	    type: 'GET',
 	    url: '${contextPath}/courses/manageCourses/list.do',
-	    data: 'page=' + page,
+	    data: { 
+	      page: page, 
+	      searchType: searchType, 
+	      searchKeyword: searchKeyword 
+      },
 	    // 응답
 	    dataType: 'json',
 	    success: (resData) => {  // resData = {"courseList": [], "totalPage": 10}
@@ -217,17 +222,14 @@
 	      let href = $(event.target).attr('href');
 	      let params = new URLSearchParams(href.split('?')[1]);
 	      let pageNum = params.get('page');
-	      fnGetCourseList(pageNum);
+        fnGetCourseList(pageNum, searchType, searchKeyword);
 	    }
 	  });
 	}
 
 	const fnCourseDetail = () => {
 	  $(document).on('click', '.course', (evt) => {
-		    // <div class="blog"> 중 클릭 이벤트가 발생한 <div> : 이벤트 대상
-		    // evt.target.dataset.blogNo === $(evt.target).data('blogNo')
 		  console.log(evt.target);
-		  // location.href = '${contextPath}/course/detail.do?courseNo=' + evt.target.dataset.courseNo;
 	  });
 	};
 	
@@ -235,13 +237,22 @@
 	  fnGetCourseList();
 		fnCourseDetail();
 		
+	    // 검색 인풋 필드에서 엔터 키 이벤트 추가
+	    $('#searchKeyword').keypress((event) => {
+	      if (event.which == 13) {  // 엔터 키의 키코드가 13
+	        searchType = $('#searchType').val();
+	        searchKeyword = $('#searchKeyword').val();
+	        fnGetCourseList(1, searchType, searchKeyword);
+	      }
+	    });
+		
 	  // 초기 페이지 링크 클릭 이벤트 추가
 	  $('#pagination').on('click', 'a', function(event) {
 	    event.preventDefault();
 	    let href = $(this).attr('href');
 	    let params = new URLSearchParams(href.split('?')[1]);
 	    let pageNum = params.get('page');
-	    fnGetCourseList(pageNum);
+      fnGetCourseList(pageNum, searchType, searchKeyword);
 	  });
 	});
 	
