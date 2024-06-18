@@ -199,10 +199,13 @@ public class HrServiceImpl implements HrService {
 				                             .exitDate(sqlExitDate)
 				                             .build();
 	   
-	    if(multipartRequest.getFile("profile") != null) {
-	    	profilePicturePath = myFileUtils.updateProfilePicture(multipartRequest, "profile");
-	    	employees.setProfilePicturePath(profilePicturePath);
-	    }
+		 if (multipartRequest.getFile("profile") != null && !multipartRequest.getFile("profile").isEmpty()) {
+		        // 파일이 존재하고, 비어있지 않을 경우에만 프로필 사진 경로를 업데이트합니다.
+		        profilePicturePath = myFileUtils.updateProfilePicture(multipartRequest, "profile");
+		        employees.setProfilePicturePath(profilePicturePath);
+			} 
+		    
+		   
 		if(multipartRequest.getParameter("pw") != null && !multipartRequest.getParameter("pw").equals("")) {
 			pw = MySecurityUtils.getSha256(multipartRequest.getParameter("pw"));
 			employees.setPassword(pw);
@@ -216,7 +219,7 @@ public class HrServiceImpl implements HrService {
 	}
 	
 	@Override
-	//@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * *") // 매일 정각에 실행
 	public void grantAnnualLeave() {
 		List<EmployeesDto> employees = null;
         try {

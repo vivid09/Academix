@@ -239,7 +239,7 @@
       </div>
 
 
-	   <div class="empList" style="display: none;">
+	   <div class="empList" id="emp-list" style="display: none;">
        
        </div> 
        
@@ -375,6 +375,7 @@
 	  
   }
   
+  let currentEmployeeNo = null;
   // 프로필 조회하기
   const fnGetProfile = () => {
     $('#memberArea').bind('select_node.jstree', function(event, data) {
@@ -398,6 +399,7 @@
                 var employee = resData.employee;
                
                 let str= '<div class="list-container"  id="list-emp">';
+                str += '<span class="close" onclick="closeModal()">&times;</span>'; // 수정된 부분
                 str += '<div class="profile-container">';
                 if(employee.profilePicturePath != null){
                     str +=  '<span>' + employee.profilePicturePath+ '</span>';
@@ -426,12 +428,12 @@
                 
                 str += '<div>';
                 str += '<button type="button" class="btn btn-default btn-empEdit" onclick="profileEdit(\'' + employee.employeeNo + '\')">수정</button>';
+                str += '<button class="btn btn-default" id="btn-emp-remove">삭제</button>'
                 str += '</div>';
-                str += '<button id="btn-emp-remove">삭제</button>'
                 str += '</div>';
 
                 $('.empList').empty().append(str); // 기존 정보 삭제 후 새로운 정보 추가
-                $('.empList').toggle();
+                $('.empList').show();
                 
                 // 삭제 버튼에 이벤트 리스너 추가
                 document.getElementById('btn-emp-remove').addEventListener('click', () => {
@@ -475,6 +477,11 @@ function profileEdit(employeeNo) {
     window.location.href = url;
 }
 	    
+//모달 닫기 함수
+function closeModal() {
+    var modal = document.getElementById('emp-list');
+    modal.style.display = 'none';
+}	    
 	  
 	   
 	   

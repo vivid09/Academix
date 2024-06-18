@@ -78,6 +78,12 @@
     cursor: pointer;
 }     
 
+#btn-reject{
+ border-radius: 5px;
+}
+#btn-approval{
+border-radius: 5px;
+}
 </style>
 
  <div class="content-wrapper">
@@ -124,14 +130,14 @@
           id="frm-requests-approval" onsubmit="submitFormWithApproval()">
           <c:if test="${sessionScope.user.depart.departmentNo == 2}">
           <div>
-     <button type="submit" id="btn-approval">승인</button>
-     <button type="button" id="btn-reject" onclick="openModal()">반려</button>
+     <button type="submit" class="state bg-green-active color-palette" id="btn-approval">승인</button>
+     <button type="button" class="state bg-red-active color-palette"id="btn-reject" onclick="openModal()">반려</button>
      </c:if>
     </div>
     
         <table>
             <tr>
-                <td >결재</td>
+                <td>결재</td>
                 <td  class="split-cell">
                     <div class="left">인사과</div>
                     <div class="right">
@@ -187,9 +193,9 @@
                 <th class="section-title" colspan="4">기간</th>
             </tr>
             <tr>
-                <td> <input type="text" name="startYear" size="4" required>년 <input type="text" name="startMonth" size="2" required>월 <input type="text" name="startDay" size="2" required>일 부터</td>
-                <td> <input type="text" name="endYear" size="4" required>년 <input type="text" name="endMonth" size="2" required>월 <input type="text" name="endDay" size="2" required>일 까지</td>
-                <td colspan="2">(<input type="text" name="days" size="2" required> 일간)</td>
+                <td> <input type="text" name="startYear" size="4" required readonly="readonly">년 <input type="text" name="startMonth" size="2" required readonly>월 <input type="text" name="startDay" size="2" required readonly>일 부터</td>
+                <td> <input type="text" name="endYear" size="4" required readonly="readonly">년 <input type="text" name="endMonth" size="2" required readonly>월 <input type="text" name="endDay" size="2" required readonly>일 까지</td>
+                <td colspan="2">(<input type="text" name="days" size="2" required readonly="readonly"> 일간)</td>
                 <input type="hidden" name="requestSort" value="1">
                
             </tr>

@@ -85,7 +85,7 @@ public class RequestsController {
   @PostMapping("/requestApproval.do")
   public String requestModify(HttpServletRequest request, RedirectAttributes redirectAttributes) {
 	  int modifyCount = requestsService.requestApproval(request);
-	  redirectAttributes.addFlashAttribute("modifyCount", modifyCount == 1  ? "결재되었습니다." : "결재 되지 않았습니다");
+	  redirectAttributes.addFlashAttribute("modifyCount", modifyCount == 0  ? "결재되었습니다." : "결재 되지 않았습니다");
 	  return "redirect:/requests/requestsList.do"; // 리디렉션 
   }
   
@@ -123,7 +123,8 @@ public class RequestsController {
   @PostMapping("attendanceModify.do")
    public String attendanceModify(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
 	  redirectAttributes.addFlashAttribute("modifyResult", requestsService.attendanceModify(multipartRequest) == 1 ? "수정" : "수정되지않았습니다");
-      return "requests/main"; 
+      int employeeNo = Integer.parseInt(multipartRequest.getParameter("employeeNo"));
+	  return "redirect:/requests/main.page?employeeNo=" + employeeNo; 
   }
   
   @PostMapping("/removeRequest.do")

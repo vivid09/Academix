@@ -45,10 +45,16 @@
    input {
             
         }
-        textarea {
-            width: 100%;
-            box-sizing: border-box;
-        }
+   textarea {
+    width: 100%;
+    box-sizing: border-box;
+   }
+  #btn-modify{
+   background-color: #007BFF;
+    color: #fff;
+    border-radius: 10px;
+    border: none;
+  }      
 
 </style>
 
@@ -152,9 +158,10 @@
 	         <input type="hidden" name="requestStatus" id="requestStatus" value="${leaveRequests.requests.requestStatus}">   
 	         <input type="hidden" name="picNo" id="picNo" value="${leaveRequests.requests.picNo}">   
 	         <input type="hidden" name="requestNo" id="requestNo" value="${leaveRequests.requests.requestNo}">   
+	         <input type="hidden" name="employeeNo" id="employeeNo" value="${leaveRequests.requests.employees.employeeNo}">   
 	        </div>
 	        <div>
-	          <button type="submit">수정완료</button>
+	          <button id="btn-modify" type="submit">수정완료</button>
 	      	  <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requests.requestNo}">작성취소</button></a>
 	        </div>
 	    </form>
