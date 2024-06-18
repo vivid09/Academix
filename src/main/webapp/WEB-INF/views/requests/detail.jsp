@@ -187,9 +187,9 @@
                 <th class="section-title" colspan="4">기간</th>
             </tr>
             <tr>
-                <td> <input type="text" name="startYear" size="4" required>년 <input type="text" name="startMonth" size="2" required>월 <input type="text" name="startDay" size="2" required>일 부터</td>
-                <td> <input type="text" name="endYear" size="4" required>년 <input type="text" name="endMonth" size="2" required>월 <input type="text" name="endDay" size="2" required>일 까지</td>
-                <td colspan="2">(<input type="text" name="days" size="2" required> 일간)</td>
+                <td> <input type="text" name="startYear" size="4" required readonly="readonly">년 <input type="text" name="startMonth" size="2" required readonly>월 <input type="text" name="startDay" size="2" required readonly>일 부터</td>
+                <td> <input type="text" name="endYear" size="4" required readonly="readonly">년 <input type="text" name="endMonth" size="2" required readonly>월 <input type="text" name="endDay" size="2" required readonly>일 까지</td>
+                <td colspan="2">(<input type="text" name="days" size="2" required readonly="readonly"> 일간)</td>
                 <input type="hidden" name="requestSort" value="1">
                
             </tr>

@@ -66,14 +66,28 @@
 .table{
  background-color: white;
  border-radius: 20px;
+ margin-top: 20px;
+    
 }
 .table tbody tr {
-  border: 1px solid black;
+  
   padding-top: 10px;
   padding-bottom: 10px;
 }
   tfoot tr {
         display: flex;
+    }
+  .document-top{
+   
+   display:flex;
+  }  
+  .document-mid {
+        display: flex;
+       
+    }
+
+.document-mid > div {
+        margin-right: 20px; /* 각 요소 사이의 간격 설정 */
     }
   
 </style>
@@ -95,6 +109,7 @@
    
 	  <!-- Main content -->
 	  <section class="content">
+	  <div class="document-top">
 	   <div class="document-papers">
 	    <div class="pending">
 	     대기문서:
@@ -107,30 +122,32 @@
 	  </div>
 	   </div>
 	  
-	  <div>
-	  <div>
-	    <input type="radio" name="sort" value="DESC" id="descending" checked>
-	    <label for="descending">내림차순</label>
-	    <input type="radio" name="sort" value="ASC" id="ascending">
-	    <label for="ascending">오름차순</label>
-	  </div>
-	  <div>
-	    <select id="display" name="display">
-	      <option>5</option>
-	      <option>10</option>
-	      <option>20</option>
-	    </select>
-	  </div>
-	  <div>
-	   <span>문서종류</span>
-	  <select id="status" name="status">
-	      <option value="5">전체</option>
-	      <option value="0">미결재</option>
-	      <option value="1">승인</option>
-	      <option value="2">반려</option>
-	    </select> 
-	  </div>
-	  
+	  <div class="document-mid">
+		  <div>
+		  <span>화면</span>
+		    <select id="display" name="display">
+		      <option>5</option>
+		      <option>10</option>
+		      <option>20</option>
+		    </select>
+		  </div>
+		  <div>
+		   <span>문서종류</span>
+		  <select id="status" name="status">
+		      <option value="5">전체</option>
+		      <option value="0">미결재</option>
+		      <option value="1">승인</option>
+		      <option value="2">반려</option>
+		    </select> 
+		  </div>
+		  <div>
+		    <input type="radio" name="sort" value="DESC" id="descending" checked>
+		    <label for="descending">내림차순</label>
+		    <input type="radio" name="sort" value="ASC" id="ascending">
+		    <label for="ascending">오름차순</label>
+		  </div>
+	</div>  
+</div> 	  
 	  <table class="table align-middle">
 	    <thead>
 	      <tr>
@@ -183,11 +200,11 @@
 	      </tr>
 	    </tfoot>
 	  </table>
-	</div>
   
   
    </section> 
-  </div>
+	</div>
+  
   
   
 <!-- jQuery 2.2.3 -->

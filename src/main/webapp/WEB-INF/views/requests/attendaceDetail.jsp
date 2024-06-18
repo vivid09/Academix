@@ -75,14 +75,31 @@
     border-radius: 5px;
 }
 
+.btn-all{
+ display:flex;
+}
+
 #btn-submit {
     display: block;
-    width: 100%;
+    width: 50%;
     padding: 10px;
     background-color: #007BFF;
     color: #fff;
     border: none;
     cursor: pointer;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+#btn-remove{
+ 	display: block;
+    width: 50%;
+    padding: 10px;
+    background-color: gray;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
 }
 
 button:hover {
@@ -291,7 +308,7 @@ button:hover {
 			    <label for="timeIn">변경요청퇴근시간</label>
 			    <input type="time" name="timeOut" id="timeOut">
 			  </div>
-		   </div>  
+		   </div>
 		   <div class="form-row">
 			  <div class="form-group">
 			    <label for="reason">사유</label>
@@ -317,10 +334,12 @@ button:hover {
 		     <textarea id="rejectReason2">${attendance.requests.rejectReason}</textarea>
 		   </div>
 		  </div>
+		  <div class="btn-all">
 		   <button type="button" id="btn-submit" onclick="submitForm('modify')">수정하기</button>
 		   <c:if test="${sessionScope.user.employeeNo == attendance.requests.employees.employeeNo}">
-		   <button type="button" id="btn-remove" >삭제</button>
+		   <button type="button" id="btn-remove">삭제</button>
 		   </c:if>
+		  </div>
 		 </div> 
 		 </form> 
 		</div> 

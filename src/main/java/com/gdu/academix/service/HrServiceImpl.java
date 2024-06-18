@@ -216,7 +216,7 @@ public class HrServiceImpl implements HrService {
 	}
 	
 	@Override
-	//@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * *") // 매일 정각에 실행
 	public void grantAnnualLeave() {
 		List<EmployeesDto> employees = null;
         try {

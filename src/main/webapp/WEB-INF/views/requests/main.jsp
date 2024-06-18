@@ -13,9 +13,10 @@
 .table{
  background-color: white;
  border-radius: 20px;
+ margin-top: 50px;
 }
 .table tbody tr {
-  border: 1px solid black;
+  
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -50,6 +51,7 @@
 	    <label for="ascending">오름차순</label>
 	  </div>
 	  <div>
+	    <span>화면</span>
 	    <select id="display" name="display">
 	      <option>5</option>
 	      <option>10</option>
@@ -145,7 +147,7 @@
   const fnDisplay = () => {
 	  document.getElementById('display').value = '${display}';
 	  document.getElementById('display').addEventListener('change', (evt) => {
-	    location.href = '${contextPath}/requests/main.page?page=1&sort=${sort}&display=' + evt.target.value;
+	    location.href = '${contextPath}/requests/main.page?employeeNo=' +${sessionScope.user.employeeNo} + '&page=1&sort=${sort}&display=' + evt.target.value;
 	  })
 	}
 
