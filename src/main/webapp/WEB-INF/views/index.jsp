@@ -115,19 +115,19 @@
                 <div class="col-md-8">
                     <div class="panel panel-default rounded-panel">
                         <div class="panel-heading">
-                            최근 메일
+                            최근 메시지
                         </div>
                         <div class="panel-body">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>발신자</th>
-                                        <th>제목</th>
+                                        <th>보낸사람</th>
+                                        <th>내용</th>
                                         <th>시간</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="message-table">
                                     <tr>
                                         <td><input type="checkbox"></td>
                                         <td>Jullu Jalal</td>

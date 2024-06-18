@@ -11,5 +11,6 @@ public interface NotifyService {
   List<NotificationsDto> getNotificationList(int employeeNo);
   int updateSeenStatus(List<Integer> notificationNoList);
   int updateChatroomSeenStatus(Map<String, Object> map);
+  List<NotificationsDto> getLatestMessage(int employeeNo);
 
 }

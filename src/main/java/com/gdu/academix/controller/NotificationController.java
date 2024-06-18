@@ -40,4 +40,9 @@ public class NotificationController {
     return ResponseEntity.ok(Map.of("updateStatusCount", notifyService.updateChatroomSeenStatus(params)));
   }
   
+  @GetMapping(value="/getLatestMessage.do")
+  public ResponseEntity<Map<String, Object>> getLatestMessage(@RequestParam int employeeNo) {
+    return ResponseEntity.ok(Map.of("LatestMessageList", notifyService.getLatestMessage(employeeNo)));
+  }
+  
 }
