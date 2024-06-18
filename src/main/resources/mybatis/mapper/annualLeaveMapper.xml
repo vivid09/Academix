@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.AnnualLeaveMapper">
+
+  <resultMap type="AnnualLeavesDto" id="AnnualLeavesMap">
+    <id     property="leaveNo"   column="LEAVE_NO" />
+    <result property="year"    column="YEAR" />
+    <result property="remainLeaves" column="REMAIN_LEAVES" />
+    <result property="usedLeaves" column="USED_LEAVES" />
+    <result property="totalLeaves" column="TOTAL_LEAVES" />
+    <result property="employeeNo" column="EMPLOYEE_NO" />
+  </resultMap>
+
+  <select id="getAnnualLeaveStatusByemployeeNo"
+          resultType="AnnualLeavesDto">
+    SELECT LEAVE_NO, YEAR, REMAIN_LEAVES, USED_LEAVES, TOTAL_LEAVES, EMPLOYEE_NO
+      FROM ANNUAL_LEAVES_T
+     WHERE EMPLOYEE_NO = #{employeeNo}
+  </select>
+  
+</mapper>
