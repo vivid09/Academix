@@ -53,102 +53,116 @@
 </style>
 
  <div class="content-wrapper">
-   <div class="start" data-set-employee-no="${leaveRequests.requests.employees.employeeNo}"
-    data-set-request-status="${leaveRequests.requests.requestStatus}">
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        수정
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">수정</li>
+      </ol>
+    </section>
     
-  ${leaveRequests.requests.requestNo}
-     <h2>연차 신청서</h2>
-    <form action="${contextPath}/requests/requestModify.do" method="post"
-          id="frm-requests-modify"
-          enctype="multipart/form-data">
-          <div>
-    </div>
-        <table>
-            <tr>
-                <td colspan="2">결재</td>
-                <td colspan="2" class="split-cell">
-                    <div class="left">인사과</div>
-                    <div class="right">
-                     <c:choose>
-                      <c:when test="${leaveRequests.requests.requestStatus eq '0'}">
-                        미결재
-					 </c:when>
-                      <c:when test="${leaveRequests.requests.requestStatus eq '1'}">
-                        승인
-					 </c:when>
-                      <c:when test="${leaveRequests.requests.requestStatus eq '2'}">
-                        반려
-					 </c:when>
-                </c:choose>
-                    </div> 
-                </td>
-            </tr>
-            <tr>
-                <th class="section-title" colspan="1">부서명</th>
-                <td colspan="3"><textarea name="departName">${leaveRequests.requests.employees.depart.departName}</textarea></td>
-            </tr>
-            <tr>
-                <th class="section-title" colspan="1">성명</th>
-                <td colspan="3"><textarea name="name">${leaveRequests.requests.employees.name}</textarea></td>
-            </tr>
-            <tr>
-                <th class="section-title" colspan="1">직책</th>
-                <td colspan="3"><textarea name="rankTitle">${leaveRequests.requests.employees.rank.rankTitle}</textarea></td>
-            </tr>
-            <tr>
-                <th class="section-title" colspan="1">휴가 종류</th>
-                <td colspan="3">
-                <select name="leaveType" id="leaveType">
-				    <option value="${leaveRequests.leaveType}">
-				        <c:choose>
-				            <c:when test="${leaveRequests.leaveType eq '0'}">연차</c:when>
-				            <c:when test="${leaveRequests.leaveType eq '1'}">오전반차</c:when>
-				            <c:when test="${leaveRequests.leaveType eq '2'}">오후반차</c:when>
-				        </c:choose>
-				    </option>
-				    <option value="0">연차</option>
-				    <option value="1">오전 반차</option>
-				    <option value="2">오후 반차</option>
-			    </select>
-
-                </td>
-            </tr>
-            <tr>
-                <th class="section-title" colspan="4">사유</th>
-            </tr>
-            <tr>
-                <td colspan="4"><textarea name="reason" rows="5" required>${leaveRequests.requests.reason}</textarea></td>
-            </tr>
-            <tr>
-                <th class="section-title" colspan="4">기간</th>
-            </tr>
-            <tr> 
-                <td> <input type="date" name="startDate" value="${leaveRequests.startDate}" >
-                <td> <input type="date" name="endDate" value="${leaveRequests.endDate}"> 
-                <td colspan="2">(<input type="text" name="duration" size="2" value="${leaveRequests.duration }"> 일간)</td>
-                <input type="hidden" name="requestSort" value="1">
-               
-            </tr>
-            <tr>
-            <td><label for="files">첨부파일</label>
-			    <input type="file" name="files" id="files" multiple  value="${leaveRequests.attach.originalFileName}"></td>
-            <td></td>
-            </tr>
-        </table>
-        <div style="text-align: center; margin-top: 20px;">
-         <input type="hidden" name="requestStatus" id="requestStatus" value="${leaveRequests.requests.requestStatus}">   
-         <input type="hidden" name="picNo" id="picNo" value="${leaveRequests.requests.picNo}">   
-         <input type="hidden" name="requestNo" id="requestNo" value="${leaveRequests.requests.requestNo}">   
-        </div>
-        <div>
-          <button type="submit">수정완료</button>
-      	  <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requests.requestNo}"><button type="button">작성취소</button></a>
-        </div>
-    </form>
-    
-   
-   </div>
+    <!-- Main content -->
+    <section class="content">
+	   <div class="start" data-set-employee-no="${leaveRequests.requests.employees.employeeNo}"
+	    data-set-request-status="${leaveRequests.requests.requestStatus}">
+	    
+	     <h2>연차 신청서</h2>
+	    <form action="${contextPath}/requests/requestModify.do" method="post"
+	          id="frm-requests-modify"
+	          enctype="multipart/form-data">
+	          <div>
+	    </div>
+	        <table>
+	            <tr>
+	                <td colspan="2">결재</td>
+	                <td colspan="2" class="split-cell">
+	                    <div class="left">인사과</div>
+	                    <div class="right">
+	                     <c:choose>
+	                      <c:when test="${leaveRequests.requests.requestStatus eq '0'}">
+	                        미결재
+						 </c:when>
+	                      <c:when test="${leaveRequests.requests.requestStatus eq '1'}">
+	                        승인
+						 </c:when>
+	                      <c:when test="${leaveRequests.requests.requestStatus eq '2'}">
+	                        반려
+						 </c:when>
+	                </c:choose>
+	                    </div> 
+	                </td>
+	            </tr>
+	            <tr>
+	                <th class="section-title" colspan="1">부서명</th>
+	                <td colspan="3"><textarea name="departName">${leaveRequests.requests.employees.depart.departName}</textarea></td>
+	            </tr>
+	            <tr>
+	                <th class="section-title" colspan="1">성명</th>
+	                <td colspan="3"><textarea name="name">${leaveRequests.requests.employees.name}</textarea></td>
+	            </tr>
+	            <tr>
+	                <th class="section-title" colspan="1">직책</th>
+	                <td colspan="3"><textarea name="rankTitle">${leaveRequests.requests.employees.rank.rankTitle}</textarea></td>
+	            </tr>
+	            <tr>
+	                <th class="section-title" colspan="1">휴가 종류</th>
+	                <td colspan="3">
+	                <select name="leaveType" id="leaveType">
+					    <option value="${leaveRequests.leaveType}">
+					        <c:choose>
+					            <c:when test="${leaveRequests.leaveType eq '0'}">연차</c:when>
+					            <c:when test="${leaveRequests.leaveType eq '1'}">오전반차</c:when>
+					            <c:when test="${leaveRequests.leaveType eq '2'}">오후반차</c:when>
+					        </c:choose>
+					    </option>
+					    <option value="0">연차</option>
+					    <option value="1">오전 반차</option>
+					    <option value="2">오후 반차</option>
+				    </select>
+	
+	                </td>
+	            </tr>
+	            <tr>
+	                <th class="section-title" colspan="4">사유</th>
+	            </tr>
+	            <tr>
+	                <td colspan="4"><textarea name="reason" rows="5" required>${leaveRequests.requests.reason}</textarea></td>
+	            </tr>
+	            <tr>
+	                <th class="section-title" colspan="4">기간</th>
+	            </tr>
+	            <tr> 
+	                <td> <input type="date" name="startDate" value="${leaveRequests.startDate}" >
+	                <td> <input type="date" name="endDate" value="${leaveRequests.endDate}"> 
+	                <td colspan="2">(<input type="text" name="duration" size="2" value="${leaveRequests.duration }"> 일간)</td>
+	                <input type="hidden" name="requestSort" value="1">
+	               
+	            </tr>
+	            <tr>
+	            <td><label for="files">첨부파일</label>
+				    <input type="file" name="files" id="files" multiple  value="${leaveRequests.attach.uploadPath}"></td>
+	            <td><span>${leaveRequests.attach.uploadPath}</span></td>
+	            </tr>
+	        </table>
+	        <div style="text-align: center; margin-top: 20px;">
+	         <input type="hidden" name="requestStatus" id="requestStatus" value="${leaveRequests.requests.requestStatus}">   
+	         <input type="hidden" name="picNo" id="picNo" value="${leaveRequests.requests.picNo}">   
+	         <input type="hidden" name="requestNo" id="requestNo" value="${leaveRequests.requests.requestNo}">   
+	        </div>
+	        <div>
+	          <button type="submit">수정완료</button>
+	      	  <a href="${contextPath}/requests/detail.do?requestNo=${leaveRequests.requests.requestNo}">작성취소</button></a>
+	        </div>
+	    </form>
+	    
+	   
+	   </div>
   
+  </section>
  </div>
   
 <!-- jQuery 2.2.3 -->

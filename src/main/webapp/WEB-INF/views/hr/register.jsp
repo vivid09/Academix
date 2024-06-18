@@ -84,9 +84,22 @@
         }
     </style>
 </head>
-<body>
+
     <div class="content-wrapper">
-        <h2 class="title">직원 및 강사 등록</h2>
+      <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        직원 및 강사 등록
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">직원 및 강사 등록</li>
+      </ol>
+    </section>
+    
+    <!-- Main content -->
+    <section class="content">
         <div class="form-st">
             <form action="${contextPath}/hr/employeeRegister.do" method="POST" enctype="multipart/form-data">
                 <div class="form-row">
@@ -103,6 +116,8 @@
                     <div class="form-group">
                         <label for="email">이메일</label>
                         <input type="text" name="email" id="email">
+                        <button type="button" id="btn-email">중복확인</button>
+                        <span id="msg-email"></span>
                     </div>
                 </div>
                 <div class="form-row">
@@ -168,7 +183,14 @@
         </div>
         
         
-    </div>
+        <div class="modal fade" id="modal-email">
+          <div>
+           <input type="text">
+          </div>
+        </div>
+        
+    </section>    
+  </div>
   
 <!-- jQuery 2.2.3 -->
 <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
@@ -182,10 +204,50 @@
 <script src="/dist/js/app.min.js"></script>  
   
   <script >
+  var emailCheck = false;
   
+  // 이메일 유효성 및 중복 체크 함수
+const fnCheckEmail = () => {
+    let inpEmail = document.getElementById('email');
+    let regEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!regEmail.test(inpEmail.value)) {
+        alert('이메일 형식이 올바르지 않습니다.');
+        return false;
+    }
+    
+    fetch('${contextPath}/hr/checkEmail.do', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'email': inpEmail.value
+        })
+    })
+    .then(response => response.json())
+    .then(resData => {
+        if (resData.enableEmail) {
+            document.getElementById('msg-email').innerHTML = '사용 가능한 이메일 입니다';
+            return true; // 이메일 중복 없음
+        } else {
+            document.getElementById('msg-email').innerHTML = '이미 사용 중인 이메일입니다.';
+            return false; // 이메일 중복 있음
+        }
+    })
+    .catch(error => {
+        console.error('Error checking email:', error);
+        return false;
+    });
+}
+
+
+
+  
+
+ document.getElementById('btn-email').addEventListener('click',fnCheckEmail);
+    
  
-  
-  
   
   </script>
 

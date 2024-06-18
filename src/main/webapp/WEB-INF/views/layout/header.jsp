@@ -251,7 +251,7 @@
               </span>
           </a>
           <ul class="treeview-menu">
-          <li><a href="${contextPath}/requests/main.page"> 내 문서함</a></li>
+          <li><a href="${contextPath}/requests/main.page?employeeNo=${sessionScope.user.employeeNo}"> 내 문서함</a></li>
          <li> <a href="${contextPath}/requests/write.page">기안하기</a></li>
            <c:if test="${sessionScope.user.depart.departmentNo == 2}"> 
           <li><a href="${contextPath}/requests/requestsList.do">결재함</a></li>

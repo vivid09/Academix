@@ -13,6 +13,15 @@
 
 <style>
        
+    .profile-container img {
+	  width: 100px;
+	  height: 100px;
+	  border-radius: 50%;
+	  object-fit: cover;
+	  display: block;
+	  margin: 0 auto 20px;
+	} 
+       
      .title {
             text-align: center;
             margin-bottom: 20px;
@@ -84,13 +93,27 @@
   
   
   <div class="content-wrapper">
-        <h2 class="title">직원 및 강사 수정</h2>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        수정
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">수정</li>
+      </ol>
+    </section>
+    
+      <!-- Main content -->
+    <section class="content"> 
         <div class="form-st">
          <form action="${contextPath}/hr/employeeModify.do" 
               method="POST" enctype="multipart/form-data">
            <div class="form-row">
-             <div class="form-group">
+             <div class="form-group profile-container">
                 <label for="profile">프로필</label>
+                <span>${employee.profilePicturePath}</span>
                 <input type="file" name="profile" id="profile" value="${employee.profilePicturePath}">
              </div>
            </div> 
@@ -108,7 +131,7 @@
            <div class="form-row">
              <div class="form-group">
                 <label for="pw">비밀번호</label>
-                <input type="password" name="pw" id="pw" value="${employee.password}">
+                <input type="password" name="pw" id="pw">
              </div>
              <div class="form-group">
                 <label for="phone">전화번호</label>
@@ -184,7 +207,7 @@
             <button type="submit">수정하기</button>
         </form>
         </div>
-        
+      </section>
     </div>
     
 <!-- jQuery 2.2.3 -->

@@ -31,6 +31,9 @@
   display:flex;
   align-items: center;
   text-align: center;
+  background-color: white;
+  font-size: 20px;
+  justify-content: center;
 }
 .approval-document-papers {
    width:250px;
@@ -42,6 +45,9 @@
   display:flex;
   align-items: center;
   text-align: center;
+  background-color: white;
+  font-size: 20px;
+  justify-content: center;
 }
 .notapproval-document-papers {
    width:250px;
@@ -53,6 +59,9 @@
   display:flex;
   align-items: center;
   text-align: center;
+  background-color: white;
+  font-size: 20px;
+  justify-content: center;
 }
 .table{
  background-color: white;
@@ -70,10 +79,22 @@
 </style>
   
   
+  
   <div class="content-wrapper">
-  
-  
-	  <h2 class="title">결재함</h2>
+   <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        결재함
+        <small>Control panel</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">결재함</li>
+      </ol>
+    </section>
+   
+	  <!-- Main content -->
+	  <section class="content">
 	   <div class="document-papers">
 	    <div class="pending">
 	     대기문서:
@@ -165,11 +186,7 @@
 	</div>
   
   
-  
-  
-  
-  
-  
+   </section> 
   </div>
   
   
