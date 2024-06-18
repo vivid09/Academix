@@ -25,6 +25,5 @@ public class MessageDto {
   private Timestamp sendDt;
   private String messageContent; 
   private List<Integer> recipientNoList;
-  private List<MessageReadStatusDto> newCountList;
 
 }

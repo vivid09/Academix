@@ -84,29 +84,6 @@
 			)
   </insert>
   
-  <!-- 메시지 읽음 여부 -->
-  <insert id="insertMessageReadStatus"
-  				parameterType="Map">
-		INSERT INTO MESSAGE_READ_STATUS_T (
-				MESSAGE_STATUS_NO,
-				MESSAGE_NO,
-				CHATROOM_NO,
-				EMPLOYEE_NO,
-				IS_READ
-		) SELECT 
-				MESSAGE_STATUS_SEQ.NEXTVAL,
-		 		#{messageNo},
-		 		CHATROOM_NO,
-		 		PARTICIPANT_NO,
-		 		'FALSE'
-				FROM CHATROOM_PARTICIPATE_T
-			 WHERE CHATROOM_NO = #{chatroomNo}
-			 	 AND PARTICIPANT_NO IN
-	       <foreach item="item" index="index" collection="offlineNoList" open="(" separator="," close=")">
-	          #{item}
-	       </foreach>
-  </insert>  
-  
   <!-- 채팅 내역 가져오기 -->
   <select id="getChatMessageList"
   				parameterType="Map"
@@ -207,97 +184,5 @@
 	     SET CHATROOM_TITLE = #{chatroomTitle}
 	   WHERE CHATROOM_NO = #{chatroomNo}
   </update>
-  
-  
-  <!-- 채팅방 별 ALL_READ가 0인 메시지 번호 및 읽음 카운트 - 처음 접속때 채팅 내역 가져오기-->
-  <select id="getMessageReadCountByChatroomNo"
-  				resultType="MessageReadStatusDto"
-  				parameterType="Map">
-		SELECT RNUM, MESSAGE_NO, UNREAD_COUNT
-		FROM (
-		    SELECT ROWNUM AS RNUM, MESSAGE_NO, UNREAD_COUNT
-		    FROM (
-		        SELECT M.MESSAGE_NO, COUNT(MRST.IS_READ) AS UNREAD_COUNT
-		          FROM MESSAGE_T M JOIN MESSAGE_READ_STATUS_T MRST
-		            ON M.MESSAGE_NO = MRST.MESSAGE_NO
-		         WHERE M.ALL_READ = 0 AND M.CHATROOM_NO = #{chatroomNo} 
-		                              AND MRST.IS_READ = 'FALSE'
-		        GROUP BY M.MESSAGE_NO, M.SEND_DT
-		        ORDER BY M.SEND_DT DESC
-		    )
-		)
-		WHERE RNUM BETWEEN #{begin} AND #{end}
-	</select>
-	
-	
-	
-	<!-- 아래 두개는 한번에 실행 -->
-	<!-- 채팅방 별로 내가 읽지 않은 메시지 번호 가져오기 -->
-	<select id="getUnreadMessageNos"
-					parameterType="Map"
-					resultType="MessageReadStatusDto">
-	    SELECT MESSAGE_NO
-	    FROM MESSAGE_READ_STATUS_T
-	    WHERE EMPLOYEE_NO = #{employeeNo} AND IS_READ = 'FALSE'
-	    AND CHATROOM_NO = #{chatroomNo}
-	</select>
-	
-	<!-- 읽지 않은 메시지들 업데이트 -->
-	<update id="updateMessageReadStatus"
-					parameterType="Map">
-	    UPDATE MESSAGE_READ_STATUS_T
-	    SET IS_READ = 'TRUE'
-	    WHERE EMPLOYEE_NO = #{employeeNo} AND IS_READ = 'FALSE'
-	    AND MESSAGE_NO IN
-	    <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
-	        #{messageNo}
-	    </foreach>
-	</update>
-	
-	<!-- 메시지 번호 별 readCount 가져오기 -->
-	<select id="getNewCountList"
-					parameterType="Map"
-					resultType="MessageReadStatusDto">
-    SELECT m.MESSAGE_NO, 
-           COALESCE(COUNT(mrs.MESSAGE_NO), 0) AS UNREAD_COUNT
-      FROM MESSAGE_T m
-           LEFT JOIN MESSAGE_READ_STATUS_T mrs 
-           ON m.MESSAGE_NO = mrs.MESSAGE_NO 
-           AND mrs.CHATROOM_NO = #{chatroomNo}
-           AND mrs.IS_READ = 'FALSE'
-     WHERE m.CHATROOM_NO = #{chatroomNo}
-       AND m.MESSAGE_NO IN 
-        <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
-            #{messageNo}
-        </foreach>
-     GROUP BY m.MESSAGE_NO
-	</select>
-	
-	<update id="updateAllRead">
-		UPDATE MESSAGE_T mt
-		   SET ALL_READ = 1
-		 WHERE EXISTS (
-		    SELECT 1
-		    FROM MESSAGE_READ_STATUS_T mrst
-		    WHERE mrst.MESSAGE_NO = mt.MESSAGE_NO
-		    GROUP BY mrst.MESSAGE_NO
-		    HAVING COUNT(CASE WHEN mrst.IS_READ = 'FALSE' THEN 1 END) = 0
-		)
-	</update>
-	
-	<!-- ALL_READ가 1인 메시지 삭제 -->
-	<delete id="deleteAlreadyRead">
-		DELETE
-		  FROM MESSAGE_READ_STATUS_T
-		 WHERE MESSAGE_NO IN (SELECT MESSAGE_NO
-		                       FROM MESSAGE_T
-		                      WHERE ALL_READ = 1)
-	</delete>
-  
-  
-  
-  
-  
-  
 
 </mapper>

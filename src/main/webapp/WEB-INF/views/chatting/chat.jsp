@@ -477,8 +477,24 @@
 				}
 			  */
 			  
-			  if(resData.employee.profilePicturPath !== null) {
-				  $('.chat-modal-profile > img').attr('src', resData.profilePicturPath);
+			  if(resData.employee.profilePicturePath !== null) {
+				  
+				    let profilePicturePath = '';
+				    
+				    // profilePicturePath가 유효한지 확인하고 src 부분 추출하기
+				    if (resData.employee.profilePicturePath) {
+				        const match = resData.employee.profilePicturePath.match(/src="([^"]+)"/);
+				        if (match && match[1]) {
+				            profilePicturePath = match[1];
+				        }
+				    }
+				  
+				  $('.chat-modal-profile > img').attr('src', profilePicturePath);
+				  $('.chat-modal-profile > img').css({
+					    'width': '128px',
+					    'height': '128px',
+					    'object-fit': 'cover'
+					});
 			  } else {
 				  $('.chat-modal-profile > img').attr('src', '${contextPath}/resources/images/default_profile_image.png');
 				  $('.chat-modal-profile > img').css({
@@ -654,13 +670,10 @@
 	            const message = JSON.parse(chatroomMessage.body);
 	
 	            if (message.messageType === 'UPDATE') {
-                fnUpdateParticipateStatus(message); // status 관련 UPDATE 메시지 받으면 바로 탭 바꿔주는 함수.
-	            } else if(message.messageType === 'UPDATE_READ_STATUS'){
-	              // 모든 사용자의 메시지의 chatMessage-count 값 업데이트해주기
-	            	fnUpdateChatMessageCount(message);
+                  fnUpdateParticipateStatus(message); // status 관련 UPDATE 메시지 받으면 바로 탭 바꿔주는 함수.
 	            } else {
                 // 받은 메시지 보여주기
-	            	fnShowChatMessage(message);
+            	  fnShowChatMessage(message);
 	            }
 	
 	        });
@@ -681,14 +694,6 @@
 	                    'messageType': 'UPDATE',
 	                    'messageContent': '1',
 	                    //'isRead': 0,
-	                    'senderNo': ${sessionScope.user.employeeNo}
-	                })
-	            );
-	            
-	            stompClient.send(sendPath, {},
-	                JSON.stringify({
-	                    'chatroomNo': chatroomNo,
-	                    'messageType': 'UPDATE_READ_STATUS',
 	                    'senderNo': ${sessionScope.user.employeeNo}
 	                })
 	            );
@@ -896,7 +901,16 @@
 			$('.chat-memberProfileList').empty();
 			// 데이터를 돌면서 회원 데이터 담은 input 추가
 			employeeList.forEach(resData => {
-				const hiddenInputHTML = '<input type="hidden" data-employee-no="' + resData.employeeNo + '" data-employee-name="' + resData.name + ' ' + resData.rank.rankTitle + '" data-employee-profilePicturPath="' + resData.profilePicturPath + '">';
+			    let profilePicturePath = '';
+			    
+			    // profilePicturePath가 유효한지 확인하고 src 부분 추출하기
+			    if (resData.profilePicturePath) {
+			        const match = resData.profilePicturePath.match(/src="([^"]+)"/);
+			        if (match && match[1]) {
+			            profilePicturePath = match[1];
+			        }
+			    }
+			    const hiddenInputHTML = '<input type="hidden" data-employee-no="' + resData.employeeNo + '" data-employee-name="' + resData.name + ' ' + resData.rank.rankTitle + '" data-employee-profilePicturePath="' + profilePicturePath + '">';
 				
 				const chatMemberProfileList = $('.chat-memberProfileList');
 				
@@ -941,17 +955,10 @@
 						
 						// 만약 가져온 데이터가 있다면..
 						if(senderData) { // (20)
-							
-							const unreadCount = getUnreadCount(message.messageNo);
 						
 							messageHTML += '<div class="chatMessage-me">';
 							messageHTML += '  <div class="chatMessage-main">';
 							messageHTML += '    <div class="chatMessage-contents">';
-							if(unreadCount === 0) {
-								messageHTML += '<span class="chatMessage-count" data-message-no="' + message.messageNo + '"></span>';
-							} else {
-								messageHTML += '<span class="chatMessage-count" data-message-no="' + message.messageNo + '">' + unreadCount + '</span>';
-							}
 							messageHTML += '      <div class="chatMessage-content">' + message.messageContent + '</div>';
 							messageHTML += '    </div>';
 						  messageHTML += '    <div class="chatMessage-info">';
@@ -970,11 +977,9 @@
 						// 만약 가져온 데이터가 있다면..
 						if(senderData) {
 							
-							const unreadCount = getUnreadCount(message.messageNo);
-							
 							messageHTML += '<div class="chatMessage-you">';
 							messageHTML += '  <div class="chatMessage-profile">';
-							if(senderData.profilePicturePath !== null && senderData.profilePicturePath !== undefined) {
+							if(senderData.profilePicturePath !== null && senderData.profilePicturePath !== undefined && senderData.profilePicturePath !== "") {
 								messageHTML += '    <img class="direct-chat-img" src="' + senderData.profilePicturePath + '" alt="Message User Image">';
 							} else {
 								messageHTML += '    <img class="direct-chat-img" src="${contextPath}/resources/images/default_profile_image.png" alt="Message User Image">';
@@ -983,12 +988,9 @@
 							messageHTML += '  <div class="chatMessage-main">';
 							messageHTML += '    <div class="chatMessage-contents">';
 							messageHTML += '      <div class="chatMessage-senderName">' + senderData.name + '</div>';
+							messageHTML += '<div class="chatMessage-youMessage">';
 							messageHTML += '      <div class="chatMessage-content">' + message.messageContent + '</div>';
-							if(unreadCount === 0) {
-								messageHTML += '<span class="chatMessage-count" data-message-no="' + message.messageNo + '"></span>';
-							} else {
-								messageHTML += '<span class="chatMessage-count" data-message-no="' + message.messageNo + '">' + unreadCount + '</span>';
-							}
+							messageHTML += '</div>';
 							messageHTML += '    </div>';
 							messageHTML += '    <div class="chatMessage-info">';
 							messageHTML += '      <span class="chatMessage-time">' + moment(message.sendDt).format('A hh:mm') + '</span>';
@@ -1007,12 +1009,9 @@
 							messageHTML += '  <div class="chatMessage-main">';
 							messageHTML += '    <div class="chatMessage-contents">';
 							messageHTML += '      <div class="chatMessage-senderName">(알수없음)</div>';
+							messageHTML += '<div class="chatMessage-youMessage">';
 							messageHTML += '      <div class="chatMessage-content">' + message.messageContent + '</div>';
-							if(unreadCount === 0) {
-								messageHTML += '<span class="chatMessage-count" data-message-no="' + message.messageNo + '"></span>';
-							} else {
-								messageHTML += '<span class="chatMessage-count" data-message-no="' + message.messageNo + '">' + unreadCount + '</span>';
-							}
+							messageHTML += '</div>';
 							messageHTML += '    </div>';
 							messageHTML += '    <div class="chatMessage-info">';
 							messageHTML += '      <span class="chatMessage-time">' + moment(message.sendDt).format('A hh:mm') + '</span>';
@@ -1171,10 +1170,6 @@
  		
  		if(chatMessage.messageType === 'CHAT') {
  			
- 		  // 오프라인 상태의 요소를 모두 선택하고 그 길이를 계산
- 			let offlineCount = $('.status.offline').length;
-
- 			
  			if(chatMessage.senderNo === ${sessionScope.user.employeeNo}) { 
  				// 내가 보낸 메시지인 경우,
  				 		
@@ -1187,11 +1182,6 @@
  					messageHTML += '<div class="chatMessage-me">';
  					messageHTML += '  <div class="chatMessage-main">';
  					messageHTML += '    <div class="chatMessage-contents">';
- 					if(offlineCount === 0) {
-	 					messageHTML += '<span class="chatMessage-count" data-message-no="' + chatMessage.messageNo + '"></span>';
- 					} else {
- 						messageHTML += '<span class="chatMessage-count" data-message-no="' + chatMessage.messageNo + '">' + offlineCount + '</span>';
- 					}
  					messageHTML += '      <div class="chatMessage-content">' + chatMessage.messageContent + '</div>';
  					messageHTML += '    </div>';
  				  messageHTML += '    <div class="chatMessage-info">';
@@ -1213,7 +1203,7 @@
  					let messageHTML = '';
  					messageHTML += '<div class="chatMessage-you">';
  					messageHTML += '  <div class="chatMessage-profile">';
-					if(senderData.profilePicturePath !== null && senderData.profilePicturePath !== undefined) {
+					if(senderData.profilePicturePath !== null && senderData.profilePicturePath !== undefined && senderData.profilePicturePath !== "") {
 						messageHTML += '    <img class="direct-chat-img" src="' + senderData.profilePicturePath + '" alt="Message User Image">';
 					} else {
 						messageHTML += '    <img class="direct-chat-img" src="${contextPath}/resources/images/default_profile_image.png" alt="Message User Image">';
@@ -1222,12 +1212,9 @@
  					messageHTML += '  <div class="chatMessage-main">';
  					messageHTML += '    <div class="chatMessage-contents">';
  					messageHTML += '      <div class="chatMessage-senderName">' + senderData.name + '</div>';
+ 					messageHTML += '<div class="chatMessage-youMessage">';
  					messageHTML += '      <div class="chatMessage-content">' + chatMessage.messageContent + '</div>';
- 					if(offlineCount === 0) {
-	 					messageHTML += '<span class="chatMessage-count" data-message-no="' + chatMessage.messageNo + '"></span>';
- 					} else {
- 						messageHTML += '<span class="chatMessage-count" data-message-no="' + chatMessage.messageNo + '">' + offlineCount + '</span>';
- 					}
+ 					messageHTML += '</div>';
  					messageHTML += '    </div>';
  					messageHTML += '    <div class="chatMessage-info">';
  					messageHTML += '      <span class="chatMessage-time">' + moment(chatMessage.sendDt).format('A hh:mm') + '</span>';
