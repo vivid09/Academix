@@ -359,8 +359,11 @@ button:hover {
 	 </div> 
 	 </form> 
 	</div>
+	
  </section>
 </div>
+
+
  
 <!-- jQuery 2.2.3 -->
 <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
@@ -372,6 +375,7 @@ button:hover {
 <script src="/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/app.min.js"></script> 
+ 
  
 <script>
 

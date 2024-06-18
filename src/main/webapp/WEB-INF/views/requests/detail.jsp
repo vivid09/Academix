@@ -78,6 +78,12 @@
     cursor: pointer;
 }     
 
+#btn-reject{
+ border-radius: 5px;
+}
+#btn-approval{
+border-radius: 5px;
+}
 </style>
 
  <div class="content-wrapper">
@@ -124,14 +130,14 @@
           id="frm-requests-approval" onsubmit="submitFormWithApproval()">
           <c:if test="${sessionScope.user.depart.departmentNo == 2}">
           <div>
-     <button type="submit" id="btn-approval">승인</button>
-     <button type="button" id="btn-reject" onclick="openModal()">반려</button>
+     <button type="submit" class="state bg-green-active color-palette" id="btn-approval">승인</button>
+     <button type="button" class="state bg-red-active color-palette"id="btn-reject" onclick="openModal()">반려</button>
      </c:if>
     </div>
     
         <table>
             <tr>
-                <td >결재</td>
+                <td>결재</td>
                 <td  class="split-cell">
                     <div class="left">인사과</div>
                     <div class="right">

@@ -24,6 +24,12 @@
         display: flex;
     }
   
+  .bg-green-active{
+   border-radius: 5px;
+  }
+  .bg-red-active{
+   border-radius: 5px;
+  }
   
 </style>
   
@@ -100,17 +106,28 @@
 	          </td>
 	          <td>${leaveRequests.employees.name}</td>
 	          <td>${leaveRequests.requestDate}</td>
-	          <td> <c:choose>
-	                      <c:when test="${leaveRequests.requestStatus eq '0'}">
+	          <td>
+	          <span class='<c:choose>
+	            <c:when test="${leaveRequests.requestStatus eq '1'}">
+			            state bg-green-active color-palette
+			        </c:when>
+			        <c:when test="${leaveRequests.requestStatus eq '2'}">
+				            state bg-red-active color-palette
+				    </c:when>
+	           </c:choose>'> 
+	          <c:choose>
+	              <c:when test="${leaveRequests.requestStatus eq '0'}">
 	                        미결재
-						 </c:when>
-	                      <c:when test="${leaveRequests.requestStatus eq '1'}">
+				  </c:when>
+	               <c:when test="${leaveRequests.requestStatus eq '1'}">
 	                        승인
-						 </c:when>
-	                      <c:when test="${leaveRequests.requestStatus eq '2'}">
+				   </c:when>
+	                 <c:when test="${leaveRequests.requestStatus eq '2'}">
 	                        반려
-						 </c:when>
-	                </c:choose></td>
+					</c:when>
+	         </c:choose>
+	         </span>       
+	         </td>
 	        </tr>
 	        
 	      </c:forEach>
