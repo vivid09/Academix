@@ -2,9 +2,9 @@ package com.gdu.academix.service;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,8 +114,20 @@ public class CoursesServiceImpl implements CoursesService {
   @Override
   public ResponseEntity<Map<String, Object>> loadCourseList(HttpServletRequest request) {
     
-    // 전체 블로그 개수
+    String searchType = request.getParameter("searchType");
+    String searchKeyword = request.getParameter("searchKeyword");
+  	
+    // 전체 강의 개수
     int total = courseMapper.getCourseCount();
+    
+    // 검색 조건이 있는 경우
+    if (searchType != null && searchKeyword != null && !searchType.isEmpty() && !searchKeyword.isEmpty()) {
+    	Map<String, Object> map = Map.of("searchType", searchType
+          													 , "searchKeyword", searchKeyword);
+        total = courseMapper.getCourseCountBySearch(map);
+    } else {
+        total = courseMapper.getCourseCount();
+    }
     
     // 스크롤 이벤트마다 가져갈 목록 개수
     int display = 10;
@@ -128,12 +140,26 @@ public class CoursesServiceImpl implements CoursesService {
     myPageUtils.setPaging(total, display, page);
     
     // DB 로 보낼 Map 생성
-    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
-                                   , "end", myPageUtils.getEnd());
+    Map<String, Object> map = new HashMap<>();
+    map.put("begin", myPageUtils.getBegin());
+    map.put("end", myPageUtils.getEnd());
+
     
+    if (searchType != null && searchKeyword != null && !searchType.isEmpty() && !searchKeyword.isEmpty()) {
+      map.put("searchType", searchType);
+      map.put("searchKeyword", searchKeyword);
+    }
+
     
     // 목록 화면으로 반환할 값 (목록 + 전체 페이지 수)
-    return new ResponseEntity<>(Map .of("courseList", courseMapper.getCourseList(map)
+    List<CourseDto> courseList;
+    if (searchType != null && searchKeyword != null && !searchType.isEmpty() && !searchKeyword.isEmpty()) {
+        courseList = courseMapper.getCourseListBySearch(map);
+    } else {
+        courseList = courseMapper.getCourseList(map);
+    }
+    
+    return new ResponseEntity<>(Map .of("courseList", courseList
                                       , "totalPage", myPageUtils.getTotalPage()
                                       , "paging", myPageUtils.getPaging(request.getContextPath() + "/courses/list.do"
                                       , null

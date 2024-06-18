@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gdu.academix.dto.AttendanceRecordDto;
+import com.gdu.academix.mapper.AnnualLeaveMapper;
 import com.gdu.academix.mapper.AttendanceRecordMapper;
 
 @Transactional
@@ -19,10 +20,12 @@ import com.gdu.academix.mapper.AttendanceRecordMapper;
 public class AttendanceServiceImpl implements AttendanceService {
 
   private final AttendanceRecordMapper attendancerecordMapper;
+  private final AnnualLeaveMapper annualleaveMapper;
   
-	public AttendanceServiceImpl(AttendanceRecordMapper attendancerecordMapper) {
+	public AttendanceServiceImpl(AttendanceRecordMapper attendancerecordMapper, AnnualLeaveMapper annualleaveMapper) {
 		super();
 		this.attendancerecordMapper = attendancerecordMapper;
+		this.annualleaveMapper = annualleaveMapper;
 	}
 
 	@Override
@@ -53,9 +56,15 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public ResponseEntity<Map<String, Object>> getAttendanceRecord(int employeeNo) {
     // 목록 화면으로 반환할 값 (목록)
-		Map<String, Object> map = Map.of("recordList", attendancerecordMapper.getAttendanceRecordByemployeeNo(employeeNo));
     return new ResponseEntity<>(Map.of("recordList", attendancerecordMapper.getAttendanceRecordByemployeeNo(employeeNo))
                               , HttpStatus.OK);
+	}
+	
+	@Override
+	public ResponseEntity<Map<String, Object>> getAnnualLeaveStatus(int employeeNo) {
+		// 목록 화면으로 반환할 값 (목록)
+		return new ResponseEntity<>(Map.of("annualLeaveStatus", annualleaveMapper.getAnnualLeaveStatusByemployeeNo(employeeNo))
+				, HttpStatus.OK);
 	}
 
 	@Override

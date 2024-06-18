@@ -179,8 +179,6 @@
 <script src="/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/app.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="/dist/js/demo.js"></script>
 <!-- fullCalendar 2.2.5 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
 <script src="/plugins/fullcalendar/fullcalendar.min.js"></script>
@@ -197,10 +195,25 @@ var leaveUsed = 0;
 var leaveTotal = 0;
 var leaveLeft = 0;
 
-const fnGetLeaveRequestList = (pageNum) => {
+
+const fnGetLeaveStatus = () => {
+	return fetch('/attendance/annualLeave/getAnnualLeaveStatus.do?employeeNo=${sessionScope.user.employeeNo}', {
+	  method: 'GET',
+	})
+	.then(response => response.json())
+	.then(resData => {
+		leaveTotal = resData.annualLeaveStatus[0].totalLeaves;
+	})
+	.catch(error => {
+	  console.error('Error fetching events:', error);
+	});
 	
+}
+
+const fnGetLeaveRequestList = async (pageNum) => {
+	await fnGetLeaveStatus();
 	page = pageNum || page;  // pageNum이 전달되지 않으면 현재 페이지를 유지
-	fetch('/attendance/annualLeave/LeaveRequestList.do?employeeNo=${sessionScope.user.employeeNo}', {
+	fetch('/attendance/annualLeave/getLeaveRequestList.do?employeeNo=${sessionScope.user.employeeNo}', {
 	  method: 'GET',
 	})
 	.then(response => response.json())
@@ -234,11 +247,12 @@ const fnGetLeaveRequestList = (pageNum) => {
 	        $('#requestList').append(str);
 	      })
 	      
-	    	leaveLeft = leaveTotal - leaveUsed;
+	    	
 	      
-	      $('#leaveTotal').html(leaveTotal);
-	      $('#leaveUsed').html(leaveUsed);
-	      $('#leaveLeft').html(leaveLeft);
+			  leaveLeft = leaveTotal - leaveUsed;
+			  $('#leaveTotal').html(leaveTotal);
+			  $('#leaveUsed').html(leaveUsed);
+			  $('#leaveLeft').html(leaveLeft);
 	      // 페이징 업데이트
 	      updatePagination(resData.paging);
 	
@@ -284,7 +298,6 @@ const updatePagination = (pagingHtml) => {
 
 $(document).ready(() => {
 	fnGetLeaveRequestList();
-	
   // 초기 페이지 링크 클릭 이벤트 추가
   $('#pagination').on('click', 'a', function(event) {
     event.preventDefault();
