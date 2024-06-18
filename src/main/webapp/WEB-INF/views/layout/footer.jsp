@@ -354,6 +354,42 @@
       })
     }
     
+    // 최근 4개 메시지 가져오기
+    
+    const fnGetLatestMessage = () => {
+      
+      let employeeNo = ${sessionScope.user.employeeNo};
+    	
+      fetch('${contextPath}/notification/getLatestMessage.do?employeeNo=' + employeeNo, {
+        method: 'GET',
+      })
+      .then((response) => response.json())
+      .then(resData => {
+    	  
+    	  console.log(resData);
+    	  
+    	  if(resData.LatestMessageList.length !== 0) {
+	    	  $('.message-table').empty();
+	    	  $.each(resData.LatestMessageList, (i, message) => {
+	    	    let msg = '<tr>';
+	    	    msg += '<td><input type="checkbox"></td>';
+	    	    msg += '<td>' + message.notifier.name + ' ' + message.notifier.rank.rankTitle + '</td>';
+	    	    msg += '<td>' + message.message + '</td>';
+	    	    msg += '<td>' + moment(message.notificationDate).format('A hh:mm') + '</td>';
+	    		$('.message-table').append(msg);
+	    	  })
+    	  
+    	  } else {
+    		  $('.message-table').empty();
+    	      let msg = '<tr>';
+    	      msg += '<td>최근 메시지가 없습니다.</td>';
+    	      msg += '</tr>'
+    		  $('.message-table').append(msg);
+    	  }
+      })
+    }
+    
+    
     
 	
 	window.addEventListener('load', fnConnectGlobalStompClient);
@@ -361,6 +397,7 @@
 	fnRemoveMessageAlert();
 	fnRemoveAllMessageNotify();
 	fnDirectChatroom();
+	fnGetLatestMessage();
   
 </script>
   <footer class="main-footer">

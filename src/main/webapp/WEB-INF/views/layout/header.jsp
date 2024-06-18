@@ -128,9 +128,9 @@
               </li> -->
               <!-- Menu Footer-->
               <li class="user-footer">
-                <div class="pull-left">
+<!--                 <div class="pull-left">
                   <a href="#" class="btn btn-default btn-flat">마이페이지</a>
-                </div>
+                </div> -->
                 <div class="pull-right">
                   <a href="${contextPath}/user/signout.do" class="btn btn-default btn-flat">로그아웃</a>
                 </div>
@@ -162,7 +162,26 @@
         </div>
         <div class="pull-left info">
           <p>${sessionScope.user.name}님</p>
-          <p style="font-size: 10px; font-weight: 300;">${sessionScope.user.email}</p>
+            <c:choose>
+	          <c:when test="${sessionScope.user.depart.departmentNo == '0'}">
+	            <p style="font-size: 10px; font-weight: 300;">대표</p>
+	          </c:when>
+	          <c:when test="${sessionScope.user.depart.departmentNo == '1'}">
+	            <p style="font-size: 10px; font-weight: 300;">행정부</p>
+	          </c:when>
+	          <c:when test="${sessionScope.user.depart.departmentNo == '2'}">
+	            <p style="font-size: 10px; font-weight: 300;">인사팀</p>
+	          </c:when>
+	          <c:when test="${sessionScope.user.depart.departmentNo == '3'}">
+	            <p style="font-size: 10px; font-weight: 300;">운영팀</p>
+	          </c:when>
+	          <c:when test="${sessionScope.user.depart.departmentNo == '4'}">
+	            <p style="font-size: 10px; font-weight: 300;">강사</p>
+	          </c:when>
+	          <c:otherwise>
+	            <p style="font-size: 10px; font-weight: 300;">unknown department</p>
+	        </c:otherwise>
+	        </c:choose>
         </div>
       </div>
       
@@ -273,7 +292,6 @@
           <ul class="treeview-menu">
             <li><a href="${contextPath}/courses/createCourseRequest.page">강의 개설 신청</a></li>
             <li><a href="${contextPath}/courses/manageCourses.page">강의 관리</a></li>
-            <li><a href="pages/charts/morris.html">학생 주소록</a></li>
           </ul>
         </li> 
         </c:if>
