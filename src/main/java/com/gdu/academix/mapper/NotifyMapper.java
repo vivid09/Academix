@@ -14,5 +14,6 @@ public interface NotifyMapper {
   List<NotificationsDto> getNotificationList(int employeeNo, int seenStatus);
   int updateSeenStatus(List<Integer> notificationNoList);
   int updateChatroomSeenStatus(Map<String, Object> map);
+  List<NotificationsDto> getLatestMessage(int employeeNo);
   
 }
