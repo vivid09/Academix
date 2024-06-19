@@ -48,8 +48,19 @@ public class NotifyServiceImpl implements NotifyService {
   }
   
   @Override
-	public int updateChatroomSeenStatus(Map<String, Object> map) {
-	  return notifyMapper.updateChatroomSeenStatus(map);
+  public int updateChatroomSeenStatus(Map<String, Object> map) {
+    return notifyMapper.updateChatroomSeenStatus(map);
+  }
+  
+  @Override
+  public List<NotificationsDto> getLatestMessage(int employeeNo) {
+	try {
+		System.out.println("notify: " + notifyMapper.getLatestMessage(employeeNo));
+		return notifyMapper.getLatestMessage(employeeNo);
+	} catch (Exception e) {
+	  e.printStackTrace();
 	}
+	return null;
+  }
 
 }

@@ -133,6 +133,7 @@
 		                     INNER JOIN RANKS_T R ON R.RANK_NO = E.RANK_NO
 		 WHERE E.EMPLOYEE_NO = #{employeeNo}
 	</select>
+
 	
 	<select id="getUserProfileList"
 			resultMap="EmployeesMap">
@@ -145,7 +146,7 @@
      </foreach>
 	</select>
   
-  
+
   
   
   

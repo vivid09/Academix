@@ -33,7 +33,6 @@ public interface ChatService {
   // 채팅방 - 참여자 번호 리스트 가져오기
   ResponseEntity<Map<String, Object>> getChatroomParticipantList(int chatroomNo);
   
-  //ResponseEntity<Map<String, Object>> getChatTotalPageCount(int chatroomNo, int page);
   // 채팅방 - 참여자 상태 업데이트
   int updateParticipateStatus(Map<String, Object> params);
   

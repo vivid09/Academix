@@ -1,8 +1,10 @@
 package com.gdu.academix.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -71,16 +73,7 @@ public class MessageController {
         } else {
           return message;
         }
-        
-        
-      }
-      
-
-       
-      
-      // 해당 메시지 반환 -> /topic/chatroomNo를 구독하는 유저에게 보내짐.
-      
-      
+      } 
     } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException("Error handling one-to-one chat message");
@@ -91,8 +84,6 @@ public class MessageController {
   @MessageMapping("/group/{chatroomNo}") // 클라이언트가 해당 url로 메시지 보냄.
   @SendTo("/queue/{chatroomNo}")    // 해당 url 구독중인 클라이언트에게 메시지 보냄.
   public MessageDto GroupChat(@DestinationVariable int chatroomNo, MessageDto message) {
-    
-    System.out.println("받은 메시지: " + message);
     
     try {
       
@@ -131,50 +122,26 @@ public class MessageController {
         int updateCount = chatService.updateParticipateStatus(params);
         if(updateCount == 1) {
           return message;
-        } else { // 이부분이 의미가 없네....
+        } else { 
           return message;
         }
-      }
-
-      
-      /*
-       * for(Integer recipientNo : chatMessage.getRecipientNoList()) {
-       * if(!recipientNo.equals(message.getSenderNo())) {
-       * messagingTemplate.convertAndSendToUser(String.valueOf(recipientNo),
-       * "/queue/notifications", chatMessage); } }
-       */
-      
-      // 해당 메시지 반환 -> /queue/chatroomNo를 구독하는 유저에게 보내짐.
-      
+      } 
       
     } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException("Error handling one-to-one chat message");
     }
   }
-  
-  
-/*
-  if (chatMessage.getRecipientNoList() == null) {
-    chatMessage.setRecipientNoList(new ArrayList<>()); 
-  }
-  
-  for(Integer recipientNo : chatMessage.getRecipientNoList()) { // 본인 제외
-    if(!recipientNo.equals(message.getSenderNo())) {
-      messagingTemplate.convertAndSendToUser(String.valueOf(recipientNo), "/queue/notifications", chatMessage); 
-    } 
-  }
-*/  
-  
 
   @MessageMapping("/notify")
   public void notifyUser(MessageDto message, CustomPrincipal customPrincipal) {
     
-    System.out.println("받은 알림 메시지: " + message);
-    
       if(message.getRecipientNoList() == null) {
         message.setRecipientNoList(new ArrayList<>());
       }
+      
+      // 중복 제거
+      Set<Integer> recipientNoSet = new HashSet<>(message.getRecipientNoList());
       
       // 메시지 송신자의 이름 가져옴.
       int notifierNo = message.getSenderNo();
@@ -182,7 +149,7 @@ public class MessageController {
       
       String notifierName = employee.getName() + " " + employee.getRank().getRankTitle();
       
-      for(Integer recipientNo : message.getRecipientNoList()) {
+      for(Integer recipientNo : recipientNoSet) {
         if(!recipientNo.equals(message.getSenderNo())) {
           System.out.println("전송된 알림 메시지: " + message + "to user: " + recipientNo);
           
@@ -213,14 +180,7 @@ public class MessageController {
             
             // NotificationsDto DB에 저장
             int insertNotificationCount = notifyService.insertNotification(notification);
-            
-            
-            // 알림 조회 시 제일 최근 것만 보냄.
-            /*
-             * Instant now = Instant.now(); Timestamp timestamp = Timestamp.from(now);
-             * 
-             * notification.setNotificationDate(timestamp);
-             */
+
             List<NotificationsDto> notificationList = notifyService.getNotificationList(recipientNo);
             
             
@@ -232,82 +192,9 @@ public class MessageController {
             
             e.printStackTrace();
           }
-          
 
-          
-          // 메시지 수신자의 세션 ID를 가져오기
-          //Set<SimpUser> users = simpUserRegistry.getUsers();
-          /*
-           * for(SimpUser user : users) {
-           * if(user.getName().equals(recipientNo.toString())) { for(SimpSession session :
-           * user.getSessions()) { try { System.out.println("session.getId(): " +
-           * session.getId()); // 특정 사용자에게 메시지 전송
-           * messagingTemplate.convertAndSendToUser(user.getName(),
-           * "/queue/notifications", message.getMessageContent());
-           * 
-           * } catch (Exception e) { e.printStackTrace(); } } } }
-           */
-          /*
-           * try { //messagingTemplate.convertAndSendToUser(recipientNo.toString(),
-           * "/queue/notifications", message.getMessageContent());
-           * System.out.println("customPrincipal.getName(): " +
-           * customPrincipal.getName());
-           * messagingTemplate.convertAndSendToUser(recipientNo.toString(),
-           * "/queue/notifications", message.getMessageContent()); } catch (Exception e) {
-           * e.printStackTrace(); }
-           */
         }
       }
   }
-  
-  
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-  /*
-   * @MessageMapping("info")
-   * 
-   * @SendToUser("/queue/info") // 1:1로 메시지 보낼때 사용함. public String info(String
-   * message, SimpMessageHeaderAccessor messageHeaderAccessor) { EmployeesDto
-   * talker = (EmployeesDto)
-   * messageHeaderAccessor.getSessionAttributes().get("user"); return message; }
-   * 
-   * @MessageMapping("chat") // 클라이언트가 chat 경로로 메시지 보낼 시..
-   * 
-   * @SendTo("/topic/message") // /topic/message라는 토픽을 구독하는 사용자들에게 메시지 전달 public
-   * String chat(String message) { return message; }
-   * 
-   * @MessageMapping("bye")
-   * 
-   * @SendTo("/topic/bye") // 1:n으로 메시지 뿌릴때 사용 public EmployeesDto bye(String
-   * message, SimpMessageHeaderAccessor messageHeaderAccessor) { EmployeesDto
-   * talker = (EmployeesDto)
-   * messageHeaderAccessor.getSessionAttributes().get("user"); return talker; }
-   */
   
 }

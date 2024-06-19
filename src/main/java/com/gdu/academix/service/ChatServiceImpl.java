@@ -43,7 +43,6 @@ public class ChatServiceImpl implements ChatService {
     MessageDto chatMessage = MessageDto.builder()
                                   .messageType(message.getMessageType())
                                   .messageContent(replaceMessageContent)
-                                  .isRead(message.getIsRead())
                                   .chatroomNo(message.getChatroomNo())
                                   .senderNo(message.getSenderNo())
                                 .build();
@@ -56,10 +55,11 @@ public class ChatServiceImpl implements ChatService {
     Timestamp currentTimestamp = new Timestamp(currentTimeMillis); 
     chatMessage.setSendDt(currentTimestamp);
     
-    // map 생성
-    Map<String, Object> map = Map.of("insertMessageCount", insertMessageCount,
-                                     "chatMessage", chatMessage);
-    return map;
+      // 최종 반환 map 생성
+      Map<String, Object> map = Map.of("insertMessageCount", insertMessageCount,
+                                       "chatMessage", chatMessage);
+      return map;
+
   }
   
   // 1:1 채팅방 여부 확인
@@ -206,7 +206,6 @@ public class ChatServiceImpl implements ChatService {
       MessageDto message = MessageDto.builder()
                                   .messageType(MessageType.JOIN)
                                   .messageContent(JoinMessage)
-                                  .isRead(0)
                                   .chatroomNo(newChatroomDto.getChatroomNo())
                                   .senderNo(loginUserNo)
                                .build();
@@ -222,45 +221,40 @@ public class ChatServiceImpl implements ChatService {
     }  
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  // 채팅 내역 가져오기
   @Override
   public ResponseEntity<Map<String, Object>> getChatMessageList(int chatroomNo, int page) {
 
-    // 채팅방 메시지 전체 개수
-    int total = chatMapper.getChatMessageCount(chatroomNo);
+    try {
+      
+     // 채팅방 메시지 전체 개수
+      int total = chatMapper.getChatMessageCount(chatroomNo);
+      
+      // 한번에 가지고올 메시지 개수
+      int display = 20;
+      
+      // 페이징 처리
+      myPageUtils.setPaging(total, display, page);
+      
+      // DB에 필요한 map 생성
+      Map<String, Object> map = Map.of("chatroomNo", chatroomNo,
+                                       "begin", myPageUtils.getBegin(),
+                                       "end", myPageUtils.getEnd());
+      
+      // 채팅 내역 리스트 가져오기
+      List<MessageDto> chatMessageList = chatMapper.getChatMessageList(map);
+      
+      return ResponseEntity.ok(Map.of("chatMessageList", chatMessageList,
+                                      "chatMessageTotalPage", myPageUtils.getTotalPage()));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     
-    // 한번에 가지고올 메시지 개수
-    int display = 20;
+    return null;
     
-    // 페이징 처리
-    myPageUtils.setPaging(total, display, page);
-    
-    // DB에 필요한 map 생성
-    Map<String, Object> map = Map.of("chatroomNo", chatroomNo,
-                                     "begin", myPageUtils.getBegin(),
-                                     "end", myPageUtils.getEnd());
-    
-    // 채팅 내역 리스트 가져오기
-    List<MessageDto> chatMessageList = chatMapper.getChatMessageList(map);
-    
-    return ResponseEntity.ok(Map.of("chatMessageList", chatMessageList,
-                                    "chatMessageTotalPage", myPageUtils.getTotalPage()));
   }
+  
+  
   
   @Override
   public ResponseEntity<Map<String, Object>> getChatList(int employeeNo) {
@@ -279,20 +273,6 @@ public class ChatServiceImpl implements ChatService {
   public ResponseEntity<Map<String, Object>> getChatroomByChatroomNo(int chatroomNo) {
     return ResponseEntity.ok(Map.of("chatroom", chatMapper.getChatroomByChatroomNo(chatroomNo)));
   }
-  
-  /*
-   * @Override public ResponseEntity<Map<String, Object>>
-   * getChatTotalPageCount(int chatroomNo, int page) {
-   * 
-   * // 채팅방 메시지 전체 개수 int total = chatMapper.getChatMessageCount(chatroomNo);
-   * 
-   * // 한번에 가지고올 메시지 개수 int display = 20;
-   * 
-   * // 페이징 처리 myPageUtils.setPaging(total, display, page);
-   * 
-   * return ResponseEntity.ok(Map.of("chatMessageTotalPage",
-   * myPageUtils.getTotalPage())); }
-   */
   
   @Override
   public ResponseEntity<Map<String, Object>> getChatroomParticipantList(int chatroomNo) {
@@ -338,7 +318,7 @@ public class ChatServiceImpl implements ChatService {
   @Override
   public void deleteNoParticipateChatroom() {
     
-    // 메시지 데이터 지우기
+    // 메시지 데이터 지우기ㅒ
     chatMapper.deleteNoParticipateMessage();
     // 채팅방 데이터 지우기
     chatMapper.deleteNoParticipateChatroom();
@@ -346,24 +326,24 @@ public class ChatServiceImpl implements ChatService {
   
   @Override
   public int updateChatroomTitle(Map<String, Object> params) {
-	  
-	try {
-	    int chatroomNo =  Integer.parseInt(String.valueOf(params.get("chatroomNo"))); 
-	    String chatroomTitle = (String) params.get("chatroomTitle");
-	    
-	    // 파라미터를 map으로 만듬
-	    Map<String, Object> map = Map.of("chatroomNo", chatroomNo
-	                                   , "chatroomTitle", chatroomTitle);
-	    
-	    int updateTitleCount = chatMapper.updateChatroomTitle(map);
+    
+  try {
+      int chatroomNo =  Integer.parseInt(String.valueOf(params.get("chatroomNo"))); 
+      String chatroomTitle = (String) params.get("chatroomTitle");
+      
+      // 파라미터를 map으로 만듬
+      Map<String, Object> map = Map.of("chatroomNo", chatroomNo
+                                     , "chatroomTitle", chatroomTitle);
+      
+      int updateTitleCount = chatMapper.updateChatroomTitle(map);
 
-	    return updateTitleCount;
-	    
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-	
-	return 0;
+      return updateTitleCount;
+      
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+  
+  return 0;
     
 
   }
