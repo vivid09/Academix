@@ -456,7 +456,15 @@
         'plugins': ['search'],           
       }).on('ready.jstree', function() {
         $(this).jstree(true).open_all();
-      })
+      }).on('select_node.jstree', function(e, data) {
+        var selectedNode = data.node;
+        if (selectedNode.type === 'folder') {
+          var selectedFolder = resData.folder.find(folder => folder.folderNo.toString() === selectedNode.id);
+          if (selectedFolder && selectedFolder.folderLink) {
+            window.location.href = selectedFolder.folderLink; // 해당 링크로 이동
+          }
+        }
+      });
       
       // 검색 기능 추가
       $('.searchInput').on('keyup', function() {
