@@ -1,5 +1,6 @@
 package com.gdu.academix.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.io.Resource;
@@ -24,6 +25,6 @@ public interface FolderService {
   ResponseEntity<Resource> download(HttpServletRequest request);
   void removeTempFiles();
   
-  ResponseEntity<Map<String, Object>> removeFile(HttpServletRequest request);
+  ResponseEntity<Map<String, Object>> removeFile(Map<String, List<Integer>> params);
 
 }

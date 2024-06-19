@@ -1,5 +1,6 @@
 package com.gdu.academix.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.io.Resource;
@@ -79,8 +80,8 @@ public class FolderController {
   
   // 파일 삭제
   @PostMapping(value="/removeFile.do", produces="application/json")
-  public ResponseEntity<Map<String, Object>> removeFile(HttpServletRequest request) {
-    return folderService.removeFile(request);
+  public ResponseEntity<Map<String, Object>> removeFile(@RequestBody Map<String, List<Integer>> params) {
+    return folderService.removeFile(params);
   }
   
 

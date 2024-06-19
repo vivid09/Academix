@@ -187,6 +187,9 @@ public class FolderServiceImpl implements FolderService {
   public ResponseEntity<Resource> download(HttpServletRequest request) {
     
     String[] fileNoStrings = request.getParameterValues("fileNo");
+    if (fileNoStrings == null || fileNoStrings.length == 0) {
+      return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
+    }
     List<Integer> fileNos = Arrays.stream(fileNoStrings).map(Integer::parseInt).collect(Collectors.toList());
     
     List<FileDto> fileList = new ArrayList<>();
@@ -265,9 +268,8 @@ public class FolderServiceImpl implements FolderService {
   }
   
   @Override
-  public ResponseEntity<Map<String, Object>> removeFile(HttpServletRequest request) {
-    String[] fileNoStrings = request.getParameterValues("fileNo");
-    List<Integer> fileNos = Arrays.stream(fileNoStrings).map(Integer::parseInt).collect(Collectors.toList());
+  public ResponseEntity<Map<String, Object>> removeFile(Map<String, List<Integer>> params) {
+    List<Integer> fileNos = params.get("fileNos");
     
     int totalDeleteCount = 0;
     

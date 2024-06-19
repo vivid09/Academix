@@ -109,6 +109,9 @@
                                 <c:when test="${drive.originalFilename.endsWith('.txt')}">
                                   <img src="${contextPath}/images/txt.png" alt="txt_img" />
                                 </c:when>
+                                <c:when test="${drive.originalFilename.endsWith('.xlsx')}">
+                                  <img src="${contextPath}/images/xlsx.png" alt="xlsx_img" />
+                                </c:when>
                                 <c:otherwise>
                                   <img src="${contextPath}/images/file.png" alt="file_img" />
                                 </c:otherwise>
@@ -629,13 +632,19 @@
 	  return selectedBoxes;
   }
   
+  // 체크된 파일 다운로드
   const fnDownloadSelected = () => {
 	  let selectedBoxes = fnGetSelectedBoxes();
-	  console.log(selectedBoxes);
 	  if (selectedBoxes.length > 0) {
 		  if (confirm('다운로드 하시겠습니까?')) {
-			  let queryString = selectedBoxes.map(id => 'fileNo=${id}').join('&');
-			  location.href = '${contextPath}/drive/download.do?${queryString}';
+			  let queryString = '';
+			  for (let i = 0; i < selectedBoxes.length; i++) {
+				  queryString += 'fileNo=' + selectedBoxes[i];
+				  if (i < selectedBoxes.length - 1) {
+					  queryString += '&';
+				  }
+			  }
+			  location.href = '${contextPath}/drive/download.do?' + queryString;
 		  }
 	  } else {
 		  alert('다운로드할 파일을 선택하세요.');
@@ -646,19 +655,24 @@
 	  let selectedBoxes = fnGetSelectedBoxes();
 	  if (selectedBoxes.length > 0) {
 		  if (confirm('삭제하시겠습니까?')) {
-			  let fileNos = selectedBoxes.map(id => ({ fileNo: id }));
+			  let fileNos = [];
+			  for (let i = 0; i < selectedBoxes.length; i++) {
+				  fileNos.push(selectedBoxes[i]);
+			  }
 			  fetch('${contextPath}/drive/removeFile.do', {
 				  method: 'POST',
 				  headers: {
 					  'Content-Type': 'application/json'
 				  },
-				  body: JSON.stringify(fileNos)
+				  body: JSON.stringify({
+					  'fileNos': fileNos
+					})
 			  })
 			  .then(response => response.json())
 			  .then(resData => {
 				  if (resData.deleteCount === selectedBoxes.length) {
 					  alert('선택한 파일이 삭제되었습니다.');
-					  fnGetFileList();
+					  location.href = '${contextPath}/drive/main.page';
 				  } else {
 					  alert('선택한 파일 중 일부가 삭제되지 않았습니다.');
 				  }
