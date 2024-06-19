@@ -93,55 +93,6 @@
       </ol>
     </section>
 
-  <!-- Modal -->
-  <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">근태 조정 신청</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-	        <form id="eventForm">
-	          <div class="form-group">
-	            <label for="eventTitle">제목</label>
-	            <input type="text" class="form-control" id="eventTitle" placeholder="Event Title">
-	          </div>
-	          <div class="form-row">
-	            <div class="form-group col-md-6">
-	              <label for="startDate">시작 일</label>
-	              <input type="date" class="form-control" id="startDate">
-	            </div>
-	          </div>
-	          <div class="form-row">
-	            <div class="form-group col-md-4">
-	              <label for="startTime">시작 시간</label>
-	              <input type="time" class="form-control" id="startTime">
-	            </div>
-	            <div class="form-group col-md-4">
-	              <label for="endTime">종료 시간</label>
-	              <input type="time" class="form-control" id="endTime">
-	            </div>
-	          </div>
- 	          <div class="form-row">
-		          <div class="form-group col-md-12">
-		            <label for="eventDescription">설명</label>
-		            <textarea class="form-control" id="eventDescription" rows="3"></textarea>
-		          </div>
-	          </div>
-		        <div class="modal-footer">
-		        	<input type="hidden" id="recordNo" name="recordNo">
-		          <button type="button" class="btn btn-danger" id="deleteEventBtn">Delete</button>
-		          <button type="submit" class="btn btn-primary" id="saveEventBtn">Save</button>
-		        </div>
-	        </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Current Date and Time -->
   <div class="current-date-time">
     <h2 id="currentDateTime">1970-01-01(목)</h2>
@@ -174,12 +125,6 @@
       <div class="status-number h1" id="attendance_annual_leave">0</div>
     </div>
   </div>
-
-  <!-- Calendar Header -->
-  <div class="calendar-header">
-    <button type="button" class="btn btn-flex btn-primary btn-lg">조정신청현황</button>
-  </div>
-
 
     <!-- Main content -->
     <section class="content">
@@ -242,7 +187,6 @@
   $(function () {
     /* initialize the calendar
      -----------------------------------------------------------------*/
-    //Date for the calendar events (dummy data)
     var date = new Date();
     var d = date.getDate(),
         m = date.getMonth(),
@@ -264,53 +208,6 @@
 	      },
 	      timezone: 'local',
 	      selectable: true,
-        select: function(start, end, jsEvent, view) {
-        	currentEvent = null;
-        	// 처음 클릭했을 때 Delete 버튼 숨기기
-        	$('#deleteEventBtn').hide(); 
-        	
-          $('#eventNo').val('');
-	        // 모달을 보여주기 전에 선택한 시작 날짜와 종료 날짜를 모달에 반영
-	        $('#startDate').val(start.format('YYYY-MM-DD'));
-	        $('#endDate').val(end.format('YYYY-MM-DD'));
-	        
-	        
-	        $('#eventModal').modal('show');
-	       
-	      },
-        eventClick: function(event) {
-        	// 이벤트 추가 모달을 띄우기 전에 모달 내용을 비운다.
-          $('#eventForm')[0].reset();
-	        
-	        // 클릭한 이벤트 정보를 모달에 반영합니다.
-	        currentEvent = event;
-	        $('#eventNo').val(event.eventNo);
-	        $('#eventTitle').val(event.title);
-	        $('#startDate').val(event.start.format('YYYY-MM-DD'));
-	        if(event.end === null){
-	        	$('#endDate').val(event.start.format('YYYY-MM-DD'));	
-	        } else {
-	        	$('#endDate').val(event.end.format('YYYY-MM-DD'));	
-	        }
-	        $('#startTime').val(event.start.format('HH:mm'));
-	        if(event.end === null){
-	        	$('#endTime').val(event.start.format('HH:mm'));
-	        } else {
-	        	$('#endTime').val(event.end.format('HH:mm'));
-	        }
-	        $('#allDay').prop('checked', event.allDay);
-	        $('#eventDescription').val(event.description);
-	        $('#backgroundColor').val(event.backgroundColor);
-	        $('#textColor').val(event.textColor);
-  	      $('#eventlat').val(event.lat);
-	      	$('#eventlng').val(event.lng);
-	      	$('#eventlocation').val(event.location);
-	        
-	        // 이벤트 수정 모달을 띄웁니다.
-	        $('#deleteEventBtn').show(); // 이벤트를 클릭했을 때만 Delete 버튼을 보이도록 설정
-	        $('#eventModal').modal('show');
-
-        },
         events: function(start, end, timezone, callback) {
       	  fetch('/attendance/commute/getAttendanceRecords.do?employeeNo=${sessionScope.user.employeeNo}', {
       	    method: 'GET',
@@ -368,13 +265,26 @@
             		inTitle = annual_leave_title;
             		color = annual_leave_color;
             		allDay = true;
-                records.push({
-                    title: inTitle,
-                    start: record.timeIn,
-                    end:  record.timeOut,
-                    color: color,
-                    allDay: allDay
-                 });
+            		// Date 객체로 변환
+            		let timeIn = new Date(record.timeIn);
+            		let timeOut = new Date(record.timeOut);
+
+            		// 9시간(9 * 60 * 60 * 1000 밀리초) 추가
+            		timeIn.setTime(timeIn.getTime() + 9 * 60 * 60 * 1000);
+            		timeOut.setTime(timeOut.getTime() + 33 * 60 * 60 * 1000);
+
+            		// ISO 문자열로 변환
+								let timeInISO = timeIn.toISOString().replace('Z', '');
+								let timeOutISO = timeOut.toISOString().replace('Z', '');
+
+            		// 레코드 배열에 이벤트 추가
+            		records.push({
+            		    title: inTitle,
+            		    start: timeInISO,
+            		    end: timeOutISO,
+            		    color: color,
+            		    allDay: allDay
+            		});
                 return;
             	}
               // timeIn 이벤트 추가
@@ -437,14 +347,8 @@
           .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
           });
-      $('#eventModal').modal('hide');
-
     });
-    
-    $('#eventModal').on('hidden.bs.modal', function () {
-        $('#deleteEventBtn').hide(); // 모달이 닫힐 때 Delete 버튼을 숨깁니다.
-    });
-    
+        
     $('#exitBtn').click(function() {
       event.preventDefault();
       
@@ -471,7 +375,6 @@
           console.error('There was a problem with the fetch operation:', error);
         });
     });
-
   });
 </script>
 
