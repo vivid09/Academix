@@ -392,6 +392,7 @@
   <footer class="main-footer">
     
   </footer>
+<script src="${contextPath}/js/checkDrive.js?dt=${dt}"></script>
 
 </body>
 </html>
