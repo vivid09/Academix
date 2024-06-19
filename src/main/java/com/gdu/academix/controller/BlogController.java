@@ -43,7 +43,7 @@ public class BlogController {
   @PostMapping("/registerBlog.do")
   public String register(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     int insertCount = blogService.registerBlog(request);
-    redirectAttributes.addFlashAttribute("insertResult", insertCount == 1 ? "블로그가 등록되었습니다." : "블로그가 등록되지 않았습니다.");
+    redirectAttributes.addFlashAttribute("insertResult", insertCount == 1 ? "공지사항이 등록되었습니다." : "공지사항이 등록되지 않았습니다.");
     return "redirect:/blog/list.page";
   }
   

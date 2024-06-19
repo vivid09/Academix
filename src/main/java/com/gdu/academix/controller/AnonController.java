@@ -46,7 +46,7 @@ public class AnonController {
   @PostMapping("/registerAnon.do")
   public String register(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     int insertCount = anonService.registerAnon(request);
-    redirectAttributes.addFlashAttribute("insertResult", insertCount == 1 ? "블로그가 등록되었습니다." : "블로그가 등록되지 않았습니다.");
+    redirectAttributes.addFlashAttribute("insertResult", insertCount == 1 ? "게시글이 등록되었습니다." : "게시글이 등록되지 않았습니다.");
     return "redirect:/anon/list.page";
   }
   
