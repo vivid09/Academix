@@ -12,7 +12,7 @@
   <title>Academix</title>
   <!-- Tell the browser to be responsive to screen width -->
   
- 
+
   
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">

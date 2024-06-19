@@ -63,15 +63,13 @@
       , FILESYSTEM_NAME
       , ORIGINAL_FILENAME
       , UPLOAD_DATE
-      , NOTI_POST_NO
       , POST_NO
     ) VALUES (
-        #{driveAttachNo}
+        ATTACH_SEQ.NEXTVAL
       , #{uploadPath}
       , #{filesystemName}
       , #{originalFilename}
       ,	CURRENT_TIMESTAMP
-      , 0
       , #{postNo}
     )
   </insert>

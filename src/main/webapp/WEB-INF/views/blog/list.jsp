@@ -143,18 +143,22 @@ table.blog-list-table tbody tr:hover {
 </section>
 <!-- /.content -->
 
-<!-- jQuery 2.2.3 -->
-<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
-<!-- Bootstrap 3.3.6 -->
-<script src="/bootstrap/js/bootstrap.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-<!-- Slimscroll -->
-<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="/plugins/fastclick/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="/dist/js/app.min.js"></script>
+			<!-- jQuery 2.2.3 -->
+			<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+			<!-- Bootstrap 3.3.6 -->
+			<script src="/bootstrap/js/bootstrap.min.js"></script>
+			<!-- jQuery UI 1.11.4 -->
+			<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+			<!-- Slimscroll -->
+			<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+			<!-- FastClick -->
+			<script src="/plugins/fastclick/fastclick.js"></script>
+			<!-- AdminLTE App -->
+			<script src="/dist/js/app.min.js"></script>
+
+	       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	       <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+	       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
 
 <script>
   // 전역 변수
