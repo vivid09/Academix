@@ -248,8 +248,6 @@
 	// 날짜 한글로
 	moment.locale('ko');
 	
-	console.log(moment().format('A h:mm'));
-	
 	// jvectorMap 이벤트 제거
 	$(document).ready(function() {
 	    // jQuery의 vectorMap 함수가 존재하는지 확인
@@ -739,7 +737,6 @@
 	// 페이지 떠날때 접속 해제
 	window.addEventListener('beforeunload', function(event) {
 		
-		console.log('접속 해제!');
 		fnDisconnect(currentChatroomType, currentChatroomNo);
 		
 	})
@@ -1000,8 +997,6 @@
 							
 						} else {// 나간 회원..
 							
-							const unreadCount = getUnreadCount(message.messageNo);
-							
 							messageHTML += '<div class="chatMessage-you">';
 							messageHTML += '  <div class="chatMessage-profile">';
 							messageHTML += '    <img class="direct-chat-img" src="${contextPath}/resources/images/default_profile_image.png" alt="Message User Image">';
@@ -1079,8 +1074,6 @@
  		})
  		.then((response) => response.json())  // (5) - 아까 위의 fetch로 받아온 데이터 json 파싱 
  		.then(resData => {
- 			
- 			console.log(resData);
  			
  			// 무한 스크롤용 totalPage
  			chatMessageTotalPage = resData.chatMessageTotalPage;  // (7)
@@ -1401,7 +1394,6 @@
 				  .then((response) => response.json())
 				  .then(resData => {
 					if(resData.updateStatusCount !== 0){
-					  console.log('updateStatusCount: ', resData.updateStatusCount);
 						
 				    // 업데이트 성공 시, 채팅방 목록에서 해당 채팅방의 아이콘을 지운다.
 				    $('ul.contacts-list li').each(function() {
@@ -1438,7 +1430,6 @@
 				          
 				        }
 				      });
-					  console.log('해당 채팅방의 알림 모두 삭제함.');
 					}
 				  })
 			})
@@ -1818,39 +1809,6 @@
         	
         })
      })
-   }
-    
-   // 화면에 있는 읽음 카운트 모두 1씩 줄어듬.
-   const fnUpdateChatMessageCount = (message) => {
-		 
-	   let newCountList = message.newCountList;
-	   
-	   console.log('newCountList', newCountList);
-	   
-     if (!Array.isArray(newCountList)) {
-        return;
-     }
-	    
-	   $('.chatMessage-count').each(function() {
-		    let $element = $(this);
-		    let messageNo = parseInt($element.data('message-no'), 10);
-		    
-		    // newCountList에서 messageNo와 일치하는 항목 찾기
-		    let matchingMessage = newCountList.find(function(message) {
-		        return message.messageNo === messageNo;
-		    });
-		    
-		    // 일치하는 항목이 있으면 unreadCount 업데이트
-		    if (matchingMessage) {
-		    		if(matchingMessage.unreadCount === 0) {
-		    			$element.text('');
-		    		} else {
-		        	$element.text(matchingMessage.unreadCount);
-		    		}
-		    }
-		});
-	   
-	   
    }
     
     

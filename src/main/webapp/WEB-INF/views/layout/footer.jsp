@@ -26,11 +26,7 @@
 	  
 	  globalStompClient.connect({}, (frame) => {
 		  
-		  console.log('전역 소켓 연결 성공: ' + frame);
-		  
 		  globalStompClient.subscribe('/user/queue/notifications', (notification) => { // notification은 수신된 메시지를 가리키는 객체
-			  
-			  console.log('메시지 받음 >>> ', notification.body)
 			  
 			  const message = JSON.parse(notification.body);
 			  fnShowAlert(message);
@@ -109,8 +105,6 @@
  		})
  		.then((response) => response.json())
  		.then(resData => {
- 			
- 			console.log('알림 리스트: ', resData);
  			
  			/*
 			{
@@ -198,7 +192,6 @@
    	// x 버튼 눌러서 메시지 알림 삭제
    	const fnRemoveMessageAlert = () => {
    		$(document).on('click', '.btn-removeMessageAlert', (evt) => {
-   			console.log('x 버튼 클릭');
    			evt.stopPropagation();  			
    			// 해당 요소의 notification_no 넘겨줌
    			let notificationNo = $(evt.target).closest('.notification-item').data('notification-no');
@@ -241,7 +234,6 @@
     	})
     	.then((response) => response.json())
     	.then(resData => {
-    		console.log(resData);
     	})
 	    .catch(error => {
 	      console.error('There has been a problem with your fetch operation:', error);
@@ -317,7 +309,6 @@
     // 알림 클릭 시 해당 채팅방으로 이동
      const fnDirectChatroom = () => {
    	   $(document).on('click', '.notification-item', (evt) => {
-	     console.log('item 클릭');
    		 let notificationNo = $(evt.currentTarget).data('notification-no');
    		 let chatroomNo = $(evt.currentTarget).data('chatroom-no');
    		 let notificationNoList = [notificationNo];
@@ -365,8 +356,6 @@
       })
       .then((response) => response.json())
       .then(resData => {
-    	  
-    	  console.log(resData);
     	  
     	  if(resData.LatestMessageList.length !== 0) {
 	    	  $('.message-table').empty();
