@@ -2,6 +2,7 @@ package com.gdu.academix.dto;
 
 import java.sql.Timestamp;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Data 
 @Builder
 public class BlogDto {
-  private int blogNo, hit;
-  private String title, contents;
-  private Timestamp createDt, modifyDt;
-  private UserDto user;
+  private int notiPostNo, authorNo;
+  private String title, content;
+  private Timestamp postDate;
+  private EmployeesDto employee;
 }

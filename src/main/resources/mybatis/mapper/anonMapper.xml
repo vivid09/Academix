@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.AnonMapper">
+
+  <resultMap type="AnonDto" id="AnonMap">
+    <id     property="postNo"   column="POST_NO" />
+    <result property="title"    column="TITLE" />
+    <result property="content" 	column="CONTENT" />
+    <result property="postDate" column="POST_DATE" />
+    <result property="authorNo" column="AUTHOR_NO" />
+    <result property="hit" 		  column="HIT" />
+    <result property="status" 	column="STATUS" />
+    <association property="employee" javaType="EmployeesDto">
+    </association>
+  </resultMap>
+  
+  <resultMap type="CommentDto" id="CommentMap">
+    <id     property="commentNo" 		column="COMMENT_NO" />
+    <result property="content"     		column="CONTENT" />
+    <result property="commentDate"      column="COMMENT_DATE" />
+    <result property="commentStatus"    column="COMMENT_STATUS" />
+    <result property="postNo"    		column="POST_NO" />
+    <result property="authorNo"  		column="AUTHOR_NO" />
+    <result property="notiPostNo" 		column="NOTI_POST_NO" />
+    <result property="depth" 			column="DEPTH" />
+    <result property="groupNo" 			column="GROUP_NO" />
+    <association property="employee" javaType="EmployeesDto">
+      
+    </association>
+  </resultMap>
+
+  <insert id="insertAnon"
+          parameterType="AnonDto">
+    <selectKey order="BEFORE" keyProperty="postNo" resultType="int">
+      SELECT ANON_POST_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO ANON_POST_T (
+        POST_NO
+      , TITLE
+      , CONTENT
+      , POST_DATE
+      , AUTHOR_NO
+      , STATUS
+    ) VALUES (
+        #{postNo}
+      , #{title}
+      , #{content}
+      , CURRENT_TIMESTAMP
+      , #{authorNo}
+      , 1
+    )
+  </insert>
+
+  <insert id="insertBlogImage" 
+          parameterType="BlogImageDto">
+    INSERT INTO NOTI_ATTACH_T (
+        DRIVE_ATTACH_NO
+      , UPLOAD_PATH
+      , FILESYSTEM_NAME
+      , ORIGINAL_FILENAME
+      , UPLOAD_DATE
+      , NOTI_POST_NO
+      , POST_NO
+    ) VALUES (
+        #{driveAttachNo}
+      , #{uploadPath}
+      , #{filesystemName}
+      , #{originalFilename}
+      ,	CURRENT_TIMESTAMP
+      , 0
+      , #{postNo}
+    )
+  </insert>
+  
+  <select id="getAnonCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM ANON_POST_T
+  </select>
+
+  <select id="getAnonList"
+          parameterType="Map"
+          resultMap="AnonMap">
+    SELECT POST_NO, TITLE, CONTENT, POST_DATE, AUTHOR_NO, HIT, STATUS
+      FROM (SELECT ROW_NUMBER() OVER(ORDER BY A.POST_NO DESC) AS RN
+                 , A.POST_NO, A.TITLE, A.CONTENT, A.POST_DATE, A.AUTHOR_NO AS AUTHOR_NO, A.HIT, A.STATUS
+              FROM EMPLOYEES_T E INNER JOIN ANON_POST_T A
+                ON E.EMPLOYEE_NO = A.AUTHOR_NO)
+     WHERE RN BETWEEN #{begin} AND #{end}
+  </select>
+
+  <update id="updateHit">
+    UPDATE ANON_POST_T
+       SET HIT = HIT + 1
+     WHERE POST_NO = #{postNo}
+  </update>
+  
+  <select id="getAnonByNo"
+          resultMap="AnonMap">
+    SELECT A.POST_NO, A.TITLE, A.CONTENT, A.POST_DATE, A.AUTHOR_NO AS AUTHOR_NO, A.HIT, A.STATUS
+      FROM EMPLOYEES_T E INNER JOIN ANON_POST_T A
+        ON E.EMPLOYEE_NO = A.AUTHOR_NO
+     WHERE A.POST_NO = #{postNo} <!-- blogNo 어떻게? 이대로두 -->
+  </select>
+
+  <update id="updateAnon" 
+          parameterType="AnonDto">
+    UPDATE ANON_POST_T
+       SET TITLE = #{title}
+         , CONTENT = #{content}
+         , POST_DATE = CURRENT_TIMESTAMP
+     WHERE POST_NO = #{postNo}
+  </update>
+  
+  <select id="getBlogImageList" 
+          resultType="BlogImageDto">
+    SELECT DRIVE_ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, UPLOAD_DATE, NOTI_POST_NO, POST_NO
+      FROM NOTI_ATTACH_T
+     WHERE POST_NO = #{postNo}
+  </select>
+
+  <delete id="deleteBlogImage">
+    DELETE
+      FROM NOTI_ATTACH_T
+     WHERE FILESYSTEM_NAME = #{filesystemName}
+  </delete>
+
+  <delete id="deleteBlogImageList">
+    DELETE
+      FROM NOTI_ATTACH_T
+     WHERE POST_NO = #{postNo}
+  </delete>
+
+  <!-- <delete id="deleteAnon" parameterType="int">
+    DELETE
+      FROM ANON_POST_T
+     WHERE POST_NO = #{postNo}
+  </delete> -->
+  
+  <!-- 게시글 삭제 -->
+  <update id="updatePostStatus" parameterType="AnonDto">
+    UPDATE ANON_POST_T
+       SET STATUS = #{status},
+           POST_DATE = SYSDATE
+     WHERE POST_NO = #{postNo}
+</update>
+
+
+
+
+
+  <insert id="insertAnonComment"
+          parameterType="CommentDto">
+    INSERT INTO COMMENTS_T (
+        COMMENT_NO
+      , CONTENT
+      , COMMENT_DATE
+      , COMMENT_STATUS
+      , AUTHOR_NO
+      , POST_NO
+      , DEPTH
+      , GROUP_NO
+    ) VALUES (
+        COMMENTS_SEQ.NEXTVAL
+      , #{content}
+      , CURRENT_TIMESTAMP
+      , 1
+      , #{authorNo}
+      , #{postNo}
+      , 0
+      , COMMENTS_SEQ.CURRVAL
+    )
+  </insert>
+  
+  <select id="getCommentCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM COMMENTS_T
+     WHERE POST_NO = #{postNo}
+  </select>
+  
+  <select id="getCommentList"
+          parameterType="Map"
+          resultMap="CommentMap">
+    SELECT COMMENT_NO, CONTENT, COMMENT_DATE, COMMENT_STATUS, AUTHOR_NO, POST_NO, DEPTH, GROUP_NO
+      FROM (SELECT ROW_NUMBER() OVER(ORDER BY C.GROUP_NO ASC, C.DEPTH ASC, C.COMMENT_NO ASC) AS RN
+                 , C.COMMENT_NO, C.CONTENT, C.COMMENT_DATE, C.COMMENT_STATUS
+                 , C.AUTHOR_NO AS AUTHOR_NO, C.POST_NO, C.DEPTH, C.GROUP_NO
+              FROM EMPLOYEES_T E INNER JOIN COMMENTS_T C
+                ON E.EMPLOYEE_NO = C.AUTHOR_NO
+             WHERE POST_NO = #{postNo})
+     WHERE RN BETWEEN #{begin} AND #{end}
+  </select>
+  
+  
+  <insert id="insertReply"
+          parameterType="CommentDto">
+    INSERT INTO COMMENTS_T (
+        COMMENT_NO
+      , CONTENT
+      , COMMENT_DATE
+      , COMMENT_STATUS
+      , AUTHOR_NO
+      , POST_NO
+      , DEPTH
+      , GROUP_NO
+    ) VALUES (
+        COMMENTS_SEQ.NEXTVAL
+      , #{content}
+      , CURRENT_TIMESTAMP
+      , 1
+      , #{authorNo}
+      , #{postNo}
+      , 1
+      , #{groupNo}
+    )
+  </insert>
+  
+  <update id="deleteComment">
+    UPDATE COMMENTS_T
+       SET COMMENT_STATUS = 0
+     WHERE COMMENT_NO = #{commentNo}
+  </update>
+  
+  <delete id="deleteCommentByAnonNo">
+    DELETE 
+      FROM COMMENTS_T
+     WHERE POST_NO = #{postNo}
+  </delete>
+  
+  <!-- 게시글 상세 조회수 -->
+  <select id="getHitCountByPostNo"
+           resultType="int">
+     SELECT HIT
+       FROM ANON_POST_T
+      WHERE POST_NO = #{postNo}
+   </select>
+  
+  <!-- <select id="getBlogImageInYesterday" 
+          resultType="BlogImageDto">
+    SELECT BLOG_NO, UPLOAD_PATH, FILESYSTEM_NAME
+      FROM BLOG_IMAGE_T
+     WHERE UPLOAD_PATH = '/blog' || TO_CHAR(CURRENT_DATE - 1, '/YYYY/MM/DD')
+  </select> -->
+  
+</mapper>

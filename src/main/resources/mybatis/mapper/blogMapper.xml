@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.BlogMapper">
+
+  <resultMap type="BlogDto" id="BlogMap">
+    <id     property="notiPostNo"   column="NOTI_POST_NO" />
+    <result property="title"    column="TITLE" />
+    <result property="content" column="CONTENT" />
+    <result property="postDate" column="POST_DATE" />
+    <result property="authorNo" column="AUTHOR_NO" />
+    <association property="employee" javaType="EmployeesDto">
+      <result property="email"  column="EMAIL" />
+      <result property="departmentNo"  column="DEPARTMENT_NO" />
+      <result property="name"  column="NAME" />
+    </association>
+  </resultMap>
+  
+  <resultMap type="CommentDto" id="CommentMap">
+    <id     property="commentNo" 		column="COMMENT_NO" />
+    <result property="content"     		column="CONTENT" />
+    <result property="commentDate"      column="COMMENT_DATE" />
+    <result property="commentStatus"    column="COMMENT_STATUS" />
+    <result property="postNo"    		column="POST_NO" />
+    <result property="authorNo"  		column="AUTHOR_NO" />
+    <result property="notiPostNo" 		column="NOTI_POST_NO" />
+    <result property="depth" 			column="DEPTH" />
+    <result property="groupNo" 			column="GROUP_NO" />
+    <association property="employee" javaType="EmployeesDto">
+      <result property="email"  column="EMAIL" />
+      <result property="departmentNo"  column="DEPARTMENT_NO" />
+      <result property="name"  column="NAME" />
+    </association>
+  </resultMap>
+
+  <insert id="insertBlog"
+          parameterType="BlogDto">
+    <selectKey order="BEFORE" keyProperty="notiPostNo" resultType="int">
+      SELECT NOTI_POST_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO NOTI_POST_T (
+        NOTI_POST_NO
+      , TITLE
+      , CONTENT
+      , POST_DATE
+      , AUTHOR_NO
+    ) VALUES (
+        #{notiPostNo}
+      , #{title}
+      , #{content}
+      , CURRENT_TIMESTAMP
+      , #{authorNo}
+    )
+  </insert>
+
+  <insert id="insertBlogImage" 
+          parameterType="BlogImageDto">
+    INSERT INTO NOTI_ATTACH_T (
+        DRIVE_ATTACH_NO
+      , UPLOAD_PATH
+      , FILESYSTEM_NAME
+      , ORIGINAL_FILENAME
+      , UPLOAD_DATE
+      , NOTI_POST_NO
+      , POST_NO
+    ) VALUES (
+        #{driveAttachNo}
+      , #{uploadPath}
+      , #{filesystemName}
+      , #{originalFilename}
+      ,	CURRENT_TIMESTAMP
+      , #{notiPostNo}
+      , 0
+    )
+  </insert>
+  
+  <select id="getBlogCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM NOTI_POST_T
+  </select>
+
+  <select id="getBlogList"
+          parameterType="Map"
+          resultMap="BlogMap">
+    SELECT NOTI_POST_NO, TITLE, CONTENT, POST_DATE, AUTHOR_NO, EMAIL, DEPARTMENT_NO, NAME
+      FROM (SELECT ROW_NUMBER() OVER(ORDER BY N.NOTI_POST_NO DESC) AS RN
+                 , N.NOTI_POST_NO, N.TITLE, N.CONTENT, N.POST_DATE, N.AUTHOR_NO AS AUTHOR_NO
+                 , E.EMAIL , E.DEPARTMENT_NO, E.NAME
+              FROM EMPLOYEES_T E INNER JOIN NOTI_POST_T N
+                ON E.EMPLOYEE_NO = N.AUTHOR_NO)
+     WHERE RN BETWEEN #{begin} AND #{end}
+  </select>
+
+  <update id="updateHit">
+    UPDATE BLOG_T
+       SET HIT = HIT + 1
+     WHERE BLOG_NO = #{blogNo}
+  </update>
+  
+  <select id="getBlogByNo"
+          resultMap="BlogMap">
+    SELECT N.NOTI_POST_NO, N.TITLE, N.CONTENT, N.POST_DATE, N.AUTHOR_NO AS AUTHOR_NO
+         , E.EMAIL, E.DEPARTMENT_NO, E.NAME
+      FROM EMPLOYEES_T E INNER JOIN NOTI_POST_T N
+        ON E.EMPLOYEE_NO = N.AUTHOR_NO
+     WHERE N.NOTI_POST_NO = #{notiPostNo} <!-- blogNo 어떻게? 이대로두 -->
+  </select>
+
+  <update id="updateBlog" 
+          parameterType="BlogDto">
+    UPDATE NOTI_POST_T
+       SET TITLE = #{title}
+         , CONTENT = #{content}
+         , POST_DATE = CURRENT_TIMESTAMP
+     WHERE NOTI_POST_NO = #{notiPostNo}
+  </update>
+  
+  <select id="getBlogImageList" 
+          resultType="BlogImageDto">
+    SELECT DRIVE_ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, UPLOAD_DATE, NOTI_POST_NO, POST_NO
+      FROM NOTI_ATTACH_T
+     WHERE NOTI_POST_NO = #{notiPostNo}
+  </select>
+
+  <delete id="deleteBlogImage">
+    DELETE
+      FROM NOTI_ATTACH_T
+     WHERE FILESYSTEM_NAME = #{filesystemName}
+  </delete>
+
+  <delete id="deleteBlogImageList">
+    DELETE
+      FROM NOTI_ATTACH_T
+     WHERE NOTI_POST_NO = #{notiPostNo}
+  </delete>
+
+  <delete id="deleteBlog" parameterType="int">
+    DELETE
+      FROM NOTI_POST_T
+     WHERE NOTI_POST_NO = #{notiPostNo}
+  </delete>
+
+
+
+
+  <insert id="insertNotiComment"
+          parameterType="CommentDto">
+    INSERT INTO COMMENTS_T (
+        COMMENT_NO
+      , CONTENT
+      , COMMENT_DATE
+      , COMMENT_STATUS
+      , AUTHOR_NO
+      , NOTI_POST_NO
+      , DEPTH
+      , GROUP_NO
+    ) VALUES (
+        COMMENTS_SEQ.NEXTVAL
+      , #{content}
+      , CURRENT_TIMESTAMP
+      , 1
+      , #{authorNo}
+      , #{notiPostNo}
+      , 0
+      , COMMENTS_SEQ.CURRVAL
+    )
+  </insert>
+  
+  <select id="getCommentCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM COMMENTS_T
+     WHERE NOTI_POST_NO = #{notiPostNo}
+  </select>
+  
+  <select id="getCommentList"
+          parameterType="Map"
+          resultMap="CommentMap">
+    SELECT COMMENT_NO, CONTENT, COMMENT_DATE, COMMENT_STATUS, AUTHOR_NO, NOTI_POST_NO, DEPTH, GROUP_NO, EMAIL, DEPARTMENT_NO, NAME
+      FROM (SELECT ROW_NUMBER() OVER(ORDER BY C.GROUP_NO ASC, C.DEPTH ASC, C.COMMENT_NO ASC) AS RN
+                 , C.COMMENT_NO, C.CONTENT, C.COMMENT_DATE, C.COMMENT_STATUS
+                 , C.AUTHOR_NO AS AUTHOR_NO, C.NOTI_POST_NO, C.DEPTH, C.GROUP_NO
+                 , E.EMAIL, E.DEPARTMENT_NO, E.NAME
+              FROM EMPLOYEES_T E INNER JOIN COMMENTS_T C
+                ON E.EMPLOYEE_NO = C.AUTHOR_NO
+             WHERE NOTI_POST_NO = #{notiPostNo})
+     WHERE RN BETWEEN #{begin} AND #{end}
+  </select>
+  
+  
+  <insert id="insertReply"
+          parameterType="CommentDto">
+    INSERT INTO COMMENTS_T (
+        COMMENT_NO
+      , CONTENT
+      , COMMENT_DATE
+      , COMMENT_STATUS
+      , AUTHOR_NO
+      , NOTI_POST_NO
+      , DEPTH
+      , GROUP_NO
+    ) VALUES (
+        COMMENTS_SEQ.NEXTVAL
+      , #{content}
+      , CURRENT_TIMESTAMP
+      , 1
+      , #{authorNo}
+      , #{notiPostNo}
+      , 1
+      , #{groupNo}
+    )
+  </insert>
+  
+  <update id="deleteComment">
+    UPDATE COMMENTS_T
+       SET COMMENT_STATUS = 0
+     WHERE COMMENT_NO = #{commentNo}
+  </update>
+  
+  <delete id="deleteCommentByNotiPostNo">
+    DELETE 
+      FROM COMMENTS_T
+     WHERE NOTI_POST_NO = #{notiPostNo}
+  </delete>
+  
+  <!-- <select id="getBlogImageInYesterday" 
+          resultType="BlogImageDto">
+    SELECT BLOG_NO, UPLOAD_PATH, FILESYSTEM_NAME
+      FROM BLOG_IMAGE_T
+     WHERE UPLOAD_PATH = '/blog' || TO_CHAR(CURRENT_DATE - 1, '/YYYY/MM/DD')
+  </select> -->
+  
+</mapper>

@@ -50,9 +50,13 @@ public class MyFileUtils {
     return System.currentTimeMillis() + "";
   }
   
-  // 블로그 작성시 사용된 이미지가 저장될 경로 반환하기
+  // 공지사항게시판 작성시 사용된 이미지가 저장될 경로 반환하기
   public String getBlogImageUploadPath() {
-    return "c:/blog" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
+    return "/Users/upload" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
+  }
+  // 익명게시 작성시 사용된 이미지가 저장될 경로 반환하기
+  public String getAnonImageUploadPath() {
+    return "/Users/upload" + DateTimeFormatter.ofPattern("/yyyy/MM/dd").format(TODAY);
   }
   
   // 블로그 이미지가 저장된 어제 경로를 반환

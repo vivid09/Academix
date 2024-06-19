@@ -3,16 +3,16 @@
 
   <!-- Appenders -->
   
-  <!-- Console view 에 로그를 찍는 Appender -->
+  <!-- 콘솔에 로그를 찍는 Appender -->
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
       <layout class="com.gdu.academix.logback.MyLogbackLayout"/>
     </encoder>
   </appender>
   
-  <!-- File 에 로그를 찍는 Appender -->
+  <!-- 파일에 로그를 찍는 Appender -->
   <appender name="file" class="ch.qos.logback.core.FileAppender">
-    <file>/logs/academix.log</file>
+    <file>/var/log/academix/academix.log</file>
     <append>true</append>
     <immediateFlush>true</immediateFlush>
     <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
@@ -23,20 +23,20 @@
   <!-- 매일 새로운 파일을 만드는 Appender -->
   <appender name="rolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <fileNamePattern>/logs/academix-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <fileNamePattern>/var/log/academix/academix-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
       <maxFileSize>10MB</maxFileSize>
       <totalSizeCap>100GB</totalSizeCap>
       <maxHistory>30</maxHistory>
     </rollingPolicy>
-    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">  
       <customFields>{"appname":"academix","roles":["customerorder","auth"],"buildinfo":{"version":"Version 0.1.0-SNAPSHOT","lastcommit":"75473700d5befa953c45f630c6d9105413c16fe1"}}</customFields>
     </encoder>
   </appender>
   
-  <!-- Application Loggers -->
+  <!-- 애플리케이션 로그 -->
   <logger name="com.gdu" level="info"/>
   
-  <!-- 3rdparty Loggers -->
+  <!-- 3rd 파티 로그 -->
   <logger name="org.springframework" level="info"/>
   <logger name="com.zaxxer.hikari"   level="info"/>
   <logger name="org.mybatis.spring"  level="info"/>
@@ -48,7 +48,7 @@
   <logger name="jdbc.resultsettable" level="off"/>    <!-- ResultSet 호출 결과 테이블 -->
   <logger name="log4jdbc.debug"      level="off"/>    <!-- log4jdbc 라이브러리 동작 -->
 
-  <!-- Root Logger -->
+  <!-- 루트 로그 -->
   <root>
     <priority value="warn" />
     <appender-ref ref="console" />

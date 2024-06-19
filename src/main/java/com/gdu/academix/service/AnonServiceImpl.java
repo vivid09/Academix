@@ -2,9 +2,13 @@ package com.gdu.academix.service;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,12 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gdu.academix.dto.BlogDto;
 import com.gdu.academix.dto.CommentDto;
 import com.gdu.academix.dto.EmployeesDto;
+import com.gdu.academix.dto.AnonDto;
 import com.gdu.academix.dto.BlogImageDto;
-import com.gdu.academix.dto.UserDto;
-import com.gdu.academix.mapper.BlogMapper;
+import com.gdu.academix.mapper.AnonMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
@@ -33,15 +36,16 @@ import lombok.RequiredArgsConstructor;
 
 @Transactional
 @Service
-public class BlogServiceImpl implements BlogService {
+public class AnonServiceImpl implements AnonService {
 
-  private final BlogMapper blogMapper;
+  private final AnonMapper anonMapper;
   private final MyPageUtils myPageUtils;
   private final MyFileUtils myFileUtils;
   
-  public BlogServiceImpl(BlogMapper blogMapper, MyPageUtils myPageUtils, MyFileUtils myFileUtils) {
+  
+  public AnonServiceImpl(AnonMapper anonMapper, MyPageUtils myPageUtils, MyFileUtils myFileUtils) {
 	super();
-	this.blogMapper = blogMapper;
+	this.anonMapper = anonMapper;
 	this.myPageUtils = myPageUtils;
 	this.myFileUtils = myFileUtils;
   }
@@ -75,7 +79,7 @@ public class BlogServiceImpl implements BlogService {
   }
 
   @Override
-  public int registerBlog(HttpServletRequest request) {
+  public int registerAnon(HttpServletRequest request) {
     
     // 요청 파라미터
     String title = request.getParameter("title");
@@ -83,24 +87,24 @@ public class BlogServiceImpl implements BlogService {
     int authorNo = Integer.parseInt(request.getParameter("authorNo"));
     
     // UserDto + BlogDto 객체 생성
-    BlogDto blog = BlogDto.builder()
+    AnonDto anon = AnonDto.builder()
                      .title(MySecurityUtils.getPreventXss(title))
                      .content(MySecurityUtils.getPreventXss(content))
                      .authorNo(authorNo)
                    .build();
     
     // DB에 blog 저장
-    int insertCount = blogMapper.insertBlog(blog);
+    int insertCount = anonMapper.insertAnon(anon);
     
     // Summernote Editor에 추가한 이미지들을 BLOG_IMAGE_T에 저장하기
     for(String editorImage : getEditorImageList(content)) {
       BlogImageDto blogImage = BlogImageDto.builder()
-          .notiPostNo(blog.getNotiPostNo())
-          .uploadPath(myFileUtils.getBlogImageUploadPath())
+          .postNo(anon.getPostNo())
+          .uploadPath(myFileUtils.getAnonImageUploadPath())
           .filesystemName(editorImage)
           .originalFilename(myFileUtils.getTempFilename())
           .build();
-      blogMapper.insertBlogImage(blogImage);
+      anonMapper.insertBlogImage(blogImage);
     }
     
     // DB에 blog 저장
@@ -110,10 +114,10 @@ public class BlogServiceImpl implements BlogService {
 
   @Transactional(readOnly=true)
   @Override
-  public ResponseEntity<Map<String, Object>> getBlogList(HttpServletRequest request) {
+  public ResponseEntity<Map<String, Object>> getAnonList(HttpServletRequest request) {
     
     // 전체 블로그 개수
-    int total = blogMapper.getBlogCount();
+    int total = anonMapper.getAnonCount();
     
     // 스크롤 이벤트마다 가져갈 목록 개수
     int display = 10;
@@ -129,21 +133,27 @@ public class BlogServiceImpl implements BlogService {
                                    , "end", myPageUtils.getEnd());
     
     // 목록 화면으로 반환할 값 (목록 + 전체 페이지 수)
-    return new ResponseEntity<>(Map .of("blogList", blogMapper.getBlogList(map)
+    return new ResponseEntity<>(Map .of("anonList", anonMapper.getAnonList(map)
                                       , "totalPage", myPageUtils.getTotalPage())
                               , HttpStatus.OK);
     
   }
   
   @Override
-  public int updateHit(int blogNo) {
-    return blogMapper.updateHit(blogNo);
+  public int updateHit(int postNo) {
+    return anonMapper.updateHit(postNo);
   }
+  
+  // 게시글 상세 조회
+  @Override
+	public int getHitCountByPostNo(int postNo) {
+	  	return anonMapper.getHitCountByPostNo(postNo);
+	}
   
   @Transactional(readOnly=true)
   @Override
-  public BlogDto getBlogByNo(int notiPostNo) {
-    return blogMapper.getBlogByNo(notiPostNo);
+  public AnonDto getAnonByNo(int postNo) {
+    return anonMapper.getAnonByNo(postNo);
   }
   
   @Transactional(readOnly=true)
@@ -169,17 +179,17 @@ public class BlogServiceImpl implements BlogService {
   }
   
   @Override
-  public int modifyBlog(HttpServletRequest request) {
+  public int modifyAnon(HttpServletRequest request) {
     
     // 수정할 제목/내용/블로그번호
     String title = request.getParameter("title");
     String content = request.getParameter("content");
-    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
+    int postNo = Integer.parseInt(request.getParameter("postNo"));
     
     // DB에 저장된 기존 이미지 가져오기
     // 1. blogImageDtoList : BlogImageDto를 요소로 가지고 있음
     // 2. blogImageList    : 이미지 이름(filesystemName)을 요소로 가지고 있음
-    List<BlogImageDto> blogImageDtoList = blogMapper.getBlogImageList(notiPostNo);
+    List<BlogImageDto> blogImageDtoList = anonMapper.getBlogImageList(postNo);
     List<String> blogImageList = blogImageDtoList.stream()
                                   .map(blogImageDto -> blogImageDto.getFilesystemName())
                                   .collect(Collectors.toList());
@@ -191,11 +201,11 @@ public class BlogServiceImpl implements BlogService {
     editorImageList.stream()
       .filter(editorImage -> !blogImageList.contains(editorImage))         // 조건 : Editor에 포함되어 있으나 기존 이미지에 포함되어 있지 않다.
       .map(editorImage -> BlogImageDto.builder()                           // 변환 : Editor에 포함된 이미지 이름을 BlogImageDto로 변환한다.
-                            .notiPostNo(notiPostNo)
+                            .postNo(postNo)
                             .uploadPath(myFileUtils.getBlogImageUploadPath())
                             .filesystemName(editorImage)
                             .build())
-      .forEach(blogImageDto -> blogMapper.insertBlogImage(blogImageDto));  // 순회 : 변환된 BlogImageDto를 BLOG_IMAGE_T에 추가한다.
+      .forEach(blogImageDto -> anonMapper.insertBlogImage(blogImageDto));  // 순회 : 변환된 BlogImageDto를 BLOG_IMAGE_T에 추가한다.
     
     // 블로그를 만들 때는 있었는데 수정할 때는 없는 이미지들 삭제 (수정하면서 지운 이미지들)
     List<BlogImageDto> removeList = blogImageDtoList.stream()
@@ -204,7 +214,7 @@ public class BlogServiceImpl implements BlogService {
 
     for(BlogImageDto blogImageDto : removeList) {
       // BLOG_IMAGE_T 테이블에서 삭제
-      blogMapper.deleteBlogImage(blogImageDto.getFilesystemName());  // 파일명이 일치하면 삭제(파일명은 UUID로 만들어졌으므로 파일명의 중복은 없다고 생각하면 된다.)
+      anonMapper.deleteBlogImage(blogImageDto.getFilesystemName());  // 파일명이 일치하면 삭제(파일명은 UUID로 만들어졌으므로 파일명의 중복은 없다고 생각하면 된다.)
       // 이미지 파일 삭제
       File file = new File(blogImageDto.getUploadPath(), blogImageDto.getFilesystemName());
       if(file.exists()) {
@@ -213,24 +223,28 @@ public class BlogServiceImpl implements BlogService {
     }
     
     // 수정할 제목/내용/블로그번호를 가진 BlogDto
-    BlogDto blog = BlogDto.builder()
+    AnonDto anon = AnonDto.builder()
                     .title(title)
                     .content(content)
-                    .notiPostNo(notiPostNo)
+                    .postNo(postNo)
                     .build();
     
     // BLOG_T 수정
-    int modifyResult = blogMapper.updateBlog(blog);
+    int modifyResult = anonMapper.updateAnon(anon);
+    
+    System.out.println(anon);
     
     return modifyResult;
     
+    
+    
   }
-
+//  익명게시판 글 db삭제
   @Override
-  public int removeBlog(int notiPostNo) {
+  public int removeAnon(int postNo) {
     
     // BLOG_IMAGE_T 테이블에서 블로그 만들 때 사용한 이미지 파일 삭제
-    List<BlogImageDto> blogImageDtoList = blogMapper.getBlogImageList(notiPostNo);
+    List<BlogImageDto> blogImageDtoList = anonMapper.getBlogImageList(postNo);
     for(BlogImageDto blogImage : blogImageDtoList) {
       File file = new File(blogImage.getUploadPath(), blogImage.getFilesystemName());
       if(file.exists()) {
@@ -239,13 +253,49 @@ public class BlogServiceImpl implements BlogService {
     }
     
     // BLOG_IMAGE_T 삭제
-    blogMapper.deleteBlogImageList(notiPostNo);
+    anonMapper.deleteBlogImageList(postNo);
     
     // NOTI 포스트 번호에 해당하는 전체 댓글삭제
-    blogMapper.deleteCommentByNotiPostNo(notiPostNo);
+    anonMapper.deleteCommentByAnonNo(postNo);
     
     // BLOG_T 삭제
-    return blogMapper.deleteBlog(notiPostNo);
+    return anonMapper.deleteAnon(postNo);
+    
+  }
+  
+  //db삭제하지 않고 status값 변경하여 삭제처럼 기
+  @Override
+  public int updatePostStatus(HttpServletRequest request) {
+    
+    // BLOG_IMAGE_T 테이블에서 블로그 만들 때 사용한 이미지 파일 삭제
+    List<BlogImageDto> blogImageDtoList = anonMapper.getBlogImageList(Integer.parseInt(request.getParameter("postNo")));
+    for(BlogImageDto blogImage : blogImageDtoList) {
+      File file = new File(blogImage.getUploadPath(), blogImage.getFilesystemName());
+      if(file.exists()) {
+        file.delete();
+      }
+    }
+    
+    // BLOG_IMAGE_T 삭제
+    anonMapper.deleteBlogImageList(Integer.parseInt(request.getParameter("postNo")));
+    
+    // NOTI 포스트 번호에 해당하는 전체 댓글삭제
+    anonMapper.deleteCommentByAnonNo(Integer.parseInt(request.getParameter("postNo")));
+    
+    int postNo = Integer.parseInt(request.getParameter("postNo"));
+    int status = 0;
+    if(request.getParameter("employeeStatus").equals("2")) {
+    	status = 2;
+    }
+
+    
+    AnonDto anon = AnonDto.builder()
+		   			.status(status)
+		   			.postNo(postNo)
+		   			.build();
+    
+    // BLOG_T 삭제
+    return anonMapper.updatePostStatus(anon);
     
   }
   
@@ -254,18 +304,18 @@ public class BlogServiceImpl implements BlogService {
     
     // 요청 파라미터
     String content = MySecurityUtils.getPreventXss(request.getParameter("content"));
-    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
+    int postNo = Integer.parseInt(request.getParameter("postNo"));
     int authorNo = Integer.parseInt(request.getParameter("authorNo"));
     
     // CommentDto 객체 생성
     CommentDto comment = CommentDto.builder()
                             .content(content)
                             .authorNo(authorNo)
-                            .notiPostNo(notiPostNo)
+                            .postNo(postNo)
                           .build();
     
     // DB 에 저장 & 결과 반환
-    return blogMapper.insertNotiComment(comment);
+    return anonMapper.insertAnonComment(comment);
     
   }
   
@@ -274,11 +324,11 @@ public class BlogServiceImpl implements BlogService {
   public Map<String, Object> getCommentList(HttpServletRequest request) {
     
     // 요청 파라미터
-    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
+    int postNo = Integer.parseInt(request.getParameter("postNo"));
     int page = Integer.parseInt(request.getParameter("page"));
     
     // 전체 댓글 개수
-    int total = blogMapper.getCommentCount(notiPostNo);
+    int total = anonMapper.getCommentCount(postNo);
     
     // 한 페이지에 표시할 댓글 개수
     int display = 10;
@@ -287,12 +337,12 @@ public class BlogServiceImpl implements BlogService {
     myPageUtils.setPaging(total, display, page);
     
     // 목록을 가져올 때 사용할 Map 생성
-    Map<String, Object> map = Map.of("notiPostNo", notiPostNo
+    Map<String, Object> map = Map.of("postNo", postNo
                                    , "begin", myPageUtils.getBegin()
                                    , "end", myPageUtils.getEnd());
     
     // 결과 (목록, 페이징) 반환
-    return Map.of("commentList", blogMapper.getCommentList(map)
+    return Map.of("commentList", anonMapper.getCommentList(map)
                 , "paging", myPageUtils.getAsyncPaging());
     
   }
@@ -302,7 +352,7 @@ public class BlogServiceImpl implements BlogService {
     
     // 요청 파라미터
     String content = request.getParameter("content");
-    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
+    int postNo = Integer.parseInt(request.getParameter("postNo"));
     int authorNo = Integer.parseInt(request.getParameter("authorNo"));
     int groupNo = Integer.parseInt(request.getParameter("groupNo"));
     
@@ -314,25 +364,25 @@ public class BlogServiceImpl implements BlogService {
     CommentDto reply = CommentDto.builder()
                           .content(content)
                           .groupNo(groupNo)
-                          .notiPostNo(notiPostNo)
+                          .postNo(postNo)
                           .authorNo(authorNo)
                         .build();
     
     // DB 에 저장하고 결과 반환
-    return blogMapper.insertReply(reply);
+    return anonMapper.insertReply(reply);
     
   }
   
   @Override
   public int removeComment(int commentNo) {
-    return blogMapper.deleteComment(commentNo);
+    return anonMapper.deleteComment(commentNo);
   }
   
   @Override
-  public void removeBlogImageNotOnTheTable() {
+  public void removeAnonImageNotOnTheTable() {
     
     // 1. 어제 작성된 블로그의 이미지 목록 (DB)
-    List<BlogImageDto> blogImageList = blogMapper.getBlogImageInYesterday();
+    List<BlogImageDto> blogImageList = anonMapper.getBlogImageInYesterday();
     
     // 2. List<BlogImageDto> -> List<Path> (Path는 경로+파일명으로 구성)
     List<Path> blogImagePathList = blogImageList.stream()
@@ -353,5 +403,6 @@ public class BlogServiceImpl implements BlogService {
     }
     
   }
+
   
 }
