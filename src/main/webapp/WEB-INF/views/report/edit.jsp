@@ -7,12 +7,9 @@
 
 <jsp:include page="../layout/header.jsp"/>
 
-
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <style>
-
-	.content {
-	      min-height: 1080px;
-	  }
   .insertForm {
     width: 640px;
     height: 180px;
@@ -25,16 +22,16 @@
     display: inline-block;
     box-sizing: border-box;
   }
+  span {
+  	color: white;
+  }
 </style>
-
-<section class="content">
-
 <div class="insertForm">
 	<h1 class="title">블로그 편집화면</h1>
 	
 	<form id="frm-blog-modify"
 	      method="POST"
-	      action="${contextPath}/blog/modifyBlog.do">
+	      action="${contextPath}/anon/modifyAnon.do">
 	
 	  <div>
 	    <span>작성자</span>
@@ -43,44 +40,22 @@
 	  
 	  <div>
 	    <label for="title">제목</label>
-	    <input type="text" name="title" id="title" value="${blog.title}">
+	    <input type="text" name="title" id="title" value="${anon.title}">
 	  </div>
 	  
 	  <div>
-	    <textarea id="content" name="content" placeholder="내용을 입력하세요">${blog.content}</textarea>
+	    <textarea id="content" name="content" placeholder="내용을 입력하세요">${anon.content}</textarea>
 	  </div>
 	  
 	  <div>
 	    <input type="hidden" name="authorNo" value="${sessionScope.user.employeeNo}">
-	    <input type="hidden" name="notiPostNo" value="${blog.notiPostNo}">
+	    <input type="hidden" name="postNo" value="${anon.postNo}">
 	    <button type="submit">수정완료</button>
-	    <a href="${contextPath}/blog/list.page"><button type="button">작성취소</button></a>
+	    <a href="${contextPath}/anon/list.page"><button type="button">작성취소</button></a>
 	  </div>
 	      
 	</form>
 </div>
-
-</section>
-
-<!-- jQuery 2.2.3 -->
-<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
-<!-- Bootstrap 3.3.6 -->
-<script src="/bootstrap/js/bootstrap.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-<!-- Slimscroll -->
-<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="/plugins/fastclick/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="/dist/js/app.min.js"></script>
-
-<script src="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.js"></script>
-  <script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
-  <link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
-
-
-
 
 <script>
 
@@ -95,7 +70,7 @@ const fnSummernoteEditor = () => {
         for(let i = 0; i < images.length; i++) {
           let formData = new FormData();
           formData.append('image', images[i]);
-          fetch('${contextPath}/blog/summernote/imageUpload.do', {
+          fetch('${contextPath}/anon/summernote/imageUpload.do', {
             method: 'POST',
             body: formData
             /*  submit 상황에서는 <form enctype="multipart/form-data"> 필요하지만 fetch 에서는 사용하면 안 된다. 

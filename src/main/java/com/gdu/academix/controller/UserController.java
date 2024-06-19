@@ -26,6 +26,11 @@ public class UserController {
     super();
     this.userService = userService;
   }
+
+  @GetMapping("/list.page")
+  public String list() {
+    return "contact/list";
+  }
   
   @GetMapping("/leave.do")
   public void leave(HttpServletRequest request, HttpServletResponse response) {

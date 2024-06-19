@@ -8,58 +8,97 @@
 <jsp:include page="../layout/header.jsp"/>
 
 
+
+  
+
 <style>
 
 	.content {
-	      min-height: 1080px;
-	  }
+	    min-height: 1080px;
+	}
   .insertForm {
-    width: 640px;
-    height: 180px;
-    margin: 10px auto;
+    width: 1070px;
+    padding: 20px;
+    margin-left: 300px;
+    margin-top: 30px;
     border: 1px solid gray;
-    cursor: pointer;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  .insertForm > insertForm {
-    color: tomato;
+  .insertForm > h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .insertForm > div {
+    margin-bottom: 15px;
+  }
+  .insertForm > div > span,
+  .insertForm > div > label {
+    color: #555;
     display: inline-block;
-    box-sizing: border-box;
+    width: 100px;
+    font-weight: bold;
+  }
+  .insertForm > div > input[type="text"],
+  .insertForm > div > textarea {
+    width: calc(100% - 100px);
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .insertForm > div > textarea {
+    resize: vertical;
+    height: 200px;
+  }
+  .insertForm > div > button,
+  .insertForm > div > a > button {
+    margin-top: 10px;
+  }
+  .title
+  {
+    margin-bottom: 10px;
   }
 </style>
 
-<section class="content">
 
+<section class="content">
 <div class="insertForm">
-	<h1 class="title">블로그 편집화면</h1>
+	<h1 class="title">익명게시판 편집화면</h1>
+	
 	
 	<form id="frm-blog-modify"
 	      method="POST"
-	      action="${contextPath}/blog/modifyBlog.do">
+	      action="${contextPath}/anon/modifyAnon.do">
 	
-	  <div>
-	    <span>작성자</span>
-	    <span>${sessionScope.user.email}</span>
-	  </div>
+	 
+    <div>
+      <span>작성자</span>
+      <span>익명</span>
+    </div>
+    
+    <div>
+      <label for="title">제목</label>
+      <input type="text" name="title" id="title" value="${anon.title}">
+    </div>
+    
+    <div>
+      <textarea id="content" name="content" placeholder="내용을 입력하세요">${anon.content}</textarea>
+    </div>
+    
+    <div>
+      <input type="hidden" name="authorNo" value="${sessionScope.user.employeeNo}">
+      <input type="hidden" name="postNo" value="${anon.postNo}">
+      <button type="submit">수정완료</button>
+      <a href="${contextPath}/anon/list.page"><button type="button">작성취소</button></a>
+    </div>
+        
+  </form>
+    
+	
 	  
-	  <div>
-	    <label for="title">제목</label>
-	    <input type="text" name="title" id="title" value="${blog.title}">
-	  </div>
-	  
-	  <div>
-	    <textarea id="content" name="content" placeholder="내용을 입력하세요">${blog.content}</textarea>
-	  </div>
-	  
-	  <div>
-	    <input type="hidden" name="authorNo" value="${sessionScope.user.employeeNo}">
-	    <input type="hidden" name="notiPostNo" value="${blog.notiPostNo}">
-	    <button type="submit">수정완료</button>
-	    <a href="${contextPath}/blog/list.page"><button type="button">작성취소</button></a>
-	  </div>
-	      
-	</form>
 </div>
-
 </section>
 
 <!-- jQuery 2.2.3 -->
@@ -79,9 +118,6 @@
   <script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
   <link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
 
-
-
-
 <script>
 
 const fnSummernoteEditor = () => {
@@ -95,7 +131,7 @@ const fnSummernoteEditor = () => {
         for(let i = 0; i < images.length; i++) {
           let formData = new FormData();
           formData.append('image', images[i]);
-          fetch('${contextPath}/blog/summernote/imageUpload.do', {
+          fetch('${contextPath}/anon/summernote/imageUpload.do', {
             method: 'POST',
             body: formData
             /*  submit 상황에서는 <form enctype="multipart/form-data"> 필요하지만 fetch 에서는 사용하면 안 된다. 

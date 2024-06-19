@@ -11,7 +11,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Academix</title>
   <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  
  
   
   <!-- Bootstrap 3.3.6 -->
@@ -214,7 +214,7 @@
         </li>
         
         <li>
-          <a href="pages/contact.html">
+          <a href="${contextPath}/user/list.page">
             <i class="fa fa-phone"></i> <span>주소록</span>
           </a>
         </li>
@@ -234,8 +234,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html">공지사항 게시판</a></li>
-            <li><a href="pages/charts/morris.html">익명 게시판</a></li>
+            <li><a href="${contextPath}/blog/list.page">공지사항 게시판</a></li>
+            <li><a href="${contextPath}/anon/list.page">익명 게시판</a></li>
           </ul>
         </li>   
         
@@ -338,7 +338,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="pages/charts/chartjs.html">강의 개설 관리</a></li>
-            <li><a href="pages/charts/chartjs.html">신고 관리</a></li>
+            <li><a href="${contextPath}/report/list.page">신고 관리</a></li>
             <li><a href="pages/charts/chartjs.html">학생 수강 신청</a></li>
           </ul>
         </li>                         
