@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.gdu.academix.dto.FileDto;
 import com.gdu.academix.dto.FolderDto;
-import com.gdu.academix.dto.UploadDto;
 
 @Mapper
 public interface FolderMapper {
@@ -21,9 +20,12 @@ public interface FolderMapper {
   int insertFile(FileDto fileDto);
   int insertFolder(FolderDto folderDto);
   
-  int getDriveListCount();
-  List<UploadDto> getDriveList(Map<String, Object> map);
+  int getDriveListCount(int parentFolderNo);
+  List<FileDto> getDriveList(Map<String, Object> map);
   
   FolderDto getFolderByMap(Map<String, Object> map);
 	
+  List<FileDto> getfileList(int fileNo);
+  int deleteFile(int fileNo);
+  
 }
