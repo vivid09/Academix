@@ -15,18 +15,20 @@ public interface BlogMapper {
   int insertBlogImage(BlogImageDto blogImage);
   int getBlogCount();
   List<BlogDto> getBlogList(Map<String, Object> map);
-  int updateHit(int blogNo);
-  BlogDto getBlogByNo(int blogNo);
+  int updateHit(int notiPostNo);
+  BlogDto getBlogByNo(int notiPostNo);
   int updateBlog(BlogDto blog);
-  List<BlogImageDto> getBlogImageList(int blogNo);
+  List<BlogImageDto> getBlogImageList(int notiPostNo);
   int deleteBlogImage(String filesystemName);
-  int deleteBlogImageList(int blogNo);
-  int deleteBlog(int blogNo);
+  int deleteBlogImageList(int notiPostNo);
+  int deleteBlog(int notiPostNo);
   List<BlogImageDto> getBlogImageInYesterday();
   
-  int insertComment(CommentDto comment);
-  int getCommentCount(int blogNo);
+  
+  int insertNotiComment(CommentDto comment);
+  int getCommentCount(int notiPostNo);
   List<CommentDto> getCommentList(Map<String, Object> map);
   int insertReply(CommentDto comment);
   int deleteComment(int commentNo);
+  int deleteCommentByNotiPostNo(int notiPostNo);
 }

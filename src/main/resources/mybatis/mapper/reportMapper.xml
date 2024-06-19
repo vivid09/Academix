@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.academix.mapper.ReportMapper">
+
+  <resultMap type="ReportDto" id="ReportMap">
+    <id     property="reportNo"       column="REPORT_NO" />
+    <result property="postNo"         column="POST_NO" />
+    <!-- <result property="commentNo" 	    column="COMMENT_NO" /> -->
+    <result property="authorNo"       column="AUTHOR_NO" />
+    <result property="reportCategory" column="REPORT_CATEGORY" />
+    <result property="description" 		column="DESCRIPTION" />
+    <result property="reportDate" 		column="REPORT_DATE" />
+    <association property="anon" javaType="AnonDto">
+      <result property="status"  column="STATUS" />
+    </association>
+  </resultMap>
+
+  <insert id="insertReport"
+          parameterType="ReportDto">
+    <selectKey order="BEFORE" keyProperty="reportNo" resultType="int">
+      SELECT REPORTS_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO REPORTS_T (
+        REPORT_NO
+      , POST_NO
+      , AUTHOR_NO
+      , REPORT_CATEGORY
+      , DESCRIPTION
+      , REPORT_DATE
+    ) VALUES (
+        #{reportNo}
+      , #{postNo}
+      , #{authorNo}
+      , #{reportCategory}
+      , #{description}
+      , CURRENT_TIMESTAMP
+    )
+  </insert>
+  
+  <select id="getReportCount"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM REPORTS_T
+  </select>
+
+  <select id="getReportList"
+          parameterType="Map"
+          resultMap="ReportMap">
+    SELECT REPORT_NO, POST_NO, AUTHOR_NO, REPORT_CATEGORY, DESCRIPTION, REPORT_DATE, STATUS
+      FROM (SELECT ROW_NUMBER() OVER(ORDER BY R.REPORT_NO DESC) AS RN
+                 , R.REPORT_NO, R.POST_NO, R.AUTHOR_NO AS AUTHOR_NO, R.REPORT_CATEGORY, R.DESCRIPTION, R.REPORT_DATE
+                 , A.STATUS AS STATUS
+              FROM ANON_POST_T A INNER JOIN REPORTS_T R
+                ON  A.POST_NO = R.POST_NO)
+     WHERE RN BETWEEN #{begin} AND #{end}
+  </select>
+
+  <!-- <update id="updateHit">
+    UPDATE ANON_POST_T
+       SET HIT = HIT + 1
+     WHERE POST_NO = #{postNo}
+  </update> -->
+  
+  <select id="getReportByNo"
+          resultMap="ReportMap">
+    SELECT R.REPORT_NO, R.POST_NO, R.AUTHOR_NO AS AUTHOR_NO, R.REPORT_CATEGORY, R.DESCRIPTION, R,REPORT_DATE
+          
+      FROM EMPLOYEES_T E INNER JOIN REPORTS_T R
+        ON E.EMPLOYEE_NO = R.AUTHOR_NO
+     WHERE R.REPORT_NO = #{reportNo}
+  </select>
+
+  <!-- <update id="updateReport" 
+          parameterType="ReportDto">
+    UPDATE REPORTS_T
+       SET TITLE = #{title}
+         , CONTENT = #{content}
+         , POST_DATE = CURRENT_TIMESTAMP
+     WHERE POST_NO = #{postNo}
+  </update> -->
+  
+
+  <delete id="deleteReport" parameterType="int">
+    DELETE
+      FROM REPORTS_T
+     WHERE REPORT_NO = #{reportNo}
+  </delete>
+
+
+
+
+  
+</mapper>

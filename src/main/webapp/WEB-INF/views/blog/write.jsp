@@ -7,81 +7,171 @@
 
 <jsp:include page="../layout/header.jsp"/>
 
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<h1 class="title">블로그 작성화면</h1>
+<style>
+
+	.content {
+	    min-height: 1080px;
+	}
+  .insertForm {
+    width: 1070px;
+    padding: 20px;
+    margin-left: 300px;
+    margin-top: 30px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .insertForm > h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .insertForm > div {
+    margin-bottom: 15px;
+  }
+  .insertForm > div > span,
+  .insertForm > div > label {
+    color: #555;
+    display: inline-block;
+    width: 100px;
+    font-weight: bold;
+  }
+  .insertForm > div > input[type="text"],
+  .insertForm > div > textarea {
+    width: calc(100% - 100px);
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .insertForm > div > textarea {
+    resize: vertical;
+    height: 200px;
+  }
+  .insertForm > div > button,
+  .insertForm > div > a > button {
+    margin-top: 10px;
+  }
+  .title
+  {
+    margin-bottom: 10px;
+  }
+  
+  
+</style>
+
+<section class="content">
+<div class="insertForm">
+	<h1 class="title">공지사항 작성화면</h1>
 
 <form id="frm-blog-register"
       method="POST"
       action="${contextPath}/blog/registerBlog.do">
 
   <div>
-    <span>작성자</span>
+    <span>작성자 :</span>
     <span>${sessionScope.user.email}</span>
   </div>
   
   <div>
-    <label for="title">제목</label>
+    <span>이름 :</span>
+    <span>${sessionScope.user.name}</span>
+  </div>
+  
+  
+  <div class="title">
+    <label for="title">제목 :</label>
     <input type="text" name="title" id="title">
   </div>
   
   <div>
-    <textarea id="contents" name="contents" placeholder="내용을 입력하세요"></textarea>
+    <textarea id="content" name="content" placeholder="내용을 입력하세요"></textarea>
   </div>
   
   <div>
-    <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
-    <button type="submit">작성완료</button>
-    <a href="${contextPath}/blog/list.page"><button type="button">작성취소</button></a>
+    <input type="hidden" name="authorNo" value="${sessionScope.user.employeeNo}">
+    <button type="submit" class="btn btn-primary">작성완료</button>
+     <a href="${contextPath}/anon/list.page">
+    <button type="button" class="btn btn-secondary">작성취소</button>
   </div>
       
 </form>
+</div>
+</section>
+
+<!-- jQuery 2.2.3 -->
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<!-- Slimscroll -->
+<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/app.min.js"></script>
+
+<script src="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.js"></script>
+  <script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
+  <link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
+
+
 
 <script>
 
-const fnSummernoteEditor = () => {
-  $('#contents').summernote({
-    width: 1024,
-    height: 500,
-    lang: 'ko-KR',
-    callbacks: {
-      onImageUpload: (images)=>{
-        // 비동기 방식을 이용한 이미지 업로드
-        for(let i = 0; i < images.length; i++) {
-          let formData = new FormData();
-          formData.append('image', images[i]);
-          fetch('${contextPath}/blog/summernote/imageUpload.do', {
-            method: 'POST',
-            body: formData
-            /*  submit 상황에서는 <form enctype="multipart/form-data"> 필요하지만 fetch 에서는 사용하면 안 된다. 
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-            */
-          })
-          .then(response=>response.json())
-          .then(resData=>{
-            $('#contents').summernote('insertImage', '${contextPath}' + resData.src);
-          })
-        }
-      }
-    }
-  })
-}
-
-const fnRegisterBlog = (evt) => {
-  if(document.getElementById('title').value === '') {
-    alert('제목 입력은 필수입니다.');
-    evt.preventDefault();
-    return;
-  }
-}
-
-document.getElementById('frm-blog-register').addEventListener('submit', (evt) => {
-  fnRegisterBlog(evt);
-})
-fnSummernoteEditor();
+const chkAdmin = () => {
+	if(${sessionScope.user.depart.departmentNo != 0 && sessionScope.user.depart.departmentNo != 1 && sessionScope.user.depart.departmentNo != 2 
+		&& sessionScope.user.depart.departmentNo != 3 && sessionScope.user.depart.departmentNo != 4}){ // 운영팀 번호로 수정 
+	      alert("잘못된 접근입니다.");
+	      location.href = "${contextPath}/blog/list.page";
+   } else {
+				const fnSummernoteEditor = () => {
+				  $('#content').summernote({
+				    width: 1024,
+				    height: 500,
+				    lang: 'ko-KR',
+				    callbacks: {
+				      onImageUpload: (images)=>{
+				        // 비동기 방식을 이용한 이미지 업로드
+				        for(let i = 0; i < images.length; i++) {
+				          let formData = new FormData();
+				          formData.append('image', images[i]);
+				          fetch('${contextPath}/blog/summernote/imageUpload.do', {
+				            method: 'POST',
+				            body: formData
+				            /*  submit 상황에서는 <form enctype="multipart/form-data"> 필요하지만 fetch 에서는 사용하면 안 된다. 
+				            headers: {
+				              'Content-Type': 'multipart/form-data'
+				            }
+				            */
+				          })
+				          .then(response=>response.json())
+				          .then(resData=>{
+				            $('#content').summernote('insertImage', '${contextPath}' + resData.src);
+				          })
+				        }
+				      }
+				    }
+				  })
+				}
+				
+				const fnRegisterBlog = (evt) => {
+				  if(document.getElementById('title').value === '') {
+				    alert('제목 입력은 필수입니다.');
+				    evt.preventDefault();
+				    return;
+				  }
+				}
+				
+				document.getElementById('frm-blog-register').addEventListener('submit', (evt) => {
+				  fnRegisterBlog(evt);
+				})
+				fnSummernoteEditor();
+	     }
+	    }
+	  chkAdmin();
 
 </script>
 

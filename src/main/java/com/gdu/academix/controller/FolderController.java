@@ -1,7 +1,9 @@
 package com.gdu.academix.controller;
 
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +32,7 @@ public class FolderController {
   
   @GetMapping("/main.page")
   public String main() {
-    return "drive/main";
+    return "redirect:/drive/main.do";
   }
   
   // 드라이브 - 최근 파일(메인 화면) / 모든 목록 불러오기 구현 후 -> 최근 목록 불러오기 구현
@@ -60,8 +62,8 @@ public class FolderController {
   @PostMapping("/register.do")
   public String register(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("inserted", folderService.registerUpload(multipartRequest));
-    return "redirect:/drive/main.page";
-    //return "redirect:/drive/main.do";
+    //return "redirect:/drive/main.page";
+    return "redirect:/drive/main.do";
   }
   
   // 폴더 추가
@@ -69,7 +71,18 @@ public class FolderController {
   public ResponseEntity<Map<String, Object>> addFolder(@RequestBody Map<String, Object> params) {
     return ResponseEntity.ok(Map.of("insertCount", folderService.addFolder(params)));
   }
-
+  
+  // 파일 다운로드
+  @GetMapping(value="/download.do", produces="application/octet-stream")
+  public ResponseEntity<Resource> download(HttpServletRequest request) {
+    return folderService.download(request);
+  }
+  
+  // 파일 삭제
+  @PostMapping(value="/removeFile.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> removeFile(@RequestBody Map<String, List<Integer>> params) {
+    return folderService.removeFile(params);
+  }
   
 
 }
