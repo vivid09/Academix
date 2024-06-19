@@ -13,9 +13,10 @@
 .table{
  background-color: white;
  border-radius: 20px;
+ margin-top: 50px;
 }
 .table tbody tr {
-  border: 1px solid black;
+  
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -23,6 +24,12 @@
         display: flex;
     }
   
+  .bg-green-active{
+   border-radius: 5px;
+  }
+  .bg-red-active{
+   border-radius: 5px;
+  }
   
 </style>
   
@@ -50,6 +57,7 @@
 	    <label for="ascending">오름차순</label>
 	  </div>
 	  <div>
+	    <span>화면</span>
 	    <select id="display" name="display">
 	      <option>5</option>
 	      <option>10</option>
@@ -98,17 +106,28 @@
 	          </td>
 	          <td>${leaveRequests.employees.name}</td>
 	          <td>${leaveRequests.requestDate}</td>
-	          <td> <c:choose>
-	                      <c:when test="${leaveRequests.requestStatus eq '0'}">
+	          <td>
+	          <span class='<c:choose>
+	            <c:when test="${leaveRequests.requestStatus eq '1'}">
+			            state bg-green-active color-palette
+			        </c:when>
+			        <c:when test="${leaveRequests.requestStatus eq '2'}">
+				            state bg-red-active color-palette
+				    </c:when>
+	           </c:choose>'> 
+	          <c:choose>
+	              <c:when test="${leaveRequests.requestStatus eq '0'}">
 	                        미결재
-						 </c:when>
-	                      <c:when test="${leaveRequests.requestStatus eq '1'}">
+				  </c:when>
+	               <c:when test="${leaveRequests.requestStatus eq '1'}">
 	                        승인
-						 </c:when>
-	                      <c:when test="${leaveRequests.requestStatus eq '2'}">
+				   </c:when>
+	                 <c:when test="${leaveRequests.requestStatus eq '2'}">
 	                        반려
-						 </c:when>
-	                </c:choose></td>
+					</c:when>
+	         </c:choose>
+	         </span>       
+	         </td>
 	        </tr>
 	        
 	      </c:forEach>
@@ -145,7 +164,7 @@
   const fnDisplay = () => {
 	  document.getElementById('display').value = '${display}';
 	  document.getElementById('display').addEventListener('change', (evt) => {
-	    location.href = '${contextPath}/requests/main.page?page=1&sort=${sort}&display=' + evt.target.value;
+	    location.href = '${contextPath}/requests/main.page?employeeNo=' +${sessionScope.user.employeeNo} + '&page=1&sort=${sort}&display=' + evt.target.value;
 	  })
 	}
 

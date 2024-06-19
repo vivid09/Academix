@@ -75,14 +75,31 @@
     border-radius: 5px;
 }
 
+.btn-all{
+ display:flex;
+}
+
 #btn-submit {
     display: block;
-    width: 100%;
+    width: 50%;
     padding: 10px;
     background-color: #007BFF;
     color: #fff;
     border: none;
     cursor: pointer;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+#btn-remove{
+ 	display: block;
+    width: 50%;
+    padding: 10px;
+    background-color: gray;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
 }
 
 button:hover {
@@ -215,6 +232,13 @@ button:hover {
  width: 381px;
  height: 45px;
 }
+
+#btn-reject{
+ border-radius: 5px;
+}
+#btn-approval{
+border-radius: 5px;
+}
  
 </style>
 
@@ -238,8 +262,10 @@ button:hover {
 		 <form id="requestForm"
 		       method="POST"
 		       enctype="multipart/form-data">
-		  <button type="submit" id="btn-approval" onclick="submitForm('approval')">승인</button>
-	      <button type="button" id="btn-reject" onclick="openModal()">반려</button>
+	   	  <c:if test="${sessionScope.user.depart.departmentNo == 2}">
+			  <button type="submit" class="state bg-green-active color-palette" id="btn-approval" onclick="submitForm('approval')">승인</button>
+		      <button type="button" class="state bg-red-active color-palette" id="btn-reject" onclick="openModal()">반려</button>
+		   </c:if>   
 		  <div class="content-main">
 		   <div class="header-wrapper">
 	                <div class="form-container">
@@ -291,7 +317,7 @@ button:hover {
 			    <label for="timeIn">변경요청퇴근시간</label>
 			    <input type="time" name="timeOut" id="timeOut">
 			  </div>
-		   </div>  
+		   </div>
 		   <div class="form-row">
 			  <div class="form-group">
 			    <label for="reason">사유</label>
@@ -317,10 +343,26 @@ button:hover {
 		     <textarea id="rejectReason2">${attendance.requests.rejectReason}</textarea>
 		   </div>
 		  </div>
-		   <button type="button" id="btn-submit" onclick="submitForm('modify')">수정하기</button>
-		   <c:if test="${sessionScope.user.employeeNo == attendance.requests.employees.employeeNo}">
-		   <button type="button" id="btn-remove" >삭제</button>
-		   </c:if>
+		  <div class="btn-all">
+		  
+		   <c:choose>
+			    <c:when test="${sessionScope.user.employeeNo == attendance.requests.employees.employeeNo}">
+			        <button type="button" id="btn-submit" onclick="submitForm('modify')">수정하기</button>
+			    </c:when>
+			    <c:otherwise>
+			        <button type="button" id="btn-submit" disabled>수정하기</button>
+			    </c:otherwise>
+	      </c:choose>
+		  <c:choose>
+		    <c:when test="${sessionScope.user.employeeNo == attendance.requests.employees.employeeNo}">
+			        <button type="button" id="btn-remove">삭제</button>
+		    </c:when>
+		    <c:otherwise>
+		     <button type="button" id="btn-remove" disabled>삭제</button>
+		    </c:otherwise>
+		     
+		   </c:choose>
+		  </div>
 		 </div> 
 		 </form> 
 		</div> 
@@ -464,16 +506,16 @@ document.getElementById("timeOut").value = formatDateWithoutTime(adjustmentTimeO
 
  const fnRemoveAttendance = () => {
 	 document.getElementById('btn-remove').addEventListener('click', (evt)=>{
+		 if(confirm('근무조정서를 삭제할까요?')){
 		 let requestNo = document.getElementById('requestNo').value;
 		 let employeeNo = document.getElementById('employeeNo').value
 		 location.href = '${contextPath}/requests/removeAttendance.do?requestNo=' + requestNo + '&employeeNo=' + employeeNo;
+			 
+		 }
 	 })
  }
  
- /* const departNameRankTitle = ()=>{
-	let departName=  document.getElementById('departName2');
-	departName.value 
- } */
+
  
 
  

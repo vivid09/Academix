@@ -74,7 +74,7 @@ public class HrController {
  @GetMapping("removeEmployee.do")
   public String removeEmployee(@RequestParam int employeeNo, RedirectAttributes redirectAttributes) {
 	   redirectAttributes.addFlashAttribute("deleteCount", hrService.removeEmoloyee(employeeNo));
-	   return "redirect:/hr/list.page";
+	   return "hr/list";
 }
 
  

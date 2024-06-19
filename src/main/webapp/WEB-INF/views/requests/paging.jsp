@@ -66,15 +66,36 @@
 .table{
  background-color: white;
  border-radius: 20px;
+ margin-top: 20px;
+    
 }
 .table tbody tr {
-  border: 1px solid black;
+  
   padding-top: 10px;
   padding-bottom: 10px;
 }
   tfoot tr {
         display: flex;
     }
+  .document-top{
+   
+   display:flex;
+  }  
+  .document-mid {
+        display: flex;
+       
+    }
+
+.document-mid > div {
+        margin-right: 20px; /* 각 요소 사이의 간격 설정 */
+    }
+ 
+ .bg-green-active{
+   border-radius: 5px;
+  }
+ .bg-red-active{
+   border-radius: 5px;
+  }
   
 </style>
   
@@ -95,6 +116,7 @@
    
 	  <!-- Main content -->
 	  <section class="content">
+	  <div class="document-top">
 	   <div class="document-papers">
 	    <div class="pending">
 	     대기문서:
@@ -107,30 +129,32 @@
 	  </div>
 	   </div>
 	  
-	  <div>
-	  <div>
-	    <input type="radio" name="sort" value="DESC" id="descending" checked>
-	    <label for="descending">내림차순</label>
-	    <input type="radio" name="sort" value="ASC" id="ascending">
-	    <label for="ascending">오름차순</label>
-	  </div>
-	  <div>
-	    <select id="display" name="display">
-	      <option>5</option>
-	      <option>10</option>
-	      <option>20</option>
-	    </select>
-	  </div>
-	  <div>
-	   <span>문서종류</span>
-	  <select id="status" name="status">
-	      <option value="5">전체</option>
-	      <option value="0">미결재</option>
-	      <option value="1">승인</option>
-	      <option value="2">반려</option>
-	    </select> 
-	  </div>
-	  
+	  <div class="document-mid">
+		  <div>
+		  <span>화면</span>
+		    <select id="display" name="display">
+		      <option>5</option>
+		      <option>10</option>
+		      <option>20</option>
+		    </select>
+		  </div>
+		  <div>
+		   <span>문서종류</span>
+		  <select id="status" name="status">
+		      <option value="5">전체</option>
+		      <option value="0">미결재</option>
+		      <option value="1">승인</option>
+		      <option value="2">반려</option>
+		    </select> 
+		  </div>
+		  <div>
+		    <input type="radio" name="sort" value="DESC" id="descending" checked>
+		    <label for="descending">내림차순</label>
+		    <input type="radio" name="sort" value="ASC" id="ascending">
+		    <label for="ascending">오름차순</label>
+		  </div>
+	</div>  
+</div> 	  
 	  <table class="table align-middle">
 	    <thead>
 	      <tr>
@@ -163,7 +187,16 @@
 	          </td>
 	          <td>${leaveRequests.employees.name}</td>
 	          <td>${leaveRequests.requestDate}</td>
-	          <td> <c:choose>
+	          <td>
+	            <span class='<c:choose>
+	            <c:when test="${leaveRequests.requestStatus eq '1'}">
+			            state bg-green-active color-palette
+			        </c:when>
+			        <c:when test="${leaveRequests.requestStatus eq '2'}">
+				            state bg-red-active color-palette
+				    </c:when>
+	           </c:choose>'>
+		          <c:choose>
 	                      <c:when test="${leaveRequests.requestStatus eq '0'}">
 	                        미결재
 						 </c:when>
@@ -173,7 +206,9 @@
 	                      <c:when test="${leaveRequests.requestStatus eq '2'}">
 	                        반려
 						 </c:when>
-	                </c:choose></td>
+	                </c:choose>
+	                 </span>
+	                </td>
 	        </tr>
 	      </c:forEach>
 	    </tbody>
@@ -183,11 +218,11 @@
 	      </tr>
 	    </tfoot>
 	  </table>
-	</div>
   
   
    </section> 
-  </div>
+	</div>
+  
   
   
 <!-- jQuery 2.2.3 -->

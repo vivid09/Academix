@@ -267,6 +267,7 @@ public class RequestsServiceImpl implements RequestsService {
 	    int display = Integer.parseInt(optDisplay.orElse("10"));
 	    int employeeNo = Integer.parseInt(request.getParameter("employeeNo"));
 	    
+	    
 	    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
 	    int page = Integer.parseInt(optPage.orElse("1"));
 
@@ -286,7 +287,7 @@ public class RequestsServiceImpl implements RequestsService {
 	    
 	    model.addAttribute("beginNo", total - (page - 1) * display);
 	    model.addAttribute("requestsList", requestsMapper.getList(map));
-	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/requests/maing.page", sort, display));
+	    model.addAttribute("paging", myPageUtils.getPaging2(request.getContextPath() + "/requests/main.page", sort, display, employeeNo, "params=0"));
 	    model.addAttribute("display", display);
 	    model.addAttribute("sort", sort);
 	    model.addAttribute("page", page);
