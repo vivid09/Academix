@@ -1,14 +1,10 @@
 package com.gdu.academix.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.NotificationsDto;
 import com.gdu.academix.mapper.NotifyMapper;
 import com.gdu.academix.mapper.UserMapper;

@@ -7,42 +7,85 @@
 
 <jsp:include page="../layout/header.jsp"/>
 
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-<h1 class="title">블로그 편집화면</h1>
+<style>
 
-<form id="frm-blog-modify"
-      method="POST"
-      action="${contextPath}/blog/modifyBlog.do">
+	.content {
+	      min-height: 1080px;
+	  }
+  .insertForm {
+    width: 640px;
+    height: 180px;
+    margin: 10px auto;
+    border: 1px solid gray;
+    cursor: pointer;
+  }
+  .insertForm > insertForm {
+    color: tomato;
+    display: inline-block;
+    box-sizing: border-box;
+  }
+</style>
 
-  <div>
-    <span>작성자</span>
-    <span>${sessionScope.user.email}</span>
-  </div>
-  
-  <div>
-    <label for="title">제목</label>
-    <input type="text" name="title" id="title" value="${blog.title}">
-  </div>
-  
-  <div>
-    <textarea id="contents" name="contents" placeholder="내용을 입력하세요">${blog.contents}</textarea>
-  </div>
-  
-  <div>
-    <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
-    <input type="hidden" name="blogNo" value="${blog.blogNo}">
-    <button type="submit">수정완료</button>
-    <a href="${contextPath}/blog/list.page"><button type="button">작성취소</button></a>
-  </div>
-      
-</form>
+<section class="content">
+
+<div class="insertForm">
+	<h1 class="title">블로그 편집화면</h1>
+	
+	<form id="frm-blog-modify"
+	      method="POST"
+	      action="${contextPath}/blog/modifyBlog.do">
+	
+	  <div>
+	    <span>작성자</span>
+	    <span>${sessionScope.user.email}</span>
+	  </div>
+	  
+	  <div>
+	    <label for="title">제목</label>
+	    <input type="text" name="title" id="title" value="${blog.title}">
+	  </div>
+	  
+	  <div>
+	    <textarea id="content" name="content" placeholder="내용을 입력하세요">${blog.content}</textarea>
+	  </div>
+	  
+	  <div>
+	    <input type="hidden" name="authorNo" value="${sessionScope.user.employeeNo}">
+	    <input type="hidden" name="notiPostNo" value="${blog.notiPostNo}">
+	    <button type="submit">수정완료</button>
+	    <a href="${contextPath}/blog/list.page"><button type="button">작성취소</button></a>
+	  </div>
+	      
+	</form>
+</div>
+
+</section>
+
+<!-- jQuery 2.2.3 -->
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<!-- Slimscroll -->
+<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/app.min.js"></script>
+
+<script src="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.js"></script>
+  <script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
+  <link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
+
+
+
 
 <script>
 
 const fnSummernoteEditor = () => {
-  $('#contents').summernote({
+  $('#content').summernote({
     width: 1024,
     height: 500,
     lang: 'ko-KR',
@@ -63,7 +106,7 @@ const fnSummernoteEditor = () => {
           })
           .then(response=>response.json())
           .then(resData=>{
-            $('#contents').summernote('insertImage', '${contextPath}' + resData.src);
+            $('#content').summernote('insertImage', '${contextPath}' + resData.src);
           })
         }
       }

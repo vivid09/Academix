@@ -19,6 +19,7 @@ public class TaskConfig {
 	RemoveTempFilesScheduler removeTempFileTask() {
 		return new RemoveTempFilesScheduler();
 	}
+
 	@Bean
 	RemoveEmptyChatroomsScheduler removeEmptyChatrooms() {
 	  return new RemoveEmptyChatroomsScheduler();

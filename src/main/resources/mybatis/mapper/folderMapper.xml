@@ -11,12 +11,13 @@
     <result property="filesystemName"   column="FILESYSTEM_NAME" />
     <result property="originalFilename" column="ORIGINAL_FILENAME" />
     <result property="fileUploadDt"     column="FILE_UPLOAD_DT" />
-    <result property="ownerNo"          column="OWNER_NO" />
+    <result property="ownerNo"          column="FILE_OWNER_NO" />
     <association property="folder" javaType="FolderDto">
       <id     property="folderNo"       column="FOLDER_NO" />
       <result property="folderName"     column="FOLDER_NAME" />
       <result property="folderCreateDt" column="FOLDER_CREATE_DT" />
       <result property="parentFolderNo" column="PARENT_FOLDER_NO" />
+      <result property="ownerNo"        column="FOLDER_OWNER_NO" />
     </association>
   </resultMap>
 
@@ -110,23 +111,49 @@
   <!-- Drive(Folder, File) 목록 조회 -->
   <select id="getDriveListCount">
     SELECT COUNT(*)
-      FROM FOLDER_T FO LEFT JOIN FILE_T FI
-        ON FO.FOLDER_NO = FI.FOLDER_NO
+      FROM (SELECT FOLDER_NO
+              FROM FOLDER_T
+             WHERE PARENT_FOLDER_NO = #{parentFolderNo}
+             UNION ALL
+            SELECT FILE_NO
+              FROM FILE_T
+             WHERE FOLDER_NO = #{parentFolderNo})
   </select>
   
   <select id="getDriveList"
           parameterType="Map"
           resultMap="FileMap">
-	  SELECT FOLDER_NO, FOLDER_NAME, FOLDER_CREATE_DT, FOLDER_UPLOAD_PATH, PARENT_FOLDER_NO, FOLDER_OWNER_NO
-	       , FILE_NO, FILE_UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, FILE_UPLOAD_DT, FILE_OWNER_NO
-	    FROM (SELECT ROW_NUMBER() OVER (ORDER BY FOLDER_NO ${sort}) AS RN
-	                 , FO.FOLDER_NO, FO.FOLDER_NAME, FO.FOLDER_CREATE_DT, FO.FOLDER_UPLOAD_PATH
-	                 , FO.PARENT_FOLDER_NO, FO.OWNER_NO AS FOLDER_OWNER_NO
-	                 , FI.FILE_NO, FI.FILE_UPLOAD_PATH, FI.FILESYSTEM_NAME, FI.ORIGINAL_FILENAME, FI.FILE_UPLOAD_DT, FI.OWNER_NO AS FILE_OWNER_NO
-	              FROM FOLDER_T FO LEFT JOIN FILE_T FI
-	                ON FO.FOLDER_NO = FI.FOLDER_NO)
-	   WHERE RN BETWEEN #{begin} AND #{end}
+    SELECT RN
+         , FOLDER_NO, FOLDER_NAME, FOLDER_CREATE_DT, FOLDER_UPLOAD_PATH, PARENT_FOLDER_NO, OWNER_NO
+         , FILE_NO, FILE_UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, FILE_UPLOAD_DT, FILE_OWNER_NO
+         , TYPE
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY FOLDER_NO ${sort}) AS RN
+                 , FOLDER_NO, FOLDER_NAME, FOLDER_CREATE_DT, FOLDER_UPLOAD_PATH, PARENT_FOLDER_NO, OWNER_NO
+                 , NULL AS FILE_NO, NULL AS FILE_UPLOAD_PATH, NULL AS FILESYSTEM_NAME, NULL AS ORIGINAL_FILENAME, NULL AS FILE_UPLOAD_DT, NULL AS FILE_OWNER_NO
+                 , 'FOLDER' AS TYPE
+              FROM FOLDER_T
+             WHERE PARENT_FOLDER_NO = #{parentFolderNo}
+            UNION ALL
+            SELECT ROW_NUMBER() OVER (ORDER BY FILE_NO ${sort}) AS RN
+                 , NULL AS FOLDER_NO, NULL AS FOLDER_NAME, NULL AS FOLDER_CREATE_DT, NULL AS FOLDER_UPLOAD_PATH, FOLDER_NO AS PARENT_FOLDER_NO, NULL AS OWNER_NO
+                 , FILE_NO, FILE_UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, FILE_UPLOAD_DT, OWNER_NO AS FILE_OWNER_NO
+                 , 'FILE' AS TYPE
+              FROM FILE_T
+             WHERE FOLDER_NO = #{parentFolderNo})
+     WHERE RN BETWEEN #{begin} AND #{end}
   </select>
   
+  <select id="getfileList"
+          resultType="FileDto">
+    SELECT FILE_NO, FILE_UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, FILE_UPLOAD_DT, FOLDER_NO, OWNER_NO
+      FROM FILE_T
+     WHERE FILE_NO = #{fileNo}
+  </select>
+  
+  <delete id="deleteFile">
+    DELETE
+      FROM FILE_T
+     WHERE FILE_NO = #{fileNo}
+  </delete>
 
 </mapper>

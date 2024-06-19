@@ -1,5 +1,6 @@
 package com.gdu.academix.config;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,6 +12,7 @@ import com.gdu.academix.interceptor.RequiredSignoutInterceptor;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
 
   
   // application.properties 파일의 설정값 저장

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,15 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gdu.academix.dto.BlogDto;
-import com.gdu.academix.dto.BlogImageDto;
 import com.gdu.academix.dto.CommentDto;
+import com.gdu.academix.dto.EmployeesDto;
+import com.gdu.academix.dto.BlogImageDto;
 import com.gdu.academix.dto.UserDto;
 import com.gdu.academix.mapper.BlogMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Transactional
 @Service
@@ -76,27 +79,26 @@ public class BlogServiceImpl implements BlogService {
     
     // 요청 파라미터
     String title = request.getParameter("title");
-    String contents = request.getParameter("contents");
-    int userNo = Integer.parseInt(request.getParameter("userNo"));
+    String content = request.getParameter("content");
+    int authorNo = Integer.parseInt(request.getParameter("authorNo"));
     
     // UserDto + BlogDto 객체 생성
-    UserDto user = new UserDto();
-    user.setUserNo(userNo);
     BlogDto blog = BlogDto.builder()
                      .title(MySecurityUtils.getPreventXss(title))
-                     .contents(MySecurityUtils.getPreventXss(contents))
-                     .user(user)
+                     .content(MySecurityUtils.getPreventXss(content))
+                     .authorNo(authorNo)
                    .build();
     
     // DB에 blog 저장
     int insertCount = blogMapper.insertBlog(blog);
     
     // Summernote Editor에 추가한 이미지들을 BLOG_IMAGE_T에 저장하기
-    for(String editorImage : getEditorImageList(contents)) {
+    for(String editorImage : getEditorImageList(content)) {
       BlogImageDto blogImage = BlogImageDto.builder()
-          .blogNo(blog.getBlogNo())
+          .notiPostNo(blog.getNotiPostNo())
           .uploadPath(myFileUtils.getBlogImageUploadPath())
           .filesystemName(editorImage)
+          .originalFilename(myFileUtils.getTempFilename())
           .build();
       blogMapper.insertBlogImage(blogImage);
     }
@@ -127,7 +129,7 @@ public class BlogServiceImpl implements BlogService {
                                    , "end", myPageUtils.getEnd());
     
     // 목록 화면으로 반환할 값 (목록 + 전체 페이지 수)
-    return new ResponseEntity<>(Map.of("blogList", blogMapper.getBlogList(map)
+    return new ResponseEntity<>(Map .of("blogList", blogMapper.getBlogList(map)
                                       , "totalPage", myPageUtils.getTotalPage())
                               , HttpStatus.OK);
     
@@ -140,18 +142,18 @@ public class BlogServiceImpl implements BlogService {
   
   @Transactional(readOnly=true)
   @Override
-  public BlogDto getBlogByNo(int blogNo) {
-    return blogMapper.getBlogByNo(blogNo);
+  public BlogDto getBlogByNo(int notiPostNo) {
+    return blogMapper.getBlogByNo(notiPostNo);
   }
   
   @Transactional(readOnly=true)
-  public List<String> getEditorImageList(String contents) {
+  public List<String> getEditorImageList(String content) {
     
     // Summernote Editor에 추가한 이미지 목록 반환하기 (Jsoup 라이브러리 사용)
     
     List<String> editorImageList = new ArrayList<>();
     
-    Document document = Jsoup.parse(contents);
+    Document document = Jsoup.parse(content);
     Elements elements =  document.getElementsByTag("img");
     
     if(elements != null) {
@@ -171,25 +173,25 @@ public class BlogServiceImpl implements BlogService {
     
     // 수정할 제목/내용/블로그번호
     String title = request.getParameter("title");
-    String contents = request.getParameter("contents");
-    int blogNo = Integer.parseInt(request.getParameter("blogNo"));
+    String content = request.getParameter("content");
+    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
     
     // DB에 저장된 기존 이미지 가져오기
     // 1. blogImageDtoList : BlogImageDto를 요소로 가지고 있음
     // 2. blogImageList    : 이미지 이름(filesystemName)을 요소로 가지고 있음
-    List<BlogImageDto> blogImageDtoList = blogMapper.getBlogImageList(blogNo);
+    List<BlogImageDto> blogImageDtoList = blogMapper.getBlogImageList(notiPostNo);
     List<String> blogImageList = blogImageDtoList.stream()
                                   .map(blogImageDto -> blogImageDto.getFilesystemName())
                                   .collect(Collectors.toList());
         
     // Editor에 포함된 이미지 이름(filesystemName)
-    List<String> editorImageList = getEditorImageList(contents);
+    List<String> editorImageList = getEditorImageList(content);
 
     // Editor에 포함되어 있으나 DB에 없는 이미지는 BLOG_IMAGE_T에 추가해야 함
     editorImageList.stream()
       .filter(editorImage -> !blogImageList.contains(editorImage))         // 조건 : Editor에 포함되어 있으나 기존 이미지에 포함되어 있지 않다.
       .map(editorImage -> BlogImageDto.builder()                           // 변환 : Editor에 포함된 이미지 이름을 BlogImageDto로 변환한다.
-                            .blogNo(blogNo)
+                            .notiPostNo(notiPostNo)
                             .uploadPath(myFileUtils.getBlogImageUploadPath())
                             .filesystemName(editorImage)
                             .build())
@@ -213,8 +215,8 @@ public class BlogServiceImpl implements BlogService {
     // 수정할 제목/내용/블로그번호를 가진 BlogDto
     BlogDto blog = BlogDto.builder()
                     .title(title)
-                    .contents(contents)
-                    .blogNo(blogNo)
+                    .content(content)
+                    .notiPostNo(notiPostNo)
                     .build();
     
     // BLOG_T 수정
@@ -225,10 +227,10 @@ public class BlogServiceImpl implements BlogService {
   }
 
   @Override
-  public int removeBlog(int blogNo) {
+  public int removeBlog(int notiPostNo) {
     
     // BLOG_IMAGE_T 테이블에서 블로그 만들 때 사용한 이미지 파일 삭제
-    List<BlogImageDto> blogImageDtoList = blogMapper.getBlogImageList(blogNo);
+    List<BlogImageDto> blogImageDtoList = blogMapper.getBlogImageList(notiPostNo);
     for(BlogImageDto blogImage : blogImageDtoList) {
       File file = new File(blogImage.getUploadPath(), blogImage.getFilesystemName());
       if(file.exists()) {
@@ -237,10 +239,13 @@ public class BlogServiceImpl implements BlogService {
     }
     
     // BLOG_IMAGE_T 삭제
-    blogMapper.deleteBlogImageList(blogNo);
+    blogMapper.deleteBlogImageList(notiPostNo);
+    
+    // NOTI 포스트 번호에 해당하는 전체 댓글삭제
+    blogMapper.deleteCommentByNotiPostNo(notiPostNo);
     
     // BLOG_T 삭제
-    return blogMapper.deleteBlog(blogNo);
+    return blogMapper.deleteBlog(notiPostNo);
     
   }
   
@@ -248,23 +253,19 @@ public class BlogServiceImpl implements BlogService {
   public int registerComment(HttpServletRequest request) {
     
     // 요청 파라미터
-    String contents = MySecurityUtils.getPreventXss(request.getParameter("contents"));
-    int blogNo = Integer.parseInt(request.getParameter("blogNo"));
-    int userNo = Integer.parseInt(request.getParameter("userNo"));
-    
-    // UserDto 객체 생성
-    UserDto user = new UserDto();
-    user.setUserNo(userNo);
+    String content = MySecurityUtils.getPreventXss(request.getParameter("content"));
+    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
+    int authorNo = Integer.parseInt(request.getParameter("authorNo"));
     
     // CommentDto 객체 생성
     CommentDto comment = CommentDto.builder()
-                            .contents(contents)
-                            .user(user)
-                            .blogNo(blogNo)
+                            .content(content)
+                            .authorNo(authorNo)
+                            .notiPostNo(notiPostNo)
                           .build();
     
     // DB 에 저장 & 결과 반환
-    return blogMapper.insertComment(comment);
+    return blogMapper.insertNotiComment(comment);
     
   }
   
@@ -273,11 +274,11 @@ public class BlogServiceImpl implements BlogService {
   public Map<String, Object> getCommentList(HttpServletRequest request) {
     
     // 요청 파라미터
-    int blogNo = Integer.parseInt(request.getParameter("blogNo"));
+    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
     int page = Integer.parseInt(request.getParameter("page"));
     
     // 전체 댓글 개수
-    int total = blogMapper.getCommentCount(blogNo);
+    int total = blogMapper.getCommentCount(notiPostNo);
     
     // 한 페이지에 표시할 댓글 개수
     int display = 10;
@@ -286,7 +287,7 @@ public class BlogServiceImpl implements BlogService {
     myPageUtils.setPaging(total, display, page);
     
     // 목록을 가져올 때 사용할 Map 생성
-    Map<String, Object> map = Map.of("blogNo", blogNo
+    Map<String, Object> map = Map.of("notiPostNo", notiPostNo
                                    , "begin", myPageUtils.getBegin()
                                    , "end", myPageUtils.getEnd());
     
@@ -300,21 +301,21 @@ public class BlogServiceImpl implements BlogService {
   public int registerReply(HttpServletRequest request) {
     
     // 요청 파라미터
-    String contents = request.getParameter("contents");
+    String content = request.getParameter("content");
+    int notiPostNo = Integer.parseInt(request.getParameter("notiPostNo"));
+    int authorNo = Integer.parseInt(request.getParameter("authorNo"));
     int groupNo = Integer.parseInt(request.getParameter("groupNo"));
-    int blogNo = Integer.parseInt(request.getParameter("blogNo"));
-    int userNo = Integer.parseInt(request.getParameter("userNo"));
     
-    // UserDto 객체 생성
-    UserDto user = new UserDto();
-    user.setUserNo(userNo);
+//    // UserDto 객체 생성
+//    UserDto user = new UserDto();
+//    user.setUserNo(authorNo);
     
     // CommentDto 객체 생성
     CommentDto reply = CommentDto.builder()
-                          .contents(contents)
+                          .content(content)
                           .groupNo(groupNo)
-                          .blogNo(blogNo)
-                          .user(user)
+                          .notiPostNo(notiPostNo)
+                          .authorNo(authorNo)
                         .build();
     
     // DB 에 저장하고 결과 반환
