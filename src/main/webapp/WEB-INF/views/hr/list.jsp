@@ -217,7 +217,7 @@
          <div class="box-header with-border">
 	         <div class="box-title-choice">
 	           <i class="fa fa-user"></i>
-	           <i class="fa fa-commenting"></i>
+	           
 	         </div>
 
          
