@@ -89,6 +89,34 @@
             border-radius: 50%;
             object-fit: cover;
         }
+        
+        .btn-all{
+		 display:flex;
+		}
+
+#btn-edit {
+    display: block;
+    
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+#btn-cancel{
+ 	display: block;
+    
+    padding: 10px;
+    background-color: gray;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+}
+       
     </style>
   
   
@@ -204,7 +232,10 @@
                 <input type="hidden" name="employeeNo" value="${employee.employeeNo}">
                 
             </div>
-            <button type="submit">수정하기</button>
+            <div class="btn-all">
+            <button id="btn-edit" type="submit">수정하기</button>
+            <a href="${contextPath}/hr/list.page"><button id="btn-cancel" type="submit">취소</button></a>
+            </div>
         </form>
         </div>
       </section>

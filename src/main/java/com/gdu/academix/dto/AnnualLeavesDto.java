@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class AnnualLeavesDto {
-  private int leaveNo,year, remainLeaves, usedLeaves, totalLeaves, employeeNo;
+  private int leaveNo, year, remainLeaves, usedLeaves, totalLeaves, employeeNo;
 }

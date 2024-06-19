@@ -188,6 +188,12 @@ button:hover {
     border-radius: 10px;
     background-color: #f9f9f9;
 }
+#btn-leaveRequest{
+ border-radius: 10px;
+}
+#btn-attendance {
+ border-radius: 10px;
+}
 
 </style>
 
@@ -280,7 +286,7 @@ button:hover {
 	                <input type="text" name="reason" id="reason">
 	            </div>  
 	           </div>   
-	            <button type="submit">기안하기</button>
+	            <button id="btn-leaveRequest" type="submit">기안하기</button>
 	            
 				
 	        </div>
@@ -349,12 +355,15 @@ button:hover {
 			<input type="hidden" name="picNo" value="0">
 			<input type="hidden" name="requestSort" value="0">
 	  </div>
-	  <button type="submit">기안하기</button>
+	  <button id="btn-attendance" type="submit">기안하기</button>
 	 </div> 
 	 </form> 
 	</div>
+	
  </section>
 </div>
+
+
  
 <!-- jQuery 2.2.3 -->
 <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
@@ -366,6 +375,7 @@ button:hover {
 <script src="/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/app.min.js"></script> 
+ 
  
 <script>
 

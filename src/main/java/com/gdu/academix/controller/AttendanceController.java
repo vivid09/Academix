@@ -65,8 +65,13 @@ public class AttendanceController {
     return attendanceService.getAttendanceRecord(employeeNo);
   }
   
-  @GetMapping(value="annualLeave/LeaveRequestList.do", produces="application/json")
-  public  ResponseEntity<Map<String, Object>> loadLeaveRequestListByEmployeeNo(HttpServletRequest request) {
+  @GetMapping(value="annualLeave/getAnnualLeaveStatus.do", produces="application/json")
+  public  ResponseEntity<Map<String, Object>> getAnnualLeaveStatus(@RequestParam int employeeNo) {
+  	return attendanceService.getAnnualLeaveStatus(employeeNo);
+  }
+  
+  @GetMapping(value="annualLeave/getLeaveRequestList.do", produces="application/json")
+  public  ResponseEntity<Map<String, Object>> getLeaveRequestListByEmployeeNo(HttpServletRequest request) {
   	return requestsService.getLeaveRequestListByEmployeeNo(request);
   }
   

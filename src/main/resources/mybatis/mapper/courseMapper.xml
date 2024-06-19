@@ -53,6 +53,21 @@
       FROM COURSES_T
   </select>
   
+  <select id="getCourseCountBySearch" 
+					parameterType="map" 
+					resultType="int">
+      SELECT COUNT(*)
+      FROM COURSES_T CRS
+      INNER JOIN EMPLOYEES_T EMP ON EMP.EMPLOYEE_NO = CRS.EMPLOYEE_NO
+      WHERE 
+      <if test="searchType == '강사명'">
+        EMP.NAME LIKE '%' || #{searchKeyword} || '%'
+      </if>
+      <if test="searchType == '강의명'">
+        CRS.TITLE LIKE '%' || #{searchKeyword} || '%'
+      </if>
+    </select>
+  
   <select id="getCourseList"
           parameterType="Map"
           resultMap="CourseMap">
@@ -65,6 +80,27 @@
                 ON EMP.EMPLOYEE_NO = CRS.EMPLOYEE_NO)
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
+  
+  <select id="getCourseListBySearch"
+        parameterType="Map"
+        resultMap="CourseMap">
+  SELECT COURSE_NO, TITLE, DESCRIPTION, START_DATE, END_DATE, COURSE_STATE
+       , EMPLOYEE_NO, NAME
+    FROM (SELECT ROW_NUMBER() OVER (ORDER BY COURSE_NO ${sort}) AS RN
+               , CRS.COURSE_NO, CRS.TITLE, CRS.DESCRIPTION, CRS.START_DATE, CRS.END_DATE, CRS.COURSE_STATE
+               , EMP.EMPLOYEE_NO, EMP.NAME
+            FROM EMPLOYEES_T EMP 
+            INNER JOIN COURSES_T CRS ON EMP.EMPLOYEE_NO = CRS.EMPLOYEE_NO
+            WHERE 
+              <if test="searchType == '강사명'">
+                EMP.NAME LIKE '%' || #{searchKeyword} || '%'
+              </if>
+              <if test="searchType == '강의명'">
+                CRS.TITLE LIKE '%' || #{searchKeyword} || '%'
+              </if>
+    ) 
+   WHERE RN BETWEEN #{begin} AND #{end}
+</select>
   
   <select id="getCourseByNo"
           resultMap="CourseMap">
