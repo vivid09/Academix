@@ -97,6 +97,11 @@
    border-radius: 5px;
   }
   
+  .paging {
+  display: flex;
+  
+}
+  
 </style>
   
   
@@ -214,7 +219,7 @@
 	    </tbody>
 	    <tfoot>
 	      <tr>
-	        <td colspan="5">${paging}</td>
+	        <td class="paging" colspan="5">${paging}</td>
 	      </tr>
 	    </tfoot>
 	  </table>
