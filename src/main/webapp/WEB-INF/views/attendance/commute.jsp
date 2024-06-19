@@ -265,13 +265,26 @@
             		inTitle = annual_leave_title;
             		color = annual_leave_color;
             		allDay = true;
-                records.push({
-                    title: inTitle,
-                    start: record.timeIn,
-                    end:  record.timeOut,
-                    color: color,
-                    allDay: allDay
-                 });
+            		// Date 객체로 변환
+            		let timeIn = new Date(record.timeIn);
+            		let timeOut = new Date(record.timeOut);
+
+            		// 9시간(9 * 60 * 60 * 1000 밀리초) 추가
+            		timeIn.setTime(timeIn.getTime() + 9 * 60 * 60 * 1000);
+            		timeOut.setTime(timeOut.getTime() + 33 * 60 * 60 * 1000);
+
+            		// ISO 문자열로 변환
+								let timeInISO = timeIn.toISOString().replace('Z', '');
+								let timeOutISO = timeOut.toISOString().replace('Z', '');
+
+            		// 레코드 배열에 이벤트 추가
+            		records.push({
+            		    title: inTitle,
+            		    start: timeInISO,
+            		    end: timeOutISO,
+            		    color: color,
+            		    allDay: allDay
+            		});
                 return;
             	}
               // timeIn 이벤트 추가
