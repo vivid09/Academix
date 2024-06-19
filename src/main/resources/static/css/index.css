@@ -1,0 +1,41 @@
+@charset "UTF-8";
+
+.rounded-panel {
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rounded-panel .panel-heading {
+    border-radius: 25px 25px 0 0;
+}
+
+.rounded-panel .panel-body {
+    border-radius: 0 0 25px 25px;
+}
+
+.time-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-section .btn {
+    margin-top: 5px;
+}
+
+.img-pro img{
+  max-width: 45px;
+}

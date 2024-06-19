@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class RanksDto {
-	int rankNo;
-	String rankTitle;
+
+  private int rankNo;
+  private String rankTitle;
+
 }

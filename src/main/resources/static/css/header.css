@@ -1,7 +1,26 @@
 @charset "UTF-8";
 
-.main-wrap {
+/* .main-wrap {
   width: 1280px;
   min-height: 600px;
   margin: 20px auto;
+} */
+
+.user-panel > .image > img {
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.user-header > img {
+  border-radius: 50%;
+  float: none !important;
+  object-fit: cover;
+}
+
+.user-panel > img {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 45px;
+  height: 45px;
 }

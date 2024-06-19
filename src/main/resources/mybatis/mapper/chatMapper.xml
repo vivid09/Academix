@@ -71,7 +71,6 @@
 					MESSAGE_NO,
 					MESSAGE_TYPE, 
 					MESSAGE_CONTENT, 
-					ISREAD, 
 					SEND_DT, 
 					CHATROOM_NO, 
 					SENDER_NO
@@ -79,19 +78,18 @@
 					#{messageNo}, 
 					#{messageType}, 
 					#{messageContent}, 
-					#{isRead}, 
 					CURRENT_TIMESTAMP, 
 					#{chatroomNo}, 
 					#{senderNo}
 			)
-  </insert>  
+  </insert>
   
   <!-- 채팅 내역 가져오기 -->
   <select id="getChatMessageList"
   				parameterType="Map"
   				resultType="MessageDto">
-		SELECT MESSAGE_NO, MESSAGE_TYPE, MESSAGE_CONTENT, ISREAD, SEND_DT, CHATROOM_NO, SENDER_NO
-	    FROM (SELECT ROW_NUMBER() OVER(ORDER BY SEND_DT DESC) AS RN, MESSAGE_NO, MESSAGE_TYPE, MESSAGE_CONTENT, ISREAD, SEND_DT, CHATROOM_NO, SENDER_NO
+		SELECT MESSAGE_NO, MESSAGE_TYPE, MESSAGE_CONTENT, SEND_DT, CHATROOM_NO, SENDER_NO
+	    FROM (SELECT ROW_NUMBER() OVER(ORDER BY SEND_DT DESC) AS RN, MESSAGE_NO, MESSAGE_TYPE, MESSAGE_CONTENT, SEND_DT, CHATROOM_NO, SENDER_NO
 	          FROM MESSAGE_T
 	         WHERE CHATROOM_NO = #{chatroomNo})
 	 	 WHERE RN BETWEEN #{begin} AND #{end}
@@ -181,7 +179,7 @@
   
   <!-- 채팅방 이름 수정 -->
   <update id="updateChatroomTitle"
-		  parameterType="Map">
+  				parameterType="Map">
 	  UPDATE CHATROOM_T
 	     SET CHATROOM_TITLE = #{chatroomTitle}
 	   WHERE CHATROOM_NO = #{chatroomNo}

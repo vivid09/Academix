@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DepartmentsDto {
 
-	int departmentNo, parentDepartNo;
-	String departName;
-	
+  private int departmentNo, parentDepartNo ;
+  private String departName;
+
 }

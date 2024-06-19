@@ -21,6 +21,8 @@ public interface ChatMapper {
   
   // 메시지 데이터 넣기
   int insertChatMessage(MessageDto message);
+  // 메시지 사용자별 읽음 여부 넣기
+  int insertMessageReadStatus(Map<String, Object> map);
   
   // 채팅 내역 가져오기
   List<MessageDto> getChatMessageList(Map<String, Object> map);
