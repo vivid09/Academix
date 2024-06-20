@@ -11,19 +11,51 @@
 <style>
 
 	.content {
-	      min-height: 1080px;
-	  }
+        min-height: 1080px;
+    }
   .insertForm {
-    width: 640px;
-    height: 180px;
-    margin: 10px auto;
+    width: 1070px;
+    padding: 20px;
+    margin-left: 300px;
+    margin-top: 30px;
     border: 1px solid gray;
-    cursor: pointer;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  .insertForm > insertForm {
-    color: tomato;
+  .insertForm > h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .insertForm > div {
+    margin-bottom: 15px;
+  }
+  .insertForm > div > span,
+  .insertForm > div > label {
+    color: #555;
     display: inline-block;
-    box-sizing: border-box;
+    width: 100px;
+    font-weight: bold;
+  }
+  .insertForm > div > input[type="text"],
+  .insertForm > div > textarea {
+    width: calc(100% - 100px);
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .insertForm > div > textarea {
+    resize: vertical;
+    height: 200px;
+  }
+  .insertForm > div > button,
+  .insertForm > div > a > button {
+    margin-top: 10px;
+  }
+  .title
+  {
+    margin-bottom: 10px;
   }
 </style>
 
@@ -40,6 +72,11 @@
 	    <span>작성자</span>
 	    <span>${sessionScope.user.email}</span>
 	  </div>
+	  
+	  <div>
+    <span>이름 :</span>
+    <span>${sessionScope.user.name}</span>
+  </div>
 	  
 	  <div>
 	    <label for="title">제목</label>
