@@ -9,17 +9,6 @@
   <jsp:param value="${anon.postNo}번 블로그" name="title"/>
 </jsp:include>
 
-<!-- Bootstrap 스타일 및 스크립트 추가 -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-
-<script src="./jquery-3.4.1.min.js"></script>
-	<link rel="stylesheet" href="./bootstrapt/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="./bootstrapt/css/bootstrap.css" />
-	<script src="./bootstrapt/js/bootstrap.min.js"></script>
-
-
 
 <!-- CSS 스타일링 -->
 <style>
@@ -435,24 +424,25 @@ div {
   </div>
  </section>
  
-		  <!-- jQuery 2.2.3 -->
-		<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
-		<!-- Bootstrap 3.3.6 -->
-		<script src="/bootstrap/js/bootstrap.min.js"></script>
-		<!-- jQuery UI 1.11.4 -->
-		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-		<!-- Slimscroll -->
-		<script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-		<!-- FastClick -->
-		<script src="/plugins/fastclick/fastclick.js"></script>
-		<!-- AdminLTE App -->
-		<script src="/dist/js/app.min.js"></script>
-	
-
-	   <script src="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.js"></script>
-	   <script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
-	   <link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
-
+		   <!-- jQuery 2.2.3 -->
+        <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <!-- Bootstrap 3.3.6 -->
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+        <!-- jQuery UI 1.11.4 -->
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <!-- Slimscroll -->
+        <script src="/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <!-- FastClick -->
+        <script src="/plugins/fastclick/fastclick.js"></script>
+        <!-- AdminLTE App -->
+        <script src="/dist/js/app.min.js"></script>
+        
+        
+        
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+         
+         
 <script>
 
 // 로그인 여부 체크
@@ -524,7 +514,7 @@ const fnReport = () => {
         }
       },
       error: (jqXHR) => {
-        alert("신고되었습니다."); // 수정 필요....
+        alert("신고되었습니다."); // 수정 필요....현재 정상적으로 데이터 넘어가는데 오류나서 임시방편으로 설정해놓음
         $('#testModal').modal('hide'); // 신고 완료 후 모달 닫기
       }
     })
