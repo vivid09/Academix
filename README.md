@@ -24,10 +24,6 @@
 - [장윤수](https://github.com/vivid09)
 - [김현우](https://github.com/LlOlEl)
 
-현재 날씨 및 날짜 표시 : OpenWeatherMap API를 이용하여 사용자의 위치를 기반으로 한 날씨 정보 표시
-일정 관리 페이지 : Fullcalendar API와 카카오맵 API를 이용하여 사용자의 일정 관리
-근태 관리 페이지 : Fullcalendar API를 이용하여 근무상황 확인/관리
-강의 관리 페이지 : 학원 강사가 업무에 필요한 강의 개설 신청, 강의 조회, 강의 정보, 강의 계획서등의 페이지 구현
 ### 담당 업무 및 역할
 - **팀장**: 프로젝트 기본아키텍처 구성하여 GitHub에 배포 및 GitHub main 브런치 관리, 개발 일정관리 
 - **담당 구현 기능**:
