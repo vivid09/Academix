@@ -2,7 +2,6 @@ package com.gdu.academix.utils;
 
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 
 @Component

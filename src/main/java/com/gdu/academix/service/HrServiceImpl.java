@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartRequest;
 
 import com.gdu.academix.dto.AnnualLeavesDto;
 import com.gdu.academix.dto.DepartmentsDto;
@@ -27,9 +25,6 @@ import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.xml.ws.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class HrServiceImpl implements HrService {

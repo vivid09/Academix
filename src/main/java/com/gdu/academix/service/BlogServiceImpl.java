@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,16 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gdu.academix.dto.BlogDto;
-import com.gdu.academix.dto.CommentDto;
-import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.BlogImageDto;
-import com.gdu.academix.dto.UserDto;
+import com.gdu.academix.dto.CommentDto;
 import com.gdu.academix.mapper.BlogMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Transactional
 @Service

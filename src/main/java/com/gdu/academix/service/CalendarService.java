@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 public interface CalendarService {
 	
   int registerEvent(Map<String, Object> params) throws ParseException;

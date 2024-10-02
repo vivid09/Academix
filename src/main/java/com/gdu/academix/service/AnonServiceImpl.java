@@ -2,16 +2,10 @@ package com.gdu.academix.service;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,16 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gdu.academix.dto.CommentDto;
-import com.gdu.academix.dto.EmployeesDto;
 import com.gdu.academix.dto.AnonDto;
 import com.gdu.academix.dto.BlogImageDto;
+import com.gdu.academix.dto.CommentDto;
 import com.gdu.academix.mapper.AnonMapper;
 import com.gdu.academix.utils.MyFileUtils;
 import com.gdu.academix.utils.MyPageUtils;
 import com.gdu.academix.utils.MySecurityUtils;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Transactional
 @Service

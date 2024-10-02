@@ -12,16 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gdu.academix.dto.EmployeesDto;
-import com.gdu.academix.dto.LeaveRequestDto;
-import com.gdu.academix.dto.RequestsDto;
 import com.gdu.academix.service.HrService;
-import com.gdu.academix.service.RequestsService;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("/hr")
 @Controller
